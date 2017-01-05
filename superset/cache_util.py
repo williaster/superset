@@ -1,4 +1,5 @@
-from caravel import simple_cache
+from superset import simple_cache
+from flask import request
 
 
 def view_cache_key(*args, **kwargs):

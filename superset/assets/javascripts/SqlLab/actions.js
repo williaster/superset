@@ -213,9 +213,9 @@ export function mergeTable(table, query) {
   return { type: MERGE_TABLE, table, query };
 }
 
-export function addTable(query, tableOpt) {
+export function addTable(query, fullTableName) {
   return function (dispatch) {
-    const namePieces = tableOpt.value.split('.');
+    const namePieces = fullTableName.split('.');
     let tableName;
     let schemaName;
     if (namePieces.length === 1) {
@@ -225,7 +225,7 @@ export function addTable(query, tableOpt) {
       schemaName = namePieces[0];
       tableName = namePieces[1];
     }
-    let url = `/superset/table/${query.dbId}/${tableName}/${query.schema}/`;
+    let url = `/superset/table/${query.dbId}/${tableName}/${schemaName}/`;
     $.get(url, (data) => {
       const dataPreviewQuery = {
         id: shortid.generate(),
@@ -242,7 +242,7 @@ export function addTable(query, tableOpt) {
         Object.assign(data, {
           dbId: query.dbId,
           queryEditorId: query.id,
-          schema: query.schema,
+          schema: schemaName,
           expanded: true,
         }), dataPreviewQuery)
       );
@@ -258,12 +258,12 @@ export function addTable(query, tableOpt) {
       );
     });
 
-    url = `/superset/extra_table_metadata/${query.dbId}/${tableName}/${query.schema}/`;
+    url = `/superset/extra_table_metadata/${query.dbId}/${tableName}/${schemaName}/`;
     $.get(url, (data) => {
       const table = {
         dbId: query.dbId,
         queryEditorId: query.id,
-        schema: query.schema,
+        schema: schemaName,
         name: tableName,
       };
       Object.assign(table, data);

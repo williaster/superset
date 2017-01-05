@@ -19,8 +19,8 @@ from sqlalchemy import event, exc
 import parsedatetime
 import sqlalchemy as sa
 from dateutil.parser import parse
-from flask import flash, Markup, request
-from markdown import markdown as md
+from flask import flash, Markup
+import markdown as md
 from sqlalchemy.types import TypeDecorator, TEXT
 from pydruid.utils.having import Having
 
@@ -110,23 +110,6 @@ class memoized(object):  # noqa
 
 def js_string_to_python(item):
     return None if item in ('null', 'undefined') else item
-
-
-def get_or_create_main_db(caravel):
-    db = caravel.db
-    config = caravel.app.config
-    DB = caravel.models.Database
-    logging.info("Creating database reference")
-    dbobj = db.session.query(DB).filter_by(database_name='main').first()
-    if not dbobj:
-        dbobj = DB(database_name="main")
-    logging.info(config.get("SQLALCHEMY_DATABASE_URI"))
-    dbobj.set_sqlalchemy_uri(config.get("SQLALCHEMY_DATABASE_URI"))
-    dbobj.expose_in_sqllab = True
-    dbobj.allow_run_sync = True
-    db.session.add(dbobj)
-    db.session.commit()
-    return dbobj
 
 
 class DimSelector(Having):
