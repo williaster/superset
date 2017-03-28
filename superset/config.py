@@ -16,6 +16,9 @@ import os
 from dateutil import tz
 from flask_appbuilder.security.manager import AUTH_DB
 
+from airbnb_search_session_explorer import views as search_session_explorer
+
+
 BASE_DIR = os.path.abspath(os.path.dirname(__file__))
 DATA_DIR = os.path.join(os.path.expanduser('~'), '.superset')
 if not os.path.exists(DATA_DIR):
@@ -289,7 +292,7 @@ SILENCE_FAB = True
 
 # Integrate external Blueprints to the app by passing them to your
 # configuration. These blueprints will get integrated in the app
-BLUEPRINTS = []
+BLUEPRINTS = [search_session_explorer.blueprint]
 
 try:
     if CONFIG_PATH_ENV_VAR in os.environ:
