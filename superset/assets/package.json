@@ -76,6 +76,7 @@
     "react-addons-css-transition-group": "^15.6.0",
     "react-addons-shallow-compare": "^15.4.2",
     "react-alert": "^2.3.0",
+    "react-beautiful-dnd": "^4.0.0",
     "react-bootstrap": "^0.31.5",
     "react-bootstrap-table": "^4.0.2",
     "react-color": "^2.13.8",

@@ -1,0 +1,47 @@
+.dashboard-v2 {
+  margin-top: -20px;
+  position: relative;
+}
+
+.dashboard-header {
+  background: white;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 16px;
+  box-shadow: 0 0px 6px #aaa; /* @TODO color */
+  margin-bottom: 2px;
+}
+
+.dashboard-builder-sidepane {
+  background: white;
+  box-shadow: 0 2px 6px #aaa; /* @TODO color */
+}
+
+.new-draggable-component {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: nowrap;
+  align-items: center;
+  padding: 16;
+  background: white;
+}
+
+  .new-draggable-component--dragging {
+    box-shadow: 0 0 1px #aaa; /* @TODO color */
+  }
+
+.new-draggable-placeholder {
+  background: #f5f5f5;
+  width: 40px;
+  height: 40px;
+  margin-right: 16px;
+  box-shadow: 0 0 1px #fff;
+}
+
+/* @TODO remove upon new theme */
+.btn.btn-primary {
+  background: #484848 !important;
+  color: white !important;
+}
