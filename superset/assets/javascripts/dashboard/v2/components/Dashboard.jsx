@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 
 import DashboardBuilder from './DashboardBuilder';
 import StaticDashboard from './StaticDashboard';
-import Header from './Header';
+import DashboardHeader from './DashboardHeader';
 
 import '../../../../stylesheets/dashboard-v2.css';
 
@@ -15,19 +15,23 @@ const propTypes = {
   editMode: PropTypes.bool,
 };
 
+const defaultProps = {
+  editMode: true,
+};
+
 class Dashboard extends React.Component {
   render() {
     const { editMode, actions } = this.props;
     const { setEditMode, updateDashboardTitle } = actions;
     return (
       <div className="dashboard-v2">
-        <Header
-          editMode={editMode}
+        <DashboardHeader
+          editMode={true}
           setEditMode={setEditMode}
           updateDashboardTitle={updateDashboardTitle}
         />
 
-        {editMode ?
+        {true ?
           <DashboardBuilder /> : <StaticDashboard />}
       </div>
     );
@@ -35,5 +39,6 @@ class Dashboard extends React.Component {
 }
 
 Dashboard.propTypes = propTypes;
+Dashboard.defaultProps = defaultProps;
 
 export default Dashboard;

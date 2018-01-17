@@ -40,6 +40,22 @@
   box-shadow: 0 0 1px #fff;
 }
 
+.grid-resizable-container {
+  width: 100%;
+  height: 100%;
+  background-color: #ff269e;
+  opacity: 0.9;
+  position: relative;
+}
+
+.grid-resizable-container--resizing {
+  box-shadow: inset 0 0 0 2px #03A9F4;
+}
+
+.grid-resizable-handle--right {
+
+}
+
 /* @TODO remove upon new theme */
 .btn.btn-primary {
   background: #484848 !important;

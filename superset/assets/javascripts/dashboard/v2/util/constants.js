@@ -1,19 +1,30 @@
-export const CHART = 'DASHBOARD_CHART';
-export const MARKDOWN = 'DASHBOARD_MARKDOWN';
-export const SEPARATOR = 'DASHBOARD_SEPARATOR';
-export const ROW = 'DASHBOARD_ROW';
-export const TABS = 'DASHBOARD_TABS';
-export const HEADER = 'DASHBOARD_HEADER';
+// Component types
+export const CHART_TYPE = 'DASHBOARD_CHART_TYPE';
+export const MARKDOWN_TYPE = 'DASHBOARD_MARKDOWN_TYPE';
+export const DIVIDER_TYPE = 'DASHBOARD_DIVIDER_TYPE';
+export const ROW_TYPE = 'DASHBOARD_ROW_TYPE';
+export const COLUMN_TYPE = 'DASHBOARD_COLUMN_TYPE';
+export const TABS_TYPE = 'DASHBOARD_TABS_TYPE';
+export const HEADER_TYPE = 'DASHBOARD_HEADER_TYPE';
 
+// Drag and drop constants
 export const DROPPABLE_NEW_COMPONENT = 'DROPPABLE_NEW_COMPONENT';
 export const DROPPABLE_DASHBOARD_ROOT = 'DASHBOARD_ROOT_DROPPABLE';
+export const DROPPABLE_DIRECTION_VERTICAL = 'vertical';
+export const DROPPABLE_DIRECTION_HORIZONTAL = 'horizontal';
 
 export const DRAGGABLE_NEW_CHART = 'DRAGGABLE_NEW_CHART';
 export const DRAGGABLE_NEW_DIVIDER = 'DRAGGABLE_NEW_DIVIDER';
 export const DRAGGABLE_NEW_HEADER = 'DRAGGABLE_NEW_HEADER';
 export const DRAGGABLE_NEW_ROW = 'DRAGGABLE_NEW_ROW';
 
-export const DRAGGABLE_ROW_TYPE = 'DRAGGABLE_ROW_TYPE';
+export const DRAGGABLE_TYPE_ROW = 'DRAGGABLE_TYPE_ROW';
 
-export const VERTICAL_DIRECTION = 'vertical';
-export const HORIZONTAL_DIRECTION = 'horizontal';
+// grid constants
+export const GRID_BASE_UNIT = 8;
+export const GRID_ROW_HEIGHT_UNIT = 2 * GRID_BASE_UNIT;
+export const GRID_COLUMN_COUNT = 12;
+export const GRID_MIN_COLUMN_COUNT = 3;
+export const GRID_MIN_ROW_UNITS = 5;
+export const GRID_MAX_ROW_UNITS = 100;
+export const GRID_MIN_ROW_HEIGHT = GRID_ROW_HEIGHT_UNIT * GRID_MIN_ROW_UNITS;

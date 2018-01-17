@@ -15,7 +15,7 @@ export default class DraggableNewRow extends React.Component {
       <DraggableNewComponent
         id={DRAGGABLE_NEW_ROW}
         label="Row"
-        ddraggableType={DRAGGABLE_ROW_TYPE}
+        type={DRAGGABLE_ROW_TYPE}
         index={index}
       />
     );

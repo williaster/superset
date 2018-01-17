@@ -1,62 +1,45 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { ButtonToolbar, DropdownButton, MenuItem } from 'react-bootstrap';
 
-import Button from '../../../components/Button';
-import EditableTitle from '../../../components/EditableTitle';
+import { GRID_BASE_UNIT } from '../util/constants';
 
 const propTypes = {
-  updateDashboardTitle: PropTypes.func,
-  editMode: PropTypes.bool.isRequired,
-  setEditMode: PropTypes.func.isRequired,
+  entity: PropTypes.shape({
+    id: PropTypes.string.isRequired,
+    meta: PropTypes.shape({
+      text: PropTypes.string,
+    }),
+  }),
+};
+
+const defaultProps = {
+  entity: {},
 };
 
 class Header extends React.Component {
   constructor(props) {
     super(props);
-    this.handleSaveTitle = this.handleSaveTitle.bind(this);
-    this.toggleEditMode = this.toggleEditMode.bind(this);
-  }
-
-  handleSaveTitle(title) {
-    this.props.updateDashboardTitle(title);
-  }
-
-  toggleEditMode() {
-    this.props.setEditMode(!this.props.editMode);
+    this.state = {};
   }
 
   render() {
-    const { editMode } = this.props;
-    return (
-      <div className="dashboard-header">
-        <h1>
-          <EditableTitle
-            title={'Example header'}
-            canEdit={false}
-            onSaveTitle={() => {}}
-            showTooltip={false}
-          />
-        </h1>
-        <ButtonToolbar>
-          <DropdownButton title="Actions" bsSize="small" id="btn-dashboard-actions">
-            <MenuItem>Action 1</MenuItem>
-            <MenuItem>Action 2</MenuItem>
-            <MenuItem>Action 3</MenuItem>
-          </DropdownButton>
-
-          <Button
-            bsStyle="primary"
-            onClick={this.toggleEditMode}
-          >
-            {editMode ? 'Save changes' : 'Edit dashboard'}
-          </Button>
-        </ButtonToolbar>
+    const { entity: { id, meta } } = this.props;
+    return !meta || !id ? null : (
+      <div
+        style={{
+          width: '100%',
+          padding: `${GRID_BASE_UNIT} 0`,
+        }}
+      >
+        <div style={{ fontSize: 24, fontWeight: 700, color: '#484848' }}>
+          {meta.text}
+        </div>
       </div>
     );
   }
 }
 
 Header.propTypes = propTypes;
+Header.defaultProps = defaultProps;
 
 export default Header;

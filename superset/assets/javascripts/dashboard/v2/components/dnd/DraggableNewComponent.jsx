@@ -7,20 +7,18 @@ const propTypes = {
   id: PropTypes.string.isRequired,
   label: PropTypes.string.isRequired,
   index: PropTypes.number.isRequired,
-  draggableType: PropTypes.string,
+  type: PropTypes.string,
 };
 
 export default class DraggableNewComponent extends React.Component {
   render() {
-    const { id, label, index, draggableType = undefined} = this.props;
-    if (!id) console.warn(`no 'id' provided for NewComponent ${type}`);
-    if (typeof index === 'undefined') console.warn(`no 'index' provided for NewComponent ${type}`);
+    const { id, label, index, type = undefined } = this.props;
 
     return (
       <Draggable
         draggableId={id}
         index={index}
-        type={draggableType}
+        type={type}
       >
         {(provided, snapshot) => (
           <div>
