@@ -1,7 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 
-import { GRID_BASE_UNIT } from '../util/constants';
+import { GRID_BASE_UNIT } from '../../util/constants';
 
 const propTypes = {
   entity: PropTypes.shape({

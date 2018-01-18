@@ -1,7 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 
-import { GRID_BASE_UNIT } from '../util/constants';
+import {  } from '../../util/constants';
 
 const propTypes = {
 };
@@ -9,7 +9,7 @@ const propTypes = {
 const defaultProps = {
 };
 
-class Divider extends React.Component {
+class Chart extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
@@ -21,16 +21,16 @@ class Divider extends React.Component {
       <div
         style={{
           width: '100%',
-          height: 2,
-          background: '#ccc',
-          margin: `${2 * GRID_BASE_UNIT}px 0`,
+          height: '100%',
+          backgroundColor: '#FFFCE1',
+          padding: 16,
         }}
-      />
+      >Chart</div>
     );
   }
 }
 
-Divider.propTypes = propTypes;
-Divider.defaultProps = defaultProps;
+Chart.propTypes = propTypes;
+Chart.defaultProps = defaultProps;
 
-export default Divider;
+export default Chart;

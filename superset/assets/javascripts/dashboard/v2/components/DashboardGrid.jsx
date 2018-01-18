@@ -2,19 +2,17 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import ParentSize from '@vx/responsive/build/components/ParentSize';
 
-import Box from './Box';
-import Header from './Header';
-import Row from './Row';
-import Divider from './Divider';
+import { Row, Header, Divider } from './gridComponents';
 
 import {
+  HEADER_TYPE,
+  DIVIDER_TYPE,
+  ROW_TYPE,
   GRID_COLUMN_COUNT,
   GRID_MIN_COLUMN_COUNT,
-  HEADER_TYPE,
-  ROW_TYPE,
-  CHART_TYPE,
-  DIVIDER_TYPE,
 } from '../util/constants';
+
+import testLayout from '../fixtures/testLayout';
 
 const propTypes = {
 };
@@ -27,62 +25,7 @@ class DashboardGrid extends React.Component {
     super(props);
     this.state = {
       showGrid: false,
-      children: [
-        'header0',
-        'row0',
-        'divider0',
-        'row1',
-        'row2',
-      ],
-      entities: {
-        header0: {
-          id: 'header0',
-          type: HEADER_TYPE,
-          children: [],
-          meta: {
-            text: 'Section header',
-          },
-        },
-        divider0: {
-          id: 'divider0',
-          type: DIVIDER_TYPE,
-          children: [],
-        },
-        row0: {
-          id: 'row0',
-          type: ROW_TYPE,
-          children: [],
-        },
-        row1: {
-          id: 'row1',
-          type: ROW_TYPE,
-          children: [],
-        },
-        row2: {
-          id: 'row2',
-          type: ROW_TYPE,
-          children: [
-            'chart0',
-            'chart1',
-          ],
-        },
-        chart0: {
-          id: 'chart0',
-          type: CHART_TYPE,
-          meta: {
-            width: 3,
-            height: 5,
-          },
-        },
-        chart1: {
-          id: 'chart1',
-          type: CHART_TYPE,
-          meta: {
-            width: 3,
-            height: 5,
-          },
-        },
-      },
+      layout: testLayout,
     };
 
     this.handleResizeStart = this.handleResizeStart.bind(this);
@@ -98,7 +41,8 @@ class DashboardGrid extends React.Component {
   }
 
   render() {
-    const { showGrid, children, entities } = this.state;
+    const { showGrid, layout } = this.state;
+    const { children, entities } = layout;
 
     return (
       <ParentSize>
@@ -112,17 +56,19 @@ class DashboardGrid extends React.Component {
                 width,
                 height,
                 position: 'relative',
-                background: '#7affd2',
+                background: 'transparent',
               }}
             >
               {children.map((id) => {
-                if (/header/i.test(id)) return <Header key={id} entity={entities[id]} />;
-                if (/divider/i.test(id)) return <Divider key={id} entity={entities[id]} />;
-                if (/row/i.test(id)) {
+                // @TODO In the future these will all be rows or invisible rows
+                const entity = entities[id];
+                if (entity.type === HEADER_TYPE) return <Header key={id} entity={entity} />;
+                if (entity.type === DIVIDER_TYPE) return <Divider key={id} entity={entity} />;
+                if (entity.type === ROW_TYPE) {
                   return (
                     <Row
                       key={id}
-                      row={entities[id]}
+                      entity={entity}
                       entities={entities}
                       columnWidth={columnWidth}
                       minElementWidth={minElementWidth}

@@ -1,6 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import ResizableContainer from './ResizableContainer';
+
+import ResizableContainer from '../ResizableContainer';
 
 import {
   COLUMN_TYPE,
@@ -12,10 +13,12 @@ import {
   GRID_MIN_COLUMN_COUNT,
   GRID_MIN_ROW_UNITS,
   GRID_MAX_ROW_UNITS,
-} from '../util/constants';
+} from '../../util/constants';
+
+import { COMPONENT_TYPE_LOOKUP } from './';
 
 const propTypes = {
-  row: PropTypes.object,
+  entity: PropTypes.object,
   entities: PropTypes.object,
   rowWidth: PropTypes.number,
   columnWidth: PropTypes.number,
@@ -25,7 +28,7 @@ const propTypes = {
 };
 
 const defaultProps = {
-  row: {},
+  entity: {},
   entities: {},
   rowWidth: 0,
   columnWidth: 0,
@@ -67,8 +70,8 @@ class Row extends React.Component {
               ...entity,
               meta: {
                 ...entity.meta,
-                width: widthMultiple,
-                height: heightMultiple,
+                width: widthMultiple || entity.meta.width,
+                height: heightMultiple || entity.meta.height,
               },
             },
           },
@@ -83,26 +86,39 @@ class Row extends React.Component {
   }
 
   render() {
-    const { row, rowWidth, columnWidth, minElementWidth } = this.props;
+    const { entity: rowEntity, columnWidth } = this.props;
     const { modifiedEntities } = this.state;
 
-    const totalColumns = row.children.reduce((sum, curr) => (
+    const totalColumns = rowEntity.children.reduce((sum, curr) => (
       sum + modifiedEntities[curr].meta.width
     ), 0);
 
     return (
       <div
         style={{
+          display: 'flex',
+          flexDirection: 'row',
+          alignItems: 'flex-start',
           width: '100%',
-          height: 'fit-content', // @TODO this only works in chrome, how to fix?
+          height: 'fit-content', // @TODO this only works in chrome, how to fix? compute height?
           minHeight: GRID_MIN_ROW_HEIGHT,
-          background: '#76218a',
-          opacity: 0.75,
-          color: '#fff',
+          background: '#D5BCDB',
+          color: '#484848',
         }}
       >
-        {row.children.map((id) => {
+        {(rowEntity.children || []).map((id) => {
           const entity = modifiedEntities[id];
+          const Component = COMPONENT_TYPE_LOOKUP[entity.type];
+          const ComponentInstance = (
+            <Component
+              key={id}
+              id={id}
+              entity={entity}
+              entities={modifiedEntities}
+              onResizeStop={this.handleResizeStop}
+              onResizeStart={this.handleResizeStart}
+            />
+          );
           const isResizable = [COLUMN_TYPE, CHART_TYPE, MARKDOWN_TYPE].indexOf(entity.type) > -1;
           if (isResizable) {
             return (
@@ -121,12 +137,15 @@ class Row extends React.Component {
                 maxHeightMultiple={GRID_MAX_ROW_UNITS}
                 onResizeStop={this.handleResizeStop}
                 onResizeStart={this.handleResizeStart}
-              />
+              >
+                {ComponentInstance}
+              </ResizableContainer>
             );
           }
-          return null;
+          return ComponentInstance;
         })}
-        {!row.children.length && 'Empty row'}
+
+        {(!rowEntity.children || !rowEntity.children.length) && 'Empty row'}
       </div>
     );
   }
