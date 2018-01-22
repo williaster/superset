@@ -1,7 +1,4 @@
 import React from 'react';
-import PropTypes from 'prop-types';
-
-import {  } from '../../util/constants';
 
 const propTypes = {
 };
@@ -9,7 +6,7 @@ const propTypes = {
 const defaultProps = {
 };
 
-class Chart extends React.Component {
+class Spacer extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
@@ -19,18 +16,19 @@ class Chart extends React.Component {
   render() {
     return (
       <div
+        className="grid-spacer"
         style={{
           width: '100%',
           height: '100%',
-          backgroundColor: '#fff',
-          padding: 16,
+          backgroundColor: 'transparent',
+          boxShadow: 'inset 0 0 0 1px #484848',
         }}
-      >Chart</div>
+      />
     );
   }
 }
 
-Chart.propTypes = propTypes;
-Chart.defaultProps = defaultProps;
+Spacer.propTypes = propTypes;
+Spacer.defaultProps = defaultProps;
 
-export default Chart;
+export default Spacer;

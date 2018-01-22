@@ -17,7 +17,7 @@ class BuilderComponentPane extends React.Component {
   render() {
     return (
       <div className="dashboard-builder-sidepane">
-        <div style={{ fontSize: 16, fontWeight: 700, borderBottom: '1px solid #ccc', padding: 16 }}>
+        <div className="dashboard-builder-sidepane-header">
           Insert components
         </div>
         <Droppable
@@ -26,13 +26,7 @@ class BuilderComponentPane extends React.Component {
           isDropDisabled
         >
           {provided => (
-            <div
-              ref={provided.innerRef}
-              style={{
-                width: 376,
-                marginTop: 1,
-              }}
-            >
+            <div ref={provided.innerRef}>
               <DraggableNewChart index={0} />
               <DraggableNewDivider index={1} />
               <DraggableNewHeader index={2} />

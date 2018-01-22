@@ -4,6 +4,7 @@ import {
   DIVIDER_TYPE,
   HEADER_TYPE,
   ROW_TYPE,
+  SPACER_TYPE,
 } from '../../util/constants';
 
 import Chart from './Chart';
@@ -11,12 +12,14 @@ import Column from './Column';
 import Divider from './Divider';
 import Header from './Header';
 import Row from './Row';
+import Spacer from './Spacer';
 
 export { default as Chart } from './Chart';
 export { default as Column } from './Column';
 export { default as Divider } from './Divider';
 export { default as Header } from './Header';
 export { default as Row } from './Row';
+export { default as Spacer } from './Spacer';
 
 export const COMPONENT_TYPE_LOOKUP = {
   [CHART_TYPE]: Chart,
@@ -24,4 +27,5 @@ export const COMPONENT_TYPE_LOOKUP = {
   [DIVIDER_TYPE]: Divider,
   [HEADER_TYPE]: Header,
   [ROW_TYPE]: Row,
+  [SPACER_TYPE]: Spacer,
 };

@@ -14,9 +14,24 @@
   margin-bottom: 2px;
 }
 
+.dashboard-builder-container {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap-reverse;
+  height: auto;
+}
+
 .dashboard-builder-sidepane {
   background: white;
-  box-shadow: 0 2px 6px #aaa; /* @TODO color */
+  flex: 0 0 376px;
+  box-shadow: 0 0 0 1px #ccc; /* @TODO color */
+}
+
+.dashboard-builder-sidepane-header {
+  font-size: 16;
+  font-weight: 700;
+  border-bottom: 1px solid #ccc;
+  padding: 16px;
 }
 
 .new-draggable-component {
@@ -24,7 +39,7 @@
   flex-direction: row;
   flex-wrap: nowrap;
   align-items: center;
-  padding: 16;
+  padding: 16px;
   background: white;
 }
 
@@ -38,22 +53,6 @@
   height: 40px;
   margin-right: 16px;
   box-shadow: 0 0 1px #fff;
-}
-
-.grid-resizable-container {
-  width: 100%;
-  height: 100%;
-  background-color: #ff269e;
-  opacity: 0.9;
-  position: relative;
-}
-
-.grid-resizable-container--resizing {
-  box-shadow: inset 0 0 0 2px #03A9F4;
-}
-
-.grid-resizable-handle--right {
-
 }
 
 /* @TODO remove upon new theme */

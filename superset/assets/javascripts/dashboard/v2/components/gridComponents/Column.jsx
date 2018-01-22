@@ -1,14 +1,24 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 
-import ResizableContainer from '../ResizableContainer';
+import ResizableContainer from '../resizable/ResizableContainer';
 
-import { GRID_MIN_ROW_HEIGHT } from '../../util/constants';
+import { COMPONENT_TYPE_LOOKUP } from './';
+import { componentIsResizable } from '../../util/gridUtils';
+
+import {
+  SPACER_TYPE,
+  GRID_GUTTER_SIZE,
+  GRID_ROW_HEIGHT_UNIT,
+  GRID_MIN_ROW_UNITS,
+  GRID_MAX_ROW_UNITS,
+} from '../../util/constants';
 
 const propTypes = {
   entity: PropTypes.object,
   entities: PropTypes.object,
   onResizeStart: PropTypes.func,
+  onResize: PropTypes.func,
   onResizeStop: PropTypes.func,
 };
 
@@ -16,82 +26,61 @@ const defaultProps = {
   entity: {},
   entities: {},
   onResizeStop: null,
+  onResize: null,
   onResizeStart: null,
 };
 
-class Column extends React.Component {
-  constructor(props) {
-    super(props);
-    this.state = {
-
-    };
-    this.handleResizeStart = this.handleResizeStart.bind(this);
-    this.handleResizeStop = this.handleResizeStop.bind(this);
-  }
-
-  handleResizeStart({ id }) {
-    const { onResizeStart } = this.props;
-    if (onResizeStart) onResizeStart({ id });
-  }
-
-  handleResizeStop({ id, heightMultiple }) {
-    // const { onResizeStop } = this.props;
-    // this.setState(({ modifiedEntities }) => {
-    //   const entity = modifiedEntities[id];
-    //   if (entity.meta.width !== widthMultiple || entity.meta.height !== heightMultiple) {
-    //     return {
-    //       modifiedEntities: {
-    //         ...modifiedEntities,
-    //         [id]: {
-    //           ...entity,
-    //           meta: {
-    //             ...entity.meta,
-    //             width: widthMultiple,
-    //             height: heightMultiple,
-    //           },
-    //         },
-    //       },
-    //     };
-    //   }
-    //   return null;
-    // }, onResizeStop);
-  }
-
+class Column extends React.PureComponent {
   render() {
-    const { entity: columnEntity, entities, onResizeStop, onResizeStart } = this.props;
+    const { entity: columnEntity, entities, onResizeStop, onResize, onResizeStart } = this.props;
+
+    const columnItems = [];
+
+    (columnEntity.children || []).forEach((id, index) => {
+      const entity = entities[id];
+      columnItems.push(entity);
+      if (index < columnEntity.children.length - 1) columnItems.push(`gutter-${index}`);
+    });
+
     return (
-      <div
-        style={{
-          width: '100%',
-          // height: 'auto',
-          minHeight: GRID_MIN_ROW_HEIGHT,
-          backgroundColor: '#D7FFF1',
-        }}
-      >
-        {(columnEntity.children || []).map((id) => {
-          const entity = entities[id];
+      <div className="grid-column">
+        {columnItems.map((entity) => {
+          const id = entity.id || entity;
           const Component = COMPONENT_TYPE_LOOKUP[entity.type];
-          const isResizable = [CHART_TYPE, MARKDOWN_TYPE].indexOf(entity.type) > -1;
+          const isResizable = componentIsResizable(entity);
+
+          let ColumnItem = Component ? (
+            <Component
+              key={id}
+              id={id}
+              entity={entity}
+              entities={entities}
+              onResizeStop={onResizeStop}
+              onResize={onResize}
+              onResizeStart={onResizeStart}
+            />
+          ) : <div key={id} style={{ height: GRID_GUTTER_SIZE }} />;
 
           if (isResizable) {
-            return (
+            ColumnItem = (
               <ResizableContainer
                 key={id}
                 id={id}
-                adjustableWidth={false}
+                adjustableWidth={false} // everything in a column inherits the Columns's width
                 adjustableHeight
                 heightStep={GRID_ROW_HEIGHT_UNIT}
                 heightMultiple={entity.meta.height}
-                minHeightMultiple={GRID_MIN_ROW_UNITS}
+                minHeightMultiple={entity.type === SPACER_TYPE ? 1 : GRID_MIN_ROW_UNITS}
                 maxHeightMultiple={GRID_MAX_ROW_UNITS}
                 onResizeStop={onResizeStop}
+                onResize={onResize}
                 onResizeStart={onResizeStart}
               >
-                {<Component entity={entity} />}
+                {ColumnItem}
               </ResizableContainer>
             );
           }
-          return <Component key={id} entity={entity} />;
+          return ColumnItem;
         })}
 
         {(!columnEntity.children || !columnEntity.children.length)

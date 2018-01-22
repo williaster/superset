@@ -4,9 +4,9 @@ import PropTypes from 'prop-types';
 import { DragDropContext, Droppable, Draggable } from 'react-beautiful-dnd';
 import BuilderComponentPane from './BuilderComponentPane';
 import DashboardGrid from './DashboardGrid';
-import { reorder, reorderRows } from '../util/dnd-reorder';
+// import { reorder, reorderRows } from '../util/dnd-reorder';
 
-import { DROPPABLE_DASHBOARD_ROOT, DRAGGABLE_ROW_TYPE } from '../util/constants';
+// import { DROPPABLE_DASHBOARD_ROOT, DRAGGABLE_ROW_TYPE } from '../util/constants';
 
 const propTypes = {
   editMode: PropTypes.bool,
@@ -79,30 +79,8 @@ class DashboardBuilder extends React.Component {
         onDragStart={this.handleDragStart}
         onDragEnd={this.handleDragEnd}
       >
-        <div style={{ display: 'flex', flexDirection: 'row', flexWrap: 'noWrap', height: '100%' }}>
-          <div style={{ flex: 1, minWidth: 0, margin: 16, height: '100%' }}>
-            <DashboardGrid />
-            {/* <Droppable
-              droppableId={DROPPABLE_DASHBOARD_ROOT}
-              direction={D}
-              type={DRAGGABLE_ROW_TYPE}
-            >
-              {(provided, snapshot) => (
-                <div
-                  ref={provided.innerRef}
-                  style={{
-                    position: 'relative',
-                    backgroundColor: snapshot.isDraggingOver ? '#e0e0e0' : null,
-                    minHeight: 100,
-                    height: '100%',
-                  }}
-                >
-                  {this.state.rows.map(id => this.renderRow(id))}
-                  {provided.placeholder}
-                </div>
-              )}
-            </Droppable> */}
-          </div>
+        <div className="dashboard-builder-container">
+          <DashboardGrid />
           <BuilderComponentPane />
         </div>
       </DragDropContext>

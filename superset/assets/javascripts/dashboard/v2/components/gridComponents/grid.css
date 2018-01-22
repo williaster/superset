@@ -1,0 +1,47 @@
+.grid-container {
+   flex: 1;
+   min-width: 66%;
+   margin: 16px;
+   height: 100%;
+   overflow-y: auto;
+   position: relative;
+}
+
+.grid-column {
+  width: 100%;
+  min-height: 16px;
+}
+
+.grid-row {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: nowrap;
+  align-items: flex-start;
+  min-height: 16px;
+  height: fit-content;
+  display: flex;
+  background-color: #D5BCDB;
+  box-shadow: 0 0 0 1px white;
+}
+
+  .grid-row--invisible {
+    background-color: transparent;
+  }
+
+/* Editing guides */
+.grid-column-guide {
+  position: absolute;
+  top: 0;
+  height: 100%;
+  background-color: #44C0FF;
+  opacity: 0.1;
+  pointer-events: none;
+}
+
+.grid-row-guide {
+  position: absolute;
+  left: 0;
+  height: 1;
+  background-color: #44C0FF;
+  pointer-events: none;
+}
