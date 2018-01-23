@@ -22,8 +22,13 @@ class Chart extends React.Component {
         style={{
           width: '100%',
           height: '100%',
+          color: '#ccc',
           backgroundColor: '#fff',
+          // boxShadow: 'inset 0 0 0 1px #ccc',
           padding: 16,
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
         }}
       >Chart</div>
     );

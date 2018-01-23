@@ -14,6 +14,10 @@
   box-shadow: inset 0 0 0 2px #44C0FF;
 }
 
+.grid-resizable-container:hover .grid-spacer {
+  box-shadow: inset 0 0 0 1px #eaeaea;
+}
+
 .resize-handle {
   opacity: 0;
 }
@@ -27,8 +31,8 @@
   position: absolute;
   border: solid;
   border-width: 0 1.5px 1.5px 0;
-  border-right-color: #484848;
-  border-bottom-color: #484848;
+  border-right-color: #879399;
+  border-bottom-color: #879399;
   right: 16;
   bottom: 16;
   width: 8px;
@@ -38,27 +42,27 @@
 .resize-handle--right {
   width: 2px;
   height: 20px;
-  right: 10px;
-  top: 50%;
+  right: -2px;
+  top: 47%;
   position: absolute;
-  border-left: 1px solid #484848;
-  border-right: 1px solid #484848;
+  border-left: 1px solid #879399;
+  border-right: 1px solid #879399;
 }
 
   .grid-spacer + span .resize-handle--right {
-    right: 50%;
+    right: 3px;
   }
 
 .resize-handle--bottom {
   height: 2px;
   width: 20px;
   bottom: 10px;
-  left: 50%;
+  left: 47%;
   position: absolute;
-  border-top: 1px solid #484848;
-  border-bottom: 1px solid #484848;
+  border-top: 1px solid #879399;
+  border-bottom: 1px solid #879399;
 }
 
-.grid-resizable-container--resizing .resize-handle:first-child {
+.grid-resizable-container--resizing > span .resize-handle {
   border-color: #44C0FF;
 }

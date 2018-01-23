@@ -2,13 +2,12 @@ import React from 'react';
 // import PropTypes from 'prop-types';
 import ParentSize from '@vx/responsive/build/components/ParentSize';
 
-import { Row, Header, Divider } from './gridComponents';
+import { Row } from './gridComponents';
 import './gridComponents/grid.css';
 
 import {
   GRID_GUTTER_SIZE,
   GRID_COLUMN_COUNT,
-  GRID_MIN_COLUMN_COUNT,
 } from '../util/constants';
 
 import testLayout from '../fixtures/testLayout';
@@ -67,16 +66,13 @@ class DashboardGrid extends React.PureComponent {
     return (
       <div className="grid-container">
         <ParentSize>
-          {({ width, height }) => {
-            const columnPlusGutterWidth = width / GRID_COLUMN_COUNT;
-            const extraGutterWidth = GRID_GUTTER_SIZE / GRID_COLUMN_COUNT;
-            const columnWidth = columnPlusGutterWidth - GRID_GUTTER_SIZE + extraGutterWidth;
+          {({ width }) => {
+            // account for (COLUMN_COUNT - 1) gutters
+            const columnPlusGutterWidth = (width + GRID_GUTTER_SIZE) / GRID_COLUMN_COUNT;
+            const columnWidth = columnPlusGutterWidth - GRID_GUTTER_SIZE;
 
             return width < 50 ? null : (
-              <div
-                ref={(ref) => { this.grid = ref; }}
-                style={{ width, height }}
-              >
+              <div ref={(ref) => { this.grid = ref; }}>
                 {children.map(id => (
                   <Row
                     key={id}

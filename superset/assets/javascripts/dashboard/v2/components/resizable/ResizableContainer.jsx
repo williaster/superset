@@ -45,6 +45,8 @@ const defaultProps = {
   onResizeStart: null,
 };
 
+// because columns are not actually multiples of a single variable (width = n*cols + (n-1)*gutters)
+// we snap to the base unit and then snap to columns on resize stop
 const snapToGrid = [GRID_BASE_UNIT, GRID_BASE_UNIT];
 
 class ResizableContainer extends React.PureComponent {
@@ -120,8 +122,8 @@ class ResizableContainer extends React.PureComponent {
     } = this.props;
 
     const size = {
-      width: adjustableWidth ? (widthStep * widthMultiple) - gutterWidth : '100%',
-      height: adjustableHeight ? heightStep * heightMultiple : '100%',
+      width: adjustableWidth ? (widthStep * widthMultiple) - gutterWidth : 'auto',
+      height: (adjustableHeight || heightMultiple) ? heightStep * heightMultiple : 'auto',
     };
 
     let enableConfig = resizableConfig.widthAndHeight;
@@ -134,10 +136,10 @@ class ResizableContainer extends React.PureComponent {
       <Resizable
         enable={enableConfig}
         grid={snapToGrid}
-        minWidth={adjustableWidth ? minWidthMultiple * widthStep - gutterWidth : '100%'}
-        minHeight={adjustableHeight ? minHeightMultiple * heightStep : '100%'}
-        maxWidth={adjustableWidth ? maxWidthMultiple * widthStep - gutterWidth : '100%'}
-        maxHeight={adjustableHeight ? maxHeightMultiple * heightStep : '100%'}
+        minWidth={adjustableWidth ? minWidthMultiple * widthStep - gutterWidth : size.width}
+        minHeight={adjustableHeight ? minHeightMultiple * heightStep : size.height}
+        maxWidth={adjustableWidth ? maxWidthMultiple * widthStep - gutterWidth : size.width}
+        maxHeight={adjustableHeight ? maxHeightMultiple * heightStep : size.height}
         size={size}
         onResizeStart={this.handleResizeStart}
         onResize={this.handleResize}

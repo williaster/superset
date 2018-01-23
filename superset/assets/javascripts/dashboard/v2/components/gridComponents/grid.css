@@ -1,9 +1,8 @@
 .grid-container {
-   flex: 1;
+   flex-grow: 9999;
    min-width: 66%;
-   margin: 16px;
+   margin: 24px;
    height: 100%;
-   overflow-y: auto;
    position: relative;
 }
 
@@ -19,23 +18,27 @@
   align-items: flex-start;
   min-height: 16px;
   height: fit-content;
-  display: flex;
-  background-color: #D5BCDB;
-  box-shadow: 0 0 0 1px white;
+  background-color: transparent;
 }
 
-  .grid-row--invisible {
-    background-color: transparent;
-  }
+.grid-row-container {
+  background-color: #fff;
+}
+
+.grid-spacer {
+  width: 100%;
+  height: 100%;
+  background-color: transparent;
+}
 
 /* Editing guides */
 .grid-column-guide {
   position: absolute;
   top: 0;
   height: 100%;
-  background-color: #44C0FF;
-  opacity: 0.1;
+  background-color: rgba(68, 192, 255, 0.05);
   pointer-events: none;
+  box-shadow: inset 0 0 0 1px rgba(68, 192, 255, 0.5);
 }
 
 .grid-row-guide {

@@ -1,3 +1,5 @@
+import './components.css';
+
 import {
   CHART_TYPE,
   COLUMN_TYPE,
@@ -5,6 +7,7 @@ import {
   HEADER_TYPE,
   ROW_TYPE,
   SPACER_TYPE,
+  TABS_TYPE,
 } from '../../util/constants';
 
 import Chart from './Chart';
@@ -13,6 +16,7 @@ import Divider from './Divider';
 import Header from './Header';
 import Row from './Row';
 import Spacer from './Spacer';
+import Tabs from './Tabs';
 
 export { default as Chart } from './Chart';
 export { default as Column } from './Column';
@@ -20,6 +24,7 @@ export { default as Divider } from './Divider';
 export { default as Header } from './Header';
 export { default as Row } from './Row';
 export { default as Spacer } from './Spacer';
+export { default as Tabs } from './Tabs';
 
 export const COMPONENT_TYPE_LOOKUP = {
   [CHART_TYPE]: Chart,
@@ -28,4 +33,5 @@ export const COMPONENT_TYPE_LOOKUP = {
   [HEADER_TYPE]: Header,
   [ROW_TYPE]: Row,
   [SPACER_TYPE]: Spacer,
+  [TABS_TYPE]: Tabs,
 };

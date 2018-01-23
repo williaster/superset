@@ -4,6 +4,7 @@ import {
   ROW_TYPE,
   INVISIBLE_ROW_TYPE,
   SPACER_TYPE,
+  TABS_TYPE,
   CHART_TYPE,
   DIVIDER_TYPE,
 } from '../util/constants';
@@ -15,24 +16,29 @@ export default {
     'row2',
     'row3',
     'row4',
+    'row5',
   ],
   entities: {
     row0: {
       id: 'row0',
-      type: ROW_TYPE,
+      type: INVISIBLE_ROW_TYPE,
       children: ['header0'],
     },
     row1: {
       id: 'row1',
-      type: ROW_TYPE,
+      type: INVISIBLE_ROW_TYPE,
       children: [
-        'divider0',
+        'charta',
+        'chartb',
+        'chartc',
       ],
     },
     row2: {
       id: 'row2',
-      type: ROW_TYPE,
-      children: [],
+      type: INVISIBLE_ROW_TYPE,
+      children: [
+        'divider0',
+      ],
     },
     row3: {
       id: 'row3',
@@ -45,9 +51,17 @@ export default {
       id: 'row4',
       type: ROW_TYPE,
       children: [
+        'tabs0',
+      ],
+    },
+    row5: {
+      id: 'row5',
+      type: ROW_TYPE,
+      children: [
         'column0',
-        'chart3',
         'spacer0',
+        'chart3',
+        'spacer1',
         'chart4',
       ],
     },
@@ -108,13 +122,36 @@ export default {
         height: 20,
       },
     },
+    charta: {
+      id: 'charta',
+      type: CHART_TYPE,
+      meta: {
+        width: 3,
+        height: 20,
+      },
+    },
+    chartb: {
+      id: 'chartb',
+      type: CHART_TYPE,
+      meta: {
+        width: 6,
+        height: 20,
+      },
+    },
+    chartc: {
+      id: 'chartc',
+      type: CHART_TYPE,
+      meta: {
+        width: 3,
+        height: 20,
+      },
+    },
     column0: {
       id: 'column0',
       type: COLUMN_TYPE,
       children: [
         'chart0',
         'chart1',
-        'spacer1',
         'chart2',
       ],
       meta: {
@@ -132,7 +169,14 @@ export default {
       id: 'spacer1',
       type: SPACER_TYPE,
       meta: {
-        height: 1,
+        width: 1,
+      },
+    },
+    tabs0: {
+      id: 'tabs0',
+      type: TABS_TYPE,
+      meta: {
+        width: 1,
       },
     },
   },

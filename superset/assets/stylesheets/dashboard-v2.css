@@ -1,6 +1,7 @@
 .dashboard-v2 {
   margin-top: -20px;
   position: relative;
+  color: #263238;
 }
 
 .dashboard-header {
@@ -9,8 +10,8 @@
   flex-direction: row;
   align-items: center;
   justify-content: space-between;
-  padding: 0 16px;
-  box-shadow: 0 0px 6px #aaa; /* @TODO color */
+  padding: 0 24px;
+  box-shadow: 0 4px 4px 0 rgba(0, 0, 0, 0.1);
   margin-bottom: 2px;
 }
 
@@ -23,7 +24,7 @@
 
 .dashboard-builder-sidepane {
   background: white;
-  flex: 0 0 376px;
+  flex: 1 0 376px;
   box-shadow: 0 0 0 1px #ccc; /* @TODO color */
 }
 
@@ -57,6 +58,6 @@
 
 /* @TODO remove upon new theme */
 .btn.btn-primary {
-  background: #484848 !important;
+  background: #263238 !important;
   color: white !important;
 }
