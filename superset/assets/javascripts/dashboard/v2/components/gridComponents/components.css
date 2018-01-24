@@ -27,10 +27,6 @@
   background-color: inherit;
 }
 
-.grid-row-container .dashboard-component-tabs {
-  /*padding-bottom: 16px;*/
-}
-
 .grid-row-container .dashboard-component-tabs .nav-tabs {
   border-bottom: 1px solid #CFD8DC;
 }

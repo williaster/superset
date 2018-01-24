@@ -43,7 +43,7 @@ class DashboardGrid extends React.PureComponent {
   handleResizeStart({ ref, direction }) {
     let rowGuide = null;
     if (direction === 'bottom' || direction === 'bottomRight') {
-      rowGuide = this.getRowGuidePosition()
+      rowGuide = this.getRowGuidePosition(ref);
     }
 
     this.setState(() => ({ showGrid: true, rowGuide }));
