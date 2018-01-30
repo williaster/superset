@@ -12,12 +12,13 @@ const propTypes = {
     updateDashboardTitle: PropTypes.func.isRequired,
     setEditMode: PropTypes.func.isRequired,
   }),
+  dashboard: PropTypes.object.isRequired,
   editMode: PropTypes.bool,
 };
 
 class Dashboard extends React.Component {
   render() {
-    const { editMode, actions } = this.props;
+    const { editMode, actions, dashboard } = this.props;
     const { setEditMode, updateDashboardTitle } = actions;
     return (
       <div className="dashboard-v2">
@@ -28,7 +29,7 @@ class Dashboard extends React.Component {
         />
 
         {editMode ?
-          <DashboardBuilder /> : <StaticDashboard />}
+          <DashboardBuilder /> : <StaticDashboard layout={dashboard.layout} />}
       </div>
     );
   }

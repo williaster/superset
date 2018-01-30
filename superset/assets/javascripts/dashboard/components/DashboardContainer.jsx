@@ -3,7 +3,8 @@ import { connect } from 'react-redux';
 
 import * as dashboardActions from '../actions';
 import * as chartActions from '../../chart/chartAction';
-import Dashboard from '../v2/components/Dashboard';
+import DashboardV2 from '../v2/components/Dashboard';
+import Dashboard from '../components/Dashboard';
 
 function mapStateToProps({ charts, dashboard }) {
   return {
@@ -27,4 +28,4 @@ function mapDispatchToProps(dispatch) {
   };
 }
 
-export default connect(mapStateToProps, mapDispatchToProps)(Dashboard);
+export default connect(mapStateToProps, mapDispatchToProps)(DashboardV2);
