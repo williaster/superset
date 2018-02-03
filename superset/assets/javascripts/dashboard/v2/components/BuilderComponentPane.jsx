@@ -27,10 +27,10 @@ class BuilderComponentPane extends React.Component {
         >
           {provided => (
             <div ref={provided.innerRef}>
-              <DraggableNewChart index={0} />
-              <DraggableNewDivider index={1} />
-              <DraggableNewHeader index={2} />
-              <DraggableNewRow index={3} />
+              <DraggableNewChart />
+              <DraggableNewDivider />
+              <DraggableNewHeader />
+              <DraggableNewRow />
               {provided.placeholder}
             </div>
           )}

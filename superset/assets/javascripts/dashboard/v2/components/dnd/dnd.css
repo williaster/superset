@@ -1,0 +1,37 @@
+.draggable-row,
+.draggable-row-item {
+  position: relative;
+}
+
+.draggable-row-handle {
+  opacity: 0;
+  position: absolute;
+  width: 5px;
+  height: 100%;
+  top: 0;
+  left: -10px;
+  cursor: move;
+  background: #44C0FF;
+  z-index: 1;
+}
+
+.draggable-row-item-handle {
+  opacity: 0;
+  position: absolute;
+  width: 100%;
+  height: 5px;
+  top: -10px;
+  left: 0;
+  cursor: move;
+  background: #44C0FF;
+  z-index: 1;
+}
+
+:not(.dashboard-builder--dragging) .draggable-row:hover .draggable-row-handle,
+:not(.dashboard-builder--dragging) .draggable-row-handle:hover,
+:not(.dashboard-builder--dragging) .draggable-row-item:hover .draggable-row-item-handle,
+:not(.dashboard-builder--dragging) .draggable-row-item-handle:hover,
+:not(.dashboard-builder--dragging) .draggable-column-item:hover .draggable-column-item-handle,
+:not(.dashboard-builder--dragging) .draggable-column-item-handle:hover {
+  opacity: 1;
+}

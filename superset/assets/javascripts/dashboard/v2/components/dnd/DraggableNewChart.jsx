@@ -1,17 +1,20 @@
 import React from 'react';
-import PropTypes from 'prop-types';
+// import PropTypes from 'prop-types';
 
 import { DRAGGABLE_NEW_CHART } from '../../util/constants';
 import DraggableNewComponent from './DraggableNewComponent';
 
 const propTypes = {
-  index: PropTypes.number.isRequired,
 };
 
-export default class DraggableNewChart extends React.Component {
+export default class DraggableNewChart extends React.PureComponent {
   render() {
-    const { index } = this.props;
-    return <DraggableNewComponent id={DRAGGABLE_NEW_CHART} label="Chart" index={index} />;
+    return (
+      <DraggableNewComponent
+        id={DRAGGABLE_NEW_CHART}
+        label="Chart"
+      />
+    );
   }
 }
 

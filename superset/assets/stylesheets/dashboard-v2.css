@@ -15,16 +15,16 @@
   margin-bottom: 2px;
 }
 
-.dashboard-builder-container {
+.dashboard-builder {
   display: flex;
   flex-direction: row;
-  flex-wrap: wrap-reverse;
+  flex-wrap: nowrap;
   height: auto;
 }
 
 .dashboard-builder-sidepane {
   background: white;
-  flex: 1 0 376px;
+  flex: 0 0 376px;
   box-shadow: 0 0 0 1px #ccc; /* @TODO color */
 }
 

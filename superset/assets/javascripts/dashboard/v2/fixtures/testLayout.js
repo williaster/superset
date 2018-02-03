@@ -7,23 +7,27 @@ import {
   TABS_TYPE,
   CHART_TYPE,
   DIVIDER_TYPE,
+  DROPPABLE_ID_DASHBOARD_ROOT,
 } from '../util/constants';
 
 export default {
-  children: [
-    'row0',
-    'row1',
-    'row2',
-    'row3',
-    'row4',
-    'row5',
-  ],
   entities: {
-    row0: {
-      id: 'row0',
-      type: INVISIBLE_ROW_TYPE,
-      children: ['header0'],
+    [DROPPABLE_ID_DASHBOARD_ROOT]: {
+      id: DROPPABLE_ID_DASHBOARD_ROOT,
+      children: [
+        'header0',
+        'row1',
+        'row2',
+        'row3',
+        'row4',
+        'row5',
+      ],
     },
+    // row0: {
+    //   id: 'row0',
+    //   type: INVISIBLE_ROW_TYPE,
+    //   children: ['header0'],
+    // },
     row1: {
       id: 'row1',
       type: INVISIBLE_ROW_TYPE,

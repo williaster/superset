@@ -6,20 +6,13 @@ import { Draggable } from 'react-beautiful-dnd';
 const propTypes = {
   id: PropTypes.string.isRequired,
   label: PropTypes.string.isRequired,
-  index: PropTypes.number.isRequired,
-  type: PropTypes.string,
 };
 
-export default class DraggableNewComponent extends React.Component {
+export default class DraggableNewComponent extends React.PureComponent {
   render() {
-    const { id, label, index, type = undefined } = this.props;
-
+    const { id, label } = this.props;
     return (
-      <Draggable
-        draggableId={id}
-        index={index}
-        type={type}
-      >
+      <Draggable draggableId={id}>
         {(provided, snapshot) => (
           <div>
             <div

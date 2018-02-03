@@ -1,12 +1,17 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 
-import { DragDropContext, Droppable, Draggable } from 'react-beautiful-dnd';
+import { DragDropContext } from 'react-beautiful-dnd';
+import cx from 'classnames';
+
 import BuilderComponentPane from './BuilderComponentPane';
 import DashboardGrid from './DashboardGrid';
-// import { reorder, reorderRows } from '../util/dnd-reorder';
+// import getNewGridEntity from '../util/getNewGridEntity';
+import { reorderRows } from '../util/dnd-reorder';
 
-// import { DROPPABLE_DASHBOARD_ROOT, DRAGGABLE_ROW_TYPE } from '../util/constants';
+import './dnd/dnd.css';
+import testLayout from '../fixtures/testLayout';
+
 
 const propTypes = {
   editMode: PropTypes.bool,
@@ -20,67 +25,90 @@ class DashboardBuilder extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      rows: [],
-      entities: {},
+      layout: testLayout,
+      draggingEntity: null,
     };
 
     this.handleDragEnd = this.handleDragEnd.bind(this);
     this.handleDragStart = this.handleDragStart.bind(this);
-    this.handleReorder = this.handleReorder.bind(this);
+    this.handleMoveEntity = this.handleMoveEntity.bind(this);
     this.handleNewEntity = this.handleNewEntity.bind(this);
+    this.handleUpdateEntity = this.handleUpdateEntity.bind(this);
   }
 
   handleDragEnd(dropResult) {
     console.log('drag end', dropResult);
     if (dropResult.destination) {
-      // if (isNewEntity(dropResult.draggableId)) {
-      //   this.handleNewEntity(dropResult);
-      // } else {
-      //   this.handleReorder(dropResult);
-      // }
+      if (/new/gi.test(dropResult.draggableId)) {
+        this.handleNewEntity(dropResult);
+      } else {
+        this.handleMoveEntity(dropResult);
+      }
     }
   }
 
-  handleDragStart(obj) {
-    console.log('drag start', obj);
+  handleDragStart(result) {
+    console.log('drag start', result);
+    const { layout } = this.state;
+    const draggingEntity = layout.entities[result.draggableId] || { type: result.draggableId };
+    this.setState(() => ({ draggingEntity }));
   }
 
   handleNewEntity() {
-
+    console.log('new entity');
   }
 
-  handleReorder({ source, destination, draggableId }) {
-    // this.setState(({ rows, entities }) => {
-    //   const { type } = entities[draggableId];
-    //
-    //   if (isRowType(type)) { // re-ordering rows
-    //     const nextRows = reorder(
-    //       rows,
-    //       source.index,
-    //       destination.index,
-    //     );
-    //     return { rows: nextRows };
-    //   }
-    //
-    //   // moving items between rows
-    //   const nextEntities = reorderRows({
-    //     entitiesMap: entities,
-    //     source,
-    //     destination,
-    //   });
-    //
-    //   return { entities: nextEntities };
-    // });
+  handleMoveEntity({ source, destination, draggableId }) {
+    console.log('source', source, 'destination', destination);
+
+    this.setState(({ layout }) => {
+      const { entities } = layout;
+
+      const nextEntities = reorderRows({
+        entitiesMap: entities,
+        source,
+        destination,
+      });
+
+      return {
+        layout: {
+          ...layout,
+          entities: {
+            ...nextEntities,
+          },
+        },
+      };
+    });
+  }
+
+  handleUpdateEntity(nextEntity) {
+    console.log('update entity', nextEntity);
+
+    this.setState(({ layout }) => ({
+      layout: {
+        ...layout,
+        entities: {
+          ...layout.entities,
+          [nextEntity.id]: nextEntity,
+        },
+      },
+    }));
   }
 
   render() {
+    const { draggingEntity, layout } = this.state;
+
     return (
       <DragDropContext
         onDragStart={this.handleDragStart}
         onDragEnd={this.handleDragEnd}
       >
-        <div className="dashboard-builder-container">
-          <DashboardGrid />
+        <div className={cx('dashboard-builder', draggingEntity && 'dashboard-builder--dragging')}>
+          <DashboardGrid
+            layout={layout}
+            draggingEntity={draggingEntity}
+            updateEntity={this.handleUpdateEntity}
+          />
           <BuilderComponentPane />
         </div>
       </DragDropContext>

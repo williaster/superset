@@ -1,5 +1,5 @@
 .grid-container {
-   flex-grow: 9999;
+   flex-grow: 1;
    min-width: 66%;
    margin: 24px;
    height: 100%;
