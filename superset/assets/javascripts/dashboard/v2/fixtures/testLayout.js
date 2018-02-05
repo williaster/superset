@@ -17,10 +17,10 @@ export default {
       children: [
         'header0',
         'row1',
-        'row2',
+        'divider0',
         'row3',
-        'row4',
-        'row5',
+        'tabs0',
+        // 'row5',
       ],
     },
     // row0: {
@@ -37,13 +37,13 @@ export default {
         'chartc',
       ],
     },
-    row2: {
-      id: 'row2',
-      type: INVISIBLE_ROW_TYPE,
-      children: [
-        'divider0',
-      ],
-    },
+    // row2: {
+    //   id: 'row2',
+    //   type: INVISIBLE_ROW_TYPE,
+    //   children: [
+    //     'divider0',
+    //   ],
+    // },
     row3: {
       id: 'row3',
       type: ROW_TYPE,
@@ -179,8 +179,10 @@ export default {
     tabs0: {
       id: 'tabs0',
       type: TABS_TYPE,
+      children: [
+        'row5',
+      ],
       meta: {
-        width: 1,
       },
     },
   },

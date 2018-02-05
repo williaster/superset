@@ -1,37 +1,76 @@
+.draggable-row {
+  width: 100%;
+}
+
 .draggable-row,
 .draggable-row-item {
   position: relative;
 }
 
+.draggable-row--dragging,
+.draggable-row-item--dragging {
+  box-shadow: inset 0 0 0 1px #CFD8DC;
+}
+
 .draggable-row-handle {
   opacity: 0;
   position: absolute;
-  width: 5px;
+  width: 10px;
   height: 100%;
   top: 0;
   left: -10px;
   cursor: move;
-  background: #44C0FF;
   z-index: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-around;
+}
+
+.draggable-row-handle:after {
+  content: "";
+  background: #44C0FF;
+  display: block;
+  width: 5px;
+  height: 20%;
+  min-height: 20px;
+  margin: auto -5px auto 0;
 }
 
 .draggable-row-item-handle {
   opacity: 0;
   position: absolute;
   width: 100%;
-  height: 5px;
-  top: -10px;
+  height: 10px;
+  top: 0;
   left: 0;
   cursor: move;
-  background: #44C0FF;
   z-index: 1;
 }
 
-:not(.dashboard-builder--dragging) .draggable-row:hover .draggable-row-handle,
-:not(.dashboard-builder--dragging) .draggable-row-handle:hover,
-:not(.dashboard-builder--dragging) .draggable-row-item:hover .draggable-row-item-handle,
-:not(.dashboard-builder--dragging) .draggable-row-item-handle:hover,
-:not(.dashboard-builder--dragging) .draggable-column-item:hover .draggable-column-item-handle,
-:not(.dashboard-builder--dragging) .draggable-column-item-handle:hover {
+.draggable-row-item-handle:after {
+  content: "";
+  background: #44C0FF;
+  display: block;
+  margin: 5px auto 0 auto;
+  width: 20%;
+  min-width: 20px;
+  height: 5px;
+}
+
+.draggable-row:hover .draggable-row-handle,
+.draggable-row-handle:hover,
+.draggable-row-item:hover .draggable-row-item-handle,
+.draggable-row-item-handle:hover,
+.draggable-column-item:hover .draggable-column-item-handle,
+.draggable-column-item-handle:hover {
   opacity: 1;
+}
+
+.dashboard-builder--dragging .draggable-row:hover .draggable-row-handle,
+.dashboard-builder--dragging .draggable-row-handle:hover,
+.dashboard-builder--dragging .draggable-row-item:hover .draggable-row-item-handle,
+.dashboard-builder--dragging .draggable-row-item-handle:hover,
+.dashboard-builder--dragging .draggable-column-item:hover .draggable-column-item-handle,
+.dashboard-builder--dragging .draggable-column-item-handle:hover {
+  opacity: 0;
 }

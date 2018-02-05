@@ -14,8 +14,10 @@
   box-shadow: inset 0 0 0 2px #44C0FF;
 }
 
-.grid-resizable-container .grid-spacer {
-  box-shadow: inset 0 0 0 1px #eaeaea;
+.grid-container--resizing .grid-spacer,
+.dashboard-builder--dragging .grid-spacer,
+.grid-spacer:hover {
+  box-shadow: inset 0 0 0 1px #CFD8DC;
 }
 
 .resize-handle {
@@ -40,7 +42,7 @@
 }
 
 .resize-handle--right {
-  width: 3px;
+  width: 2px;
   height: 20px;
   right: -2px;
   top: 47%;
@@ -54,7 +56,7 @@
   }
 
 .resize-handle--bottom {
-  height: 3px;
+  height: 2px;
   width: 20px;
   bottom: 10px;
   left: 47%;

@@ -23,19 +23,21 @@ const typeToValidChildType = {
     [ROW_TYPE]: true,
     [INVISIBLE_ROW_TYPE]: true,
     [TABS_TYPE]: true,
-
+    [DIVIDER_TYPE]: true,
+    [HEADER_TYPE]: true,
     [DRAGGABLE_NEW_CHART]: true,
     [DRAGGABLE_NEW_DIVIDER]: true,
     [DRAGGABLE_NEW_HEADER]: true,
     [DRAGGABLE_NEW_ROW]: true,
   },
 
-  // row types
   [ROW_TYPE]: {
     [CHART_TYPE]: true,
     [MARKDOWN_TYPE]: true,
     [COLUMN_TYPE]: true,
     [SPACER_TYPE]: true,
+    [HEADER_TYPE]: true,
+
     [DRAGGABLE_NEW_SPACER]: true,
     [DRAGGABLE_NEW_CHART]: true,
     [DRAGGABLE_NEW_HEADER]: true,
@@ -53,12 +55,14 @@ const typeToValidChildType = {
 
   [TABS_TYPE]: {
     [ROW_TYPE]: true,
-    [CHART_TYPE]: true,
-    [MARKDOWN_TYPE]: true,
-    [SPACER_TYPE]: true,
-    [COLUMN_TYPE]: true,
-
-    [DRAGGABLE_NEW_SPACER]: true,
+    [INVISIBLE_ROW_TYPE]: true,
+    [DIVIDER_TYPE]: true,
+    [HEADER_TYPE]: true,
+    // [CHART_TYPE]: true,
+    // [MARKDOWN_TYPE]: true,
+    // [SPACER_TYPE]: true,
+    // [COLUMN_TYPE]: true,
+    // [DRAGGABLE_NEW_SPACER]: true,
   },
 
   [COLUMN_TYPE]: {
@@ -66,12 +70,11 @@ const typeToValidChildType = {
     [MARKDOWN_TYPE]: true,
     [HEADER_TYPE]: true,
     [SPACER_TYPE]: true,
-
+    [DIVIDER_TYPE]: true,
+    [DRAGGABLE_NEW_DIVIDER]: true,
     [DRAGGABLE_NEW_SPACER]: true,
     [DRAGGABLE_NEW_CHART]: true,
     [DRAGGABLE_NEW_HEADER]: true,
-    // divider?
-    // row?
   },
 
   // these have no valid children
@@ -84,7 +87,10 @@ const typeToValidChildType = {
 
 export default function isValidChild({ parentType, childType }) {
   if (!parentType || !childType) return false;
-  return Boolean(
+  const isValid = Boolean(
     typeToValidChildType[parentType][childType],
   );
+
+  console.log(`${parentType} > ${childType} -> ${isValid}`);
+  return isValid;
 }

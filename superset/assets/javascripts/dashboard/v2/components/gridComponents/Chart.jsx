@@ -1,7 +1,5 @@
 import React from 'react';
-import PropTypes from 'prop-types';
-
-import {  } from '../../util/constants';
+// import PropTypes from 'prop-types';
 
 const propTypes = {
 };
@@ -18,19 +16,7 @@ class Chart extends React.Component {
 
   render() {
     return (
-      <div
-        style={{
-          width: '100%',
-          height: '100%',
-          color: '#ccc',
-          backgroundColor: '#fff',
-          // boxShadow: 'inset 0 0 0 1px #ccc',
-          padding: 16,
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'center',
-        }}
-      >Chart</div>
+      <div className="dashboard-component dashboard-component-chart">Chart</div>
     );
   }
 }

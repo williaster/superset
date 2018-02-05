@@ -23,7 +23,7 @@ import {
 import { COMPONENT_TYPE_LOOKUP } from './';
 
 const propTypes = {
-  entity: PropTypes.object,
+  entity: PropTypes.object, // @TODO shape
   entities: PropTypes.object,
   columnWidth: PropTypes.number,
   onResizeStart: PropTypes.func,
@@ -42,7 +42,7 @@ const defaultProps = {
 
 class Row extends React.PureComponent {
   // shouldComponentUpdate() {
-  //   // @TODO check foro updates to this row only
+  //   // @TODO check for updates to this row only
   // }
 
   render() {
@@ -62,6 +62,7 @@ class Row extends React.PureComponent {
     let maxItemHeight = 0;
     const rowItems = [];
 
+    // this adds a gutter between each child in the row.
     (rowEntity.children || []).forEach((id, index) => {
       const entity = entities[id];
       totalColumns += (entity.meta || {}).width || 0;
@@ -69,14 +70,6 @@ class Row extends React.PureComponent {
       if (index < rowEntity.children.length - 1) rowItems.push(`gutter-${index}`);
       if ((entity.meta || {}).height) maxItemHeight = Math.max(maxItemHeight, entity.meta.height);
     });
-
-    if (!rowEntity.children || !rowEntity.children.length) {
-      return (
-        <div style={{ padding: 16 }}>
-          Empty row
-        </div>
-      );
-    }
 
     return (
       <Droppable
@@ -90,14 +83,13 @@ class Row extends React.PureComponent {
         {(droppableProvided, droppableSnapshot) => (
           <div
             ref={droppableProvided.innerRef}
-            style={{ backgroundColor: droppableSnapshot.isDraggingOver ? 'coral' : 'transparent' }}
+            style={{ backgroundColor: droppableSnapshot.isDraggingOver ? '#eee' : undefined }}
             className={cx(
               'grid-row',
+              draggingEntity && draggingEntity.id === rowEntity.id && 'grid-row--dragging',
               rowEntity.type !== INVISIBLE_ROW_TYPE && 'grid-row-container',
             )}
           >
-            {droppableProvided.placeholder}
-
             {rowItems.map((entity, index) => {
               const id = entity.id || entity;
               const Component = COMPONENT_TYPE_LOOKUP[entity.type];
@@ -152,8 +144,12 @@ class Row extends React.PureComponent {
                     isDragDisabled={disableDrag}
                   >
                     {draggableProvided => (
-                      <div className="draggable-row-item">
-                        {draggableProvided.placeholder}
+                      <div
+                        className={cx(
+                          'draggable-row-item',
+                          draggingEntity && draggingEntity.id === id && 'grid-row-item--dragging',
+                        )}
+                      >
                         <div
                           ref={draggableProvided.innerRef}
                           {...draggableProvided.draggableProps}
@@ -164,6 +160,7 @@ class Row extends React.PureComponent {
                           />
                           {RowItem}
                         </div>
+                        {draggableProvided.placeholder}
                       </div>
                       )}
                   </Draggable>
@@ -172,6 +169,7 @@ class Row extends React.PureComponent {
 
               return RowItem;
             })}
+            {droppableProvided.placeholder}
           </div>
         )}
       </Droppable>

@@ -2,11 +2,11 @@ export function reorder(list, startIndex, endIndex) {
   const result = [...list];
   const [removed] = result.splice(startIndex, 1);
   result.splice(endIndex, 0, removed);
-  if (result.some(v => !v)) debugger;
+
   return result;
 }
 
-export function reorderRows({
+export function reorderItem({
   entitiesMap,
   source,
   destination,
@@ -17,7 +17,6 @@ export function reorderRows({
 
   // moving to same list
   if (source.droppableId === destination.droppableId) {
-    console.log('within list', source.index, destination.index);
     const reordered = reorder(
       current,
       source.index,
@@ -39,7 +38,6 @@ export function reorderRows({
   current.splice(source.index, 1); // remove from original
   next.splice(destination.index, 0, target); // insert into next
 
-  console.log('between list', source.index, destination.index);
   const result = {
     ...entitiesMap,
     [source.droppableId]: {

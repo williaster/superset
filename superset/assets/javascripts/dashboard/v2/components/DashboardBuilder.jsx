@@ -7,7 +7,7 @@ import cx from 'classnames';
 import BuilderComponentPane from './BuilderComponentPane';
 import DashboardGrid from './DashboardGrid';
 // import getNewGridEntity from '../util/getNewGridEntity';
-import { reorderRows } from '../util/dnd-reorder';
+import { reorderItem } from '../util/dnd-reorder';
 
 import './dnd/dnd.css';
 import testLayout from '../fixtures/testLayout';
@@ -45,6 +45,7 @@ class DashboardBuilder extends React.Component {
         this.handleMoveEntity(dropResult);
       }
     }
+    this.setState(() => ({ draggingEntity: null }));
   }
 
   handleDragStart(result) {
@@ -64,7 +65,7 @@ class DashboardBuilder extends React.Component {
     this.setState(({ layout }) => {
       const { entities } = layout;
 
-      const nextEntities = reorderRows({
+      const nextEntities = reorderItem({
         entitiesMap: entities,
         source,
         destination,
@@ -103,7 +104,12 @@ class DashboardBuilder extends React.Component {
         onDragStart={this.handleDragStart}
         onDragEnd={this.handleDragEnd}
       >
-        <div className={cx('dashboard-builder', draggingEntity && 'dashboard-builder--dragging')}>
+        <div
+          className={cx(
+            'dashboard-builder',
+            draggingEntity && 'dashboard-builder--dragging',
+          )}
+        >
           <DashboardGrid
             layout={layout}
             draggingEntity={draggingEntity}
