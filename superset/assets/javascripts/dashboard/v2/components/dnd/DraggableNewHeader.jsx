@@ -1,7 +1,7 @@
 import React from 'react';
 // import PropTypes from 'prop-types';
 
-import { DRAGGABLE_NEW_HEADER } from '../../util/constants';
+import { HEADER_TYPE } from '../../util/componentTypes';
 import DraggableNewComponent from './DraggableNewComponent';
 
 const propTypes = {
@@ -11,7 +11,7 @@ export default class DraggableNewHeader extends React.Component {
   render() {
     return (
       <DraggableNewComponent
-        id={DRAGGABLE_NEW_HEADER}
+        type={HEADER_TYPE}
         label="Header"
       />
     );

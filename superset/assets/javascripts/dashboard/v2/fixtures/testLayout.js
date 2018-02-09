@@ -7,183 +7,123 @@ import {
   TABS_TYPE,
   CHART_TYPE,
   DIVIDER_TYPE,
-  DROPPABLE_ID_DASHBOARD_ROOT,
-} from '../util/constants';
+} from '../util/componentTypes';
+
+import { DASHBOARD_ROOT_ID } from '../util/constants';
 
 export default {
-  entities: {
-    [DROPPABLE_ID_DASHBOARD_ROOT]: {
-      id: DROPPABLE_ID_DASHBOARD_ROOT,
-      children: [
-        'header0',
-        'row1',
-        'divider0',
-        'row3',
-        'tabs0',
-        // 'row5',
-      ],
+  [DASHBOARD_ROOT_ID]: {
+    id: DASHBOARD_ROOT_ID,
+    children: [
+      'header0',
+      'row0',
+      'divider0',
+      'row1',
+      'tabs0',
+      'divider1',
+    ],
+  },
+  row0: {
+    id: 'row0',
+    type: INVISIBLE_ROW_TYPE,
+    children: [
+      'charta',
+      'chartb',
+      'chartc',
+    ],
+  },
+  row1: {
+    id: 'row1',
+    type: ROW_TYPE,
+    children: [
+      'header1',
+    ],
+  },
+  row2: {
+    id: 'row2',
+    type: ROW_TYPE,
+    children: [
+      'chartd',
+      'spacer0',
+      'charte',
+    ],
+  },
+  tabs0: {
+    id: 'tabs0',
+    type: TABS_TYPE,
+    children: [
+      'row2',
+    ],
+    meta: {
     },
-    // row0: {
-    //   id: 'row0',
-    //   type: INVISIBLE_ROW_TYPE,
-    //   children: ['header0'],
-    // },
-    row1: {
-      id: 'row1',
-      type: INVISIBLE_ROW_TYPE,
-      children: [
-        'charta',
-        'chartb',
-        'chartc',
-      ],
+  },
+  header0: {
+    id: 'header0',
+    type: HEADER_TYPE,
+    meta: {
+      text: 'Header 1',
     },
-    // row2: {
-    //   id: 'row2',
-    //   type: INVISIBLE_ROW_TYPE,
-    //   children: [
-    //     'divider0',
-    //   ],
-    // },
-    row3: {
-      id: 'row3',
-      type: ROW_TYPE,
-      children: [
-        'header1',
-      ],
+  },
+  header1: {
+    id: 'header1',
+    type: HEADER_TYPE,
+    meta: {
+      text: 'Header 2',
     },
-    row4: {
-      id: 'row4',
-      type: ROW_TYPE,
-      children: [
-        'tabs0',
-      ],
+  },
+  divider0: {
+    id: 'divider0',
+    type: DIVIDER_TYPE,
+  },
+  divider1: {
+    id: 'divider1',
+    type: DIVIDER_TYPE,
+  },
+  charta: {
+    id: 'charta',
+    type: CHART_TYPE,
+    meta: {
+      width: 3,
+      height: 10,
     },
-    row5: {
-      id: 'row5',
-      type: ROW_TYPE,
-      children: [
-        'column0',
-        'spacer0',
-        'chart3',
-        'spacer1',
-        'chart4',
-      ],
+  },
+  chartb: {
+    id: 'chartb',
+    type: CHART_TYPE,
+    meta: {
+      width: 3,
+      height: 10,
     },
-    header0: {
-      id: 'header0',
-      type: HEADER_TYPE,
-      meta: {
-        text: 'Section header',
-      },
+  },
+  chartc: {
+    id: 'chartc',
+    type: CHART_TYPE,
+    meta: {
+      width: 3,
+      height: 10,
     },
-    header1: {
-      id: 'header1',
-      type: HEADER_TYPE,
-      meta: {
-        text: 'Header in row',
-      },
+  },
+  chartd: {
+    id: 'chartd',
+    type: CHART_TYPE,
+    meta: {
+      width: 6,
+      height: 10,
     },
-    divider0: {
-      id: 'divider0',
-      type: DIVIDER_TYPE,
-      children: [],
+  },
+  charte: {
+    id: 'charte',
+    type: CHART_TYPE,
+    meta: {
+      width: 6,
+      height: 10,
     },
-
-    chart0: {
-      id: 'chart0',
-      type: CHART_TYPE,
-      meta: {
-        height: 6,
-      },
-    },
-    chart1: {
-      id: 'chart1',
-      type: CHART_TYPE,
-      meta: {
-        height: 6,
-      },
-    },
-    chart2: {
-      id: 'chart2',
-      type: CHART_TYPE,
-      meta: {
-        height: 6,
-      },
-    },
-    chart3: {
-      id: 'chart3',
-      type: CHART_TYPE,
-      meta: {
-        width: 3,
-        height: 20,
-      },
-    },
-    chart4: {
-      id: 'chart4',
-      type: CHART_TYPE,
-      meta: {
-        width: 3,
-        height: 20,
-      },
-    },
-    charta: {
-      id: 'charta',
-      type: CHART_TYPE,
-      meta: {
-        width: 3,
-        height: 20,
-      },
-    },
-    chartb: {
-      id: 'chartb',
-      type: CHART_TYPE,
-      meta: {
-        width: 6,
-        height: 20,
-      },
-    },
-    chartc: {
-      id: 'chartc',
-      type: CHART_TYPE,
-      meta: {
-        width: 3,
-        height: 20,
-      },
-    },
-    column0: {
-      id: 'column0',
-      type: COLUMN_TYPE,
-      children: [
-        'chart0',
-        'chart1',
-        'chart2',
-      ],
-      meta: {
-        width: 3,
-      },
-    },
-    spacer0: {
-      id: 'spacer0',
-      type: SPACER_TYPE,
-      meta: {
-        width: 1,
-      },
-    },
-    spacer1: {
-      id: 'spacer1',
-      type: SPACER_TYPE,
-      meta: {
-        width: 1,
-      },
-    },
-    tabs0: {
-      id: 'tabs0',
-      type: TABS_TYPE,
-      children: [
-        'row5',
-      ],
-      meta: {
-      },
+  },
+  spacer0: {
+    id: 'spacer0',
+    type: SPACER_TYPE,
+    meta: {
+      width: 1,
     },
   },
 };

@@ -3,9 +3,9 @@ import {
   COLUMN_TYPE,
   CHART_TYPE,
   MARKDOWN_TYPE,
-} from './constants';
+} from './componentTypes';
 
-export function componentIsResizable(entity) {
+export default function componentIsResizable(entity) {
   return [
     SPACER_TYPE,
     COLUMN_TYPE,

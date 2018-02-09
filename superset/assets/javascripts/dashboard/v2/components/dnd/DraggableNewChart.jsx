@@ -1,7 +1,7 @@
 import React from 'react';
 // import PropTypes from 'prop-types';
 
-import { DRAGGABLE_NEW_CHART } from '../../util/constants';
+import { CHART_TYPE } from '../../util/componentTypes';
 import DraggableNewComponent from './DraggableNewComponent';
 
 const propTypes = {
@@ -11,7 +11,7 @@ export default class DraggableNewChart extends React.PureComponent {
   render() {
     return (
       <DraggableNewComponent
-        id={DRAGGABLE_NEW_CHART}
+        type={CHART_TYPE}
         label="Chart"
       />
     );

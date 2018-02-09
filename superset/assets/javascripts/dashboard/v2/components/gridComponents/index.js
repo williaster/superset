@@ -9,7 +9,7 @@ import {
   ROW_TYPE,
   SPACER_TYPE,
   TABS_TYPE,
-} from '../../util/constants';
+} from '../../util/componentTypes';
 
 import Chart from './Chart';
 import Column from './Column';

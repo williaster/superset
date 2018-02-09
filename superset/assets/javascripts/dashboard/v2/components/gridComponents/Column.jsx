@@ -4,15 +4,16 @@ import PropTypes from 'prop-types';
 import ResizableContainer from '../resizable/ResizableContainer';
 
 import { COMPONENT_TYPE_LOOKUP } from './';
-import { componentIsResizable } from '../../util/gridUtils';
+import componentIsResizable from '../../util/componentIsResizable';
 
 import {
-  SPACER_TYPE,
   GRID_GUTTER_SIZE,
   GRID_ROW_HEIGHT_UNIT,
   GRID_MIN_ROW_UNITS,
   GRID_MAX_ROW_UNITS,
 } from '../../util/constants';
+
+import { SPACER_TYPE } from '../../util/componentTypes';
 
 const propTypes = {
   entity: PropTypes.object,

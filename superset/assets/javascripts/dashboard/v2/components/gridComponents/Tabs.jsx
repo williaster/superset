@@ -2,14 +2,10 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import cx from 'classnames';
 import { Tabs as BootstrapTabs, Tab } from 'react-bootstrap';
-import { Draggable, Droppable } from 'react-beautiful-dnd';
 
-import { DROPPABLE_DIRECTION_VERTICAL } from '../../util/constants';
-import isValidChild from '../../util/isValidChild';
-import { COMPONENT_TYPE_LOOKUP } from './';
+import DraggableRow from '../dnd/DraggableRow';
 
 const propTypes = {
-  id: PropTypes.string.isRequired,
   tabs: PropTypes.arrayOf(
     PropTypes.shape({
       label: PropTypes.string,
@@ -50,14 +46,21 @@ class Tabs extends React.Component {
   }
 
   render() {
-    const { tabs, id: tabId, entity: tabEntity, ...restProps } = this.props;
-    const { entities, draggingEntity, disableDrop, disableDrag } = restProps;
-    const { tabIndex } = this.state;
+    const {
+      tabs,
+      entity: tabEntity,
+      entities,
+      gridProps,
+      disableDrop,
+      disableDrag,
+      onDrop,
+    } = this.props;
+
     return (
       <div className="dashboard-component dashboard-component-tabs">
         <BootstrapTabs
           id={tabEntity.id}
-          activeKey={tabIndex}
+          activeKey={this.state.tabIndex}
           onSelect={this.handleClicKTab}
           animation={false}
         >
@@ -66,54 +69,19 @@ class Tabs extends React.Component {
           ))}
         </BootstrapTabs>
 
-        <Droppable
-          droppableId={tabEntity.id}
-          isDropDisabled={disableDrop || !isValidChild({
-            childType: draggingEntity && draggingEntity.type,
-            parentType: tabEntity.type,
-          })}
-          direction={DROPPABLE_DIRECTION_VERTICAL}
-        >
-          {(droppableProvided, droppableSnapshot) => (
-            <div
-              ref={droppableProvided.innerRef}
-              style={{ backgroundColor: droppableSnapshot.isDraggingOver ? '#eee' : undefined }}
-            >
-              {(tabEntity.children || []).map((id, index) => {
-                const entity = entities[id] || {};
-                const Component = COMPONENT_TYPE_LOOKUP[entity.type];
-                return Component && (
-                  <Draggable
-                    key={id}
-                    draggableId={id}
-                    index={index}
-                  >
-                    {draggableProvided => (
-                      <div className="draggable-row">
-                        <div
-                          ref={draggableProvided.innerRef}
-                          {...draggableProvided.draggableProps}
-                        >
-                          <div
-                            className={cx(!disableDrag && 'draggable-row-handle')}
-                            {...draggableProvided.dragHandleProps}
-                          />
-                          <Component
-                            id={id}
-                            {...restProps}
-                            entity={entity}
-                          />
-                        </div>
-                        {draggableProvided.placeholder}
-                      </div>
-                    )}
-                  </Draggable>
-                );
-              })}
-              {droppableProvided.placeholder}
-            </div>
-          )}
-        </Droppable>
+        {(tabEntity.children || []).map((id, index) => (
+          <DraggableRow
+            key={id}
+            index={index}
+            entity={entities[id]}
+            entities={entities}
+            parentId={tabEntity.id}
+            onDrop={onDrop}
+            disableDrop={disableDrop}
+            disableDrag={disableDrag}
+            gridProps={gridProps}
+          />
+        ))}
       </div>
     );
   }

@@ -14,12 +14,6 @@
   box-shadow: inset 0 0 0 2px #44C0FF;
 }
 
-.grid-container--resizing .grid-spacer,
-.dashboard-builder--dragging .grid-spacer,
-.grid-spacer:hover {
-  box-shadow: inset 0 0 0 1px #CFD8DC;
-}
-
 .resize-handle {
   opacity: 0;
 }

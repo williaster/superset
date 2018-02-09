@@ -1,36 +1,32 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import cx from 'classnames';
-import { Draggable } from 'react-beautiful-dnd';
+import Draggable from './Draggable';
 
 const propTypes = {
-  id: PropTypes.string.isRequired,
+  // id: PropTypes.string.isRequired,
+  type: PropTypes.string.isRequired,
   label: PropTypes.string.isRequired,
 };
 
 export default class DraggableNewComponent extends React.PureComponent {
   render() {
-    const { id, label } = this.props;
+    const { type, label } = this.props;
     return (
-      <Draggable draggableId={id}>
-        {(provided, snapshot) => (
-          <div>
-            <div
-              {...provided.draggableProps}
-              {...provided.dragHandleProps}
-              ref={provided.innerRef}
-            >
-              <div
-                className={cx(
-                  'new-draggable-component',
-                  snapshot.isDragging && 'new-draggable-component--dragging',
-                )}
-              >
-                <div className="new-draggable-placeholder" />
-                {label}
-              </div>
-            </div>
-            {provided.placeholder}
+      <Draggable type={type} draggableId={type} index={0}>
+        {({ dragSourceRef, dragPreviewRef, isDragging }) => (
+          <div
+            ref={(ref) => {
+              dragSourceRef(ref);
+              dragPreviewRef(ref);
+            }}
+            className={cx(
+              'new-draggable-component',
+              isDragging && 'draggable--dragging',
+            )}
+          >
+            <div className="new-draggable-placeholder" />
+            {label}
           </div>
         )}
       </Draggable>

@@ -1,7 +1,6 @@
 import React from 'react';
-// import PropTypes from 'prop-types';
 
-import { DRAGGABLE_NEW_ROW } from '../../util/constants';
+import { ROW_TYPE } from '../../util/componentTypes';
 import DraggableNewComponent from './DraggableNewComponent';
 
 const propTypes = {
@@ -11,7 +10,7 @@ export default class DraggableNewRow extends React.PureComponent {
   render() {
     return (
       <DraggableNewComponent
-        id={DRAGGABLE_NEW_ROW}
+        type={ROW_TYPE}
         label="Row"
       />
     );

@@ -2,34 +2,23 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import ParentSize from '@vx/responsive/build/components/ParentSize';
 import cx from 'classnames';
-import { Droppable, Draggable } from 'react-beautiful-dnd';
-
-import isValidChild from '../util/isValidChild';
+import DraggableRow from './dnd/DraggableRow';
 
 import {
-  DROPPABLE_ID_DASHBOARD_ROOT,
+  DASHBOARD_ROOT_ID,
   GRID_GUTTER_SIZE,
   GRID_COLUMN_COUNT,
-  GRID_ROOT_TYPE,
 } from '../util/constants';
 
-import { COMPONENT_TYPE_LOOKUP } from './gridComponents';
 import './gridComponents/grid.css';
 
 const propTypes = {
   layout: PropTypes.object,
-  draggingEntity: PropTypes.shape({
-    type: PropTypes.string.isRequired, // @TODO enumerate
-  }),
   updateEntity: PropTypes.func,
 };
 
 const defaultProps = {
-  layout: {
-    children: [],
-    entities: {},
-  },
-  draggingEntity: null,
+  layout: {},
   updateEntity() {},
 };
 
@@ -38,10 +27,11 @@ class DashboardGrid extends React.PureComponent {
     super(props);
     this.state = {
       showGrid: false,
-      rowGuide: null,
+      rowGuideTop: null,
       disableDrop: false,
       disableDrag: false,
       selectedEntityId: null,
+      dropIndicatorTop: null,
     };
 
     this.handleToggleSelectEntityId = this.handleToggleSelectEntityId.bind(this);
@@ -60,14 +50,14 @@ class DashboardGrid extends React.PureComponent {
 
   handleResizeStart({ ref, direction }) {
     console.log('resize start');
-    let rowGuide = null;
+    let rowGuideTop = null;
     if (direction === 'bottom' || direction === 'bottomRight') {
-      rowGuide = this.getRowGuidePosition(ref);
+      rowGuideTop = this.getRowGuidePosition(ref);
     }
 
     this.setState(() => ({
       showGrid: true,
-      rowGuide,
+      rowGuideTop,
       disableDrag: true,
       disableDrop: true,
     }));
@@ -76,15 +66,15 @@ class DashboardGrid extends React.PureComponent {
   handleResize({ ref, direction }) {
     console.log('resize');
     if (direction === 'bottom' || direction === 'bottomRight') {
-      this.setState(() => ({ rowGuide: this.getRowGuidePosition(ref) }));
+      this.setState(() => ({ rowGuideTop: this.getRowGuidePosition(ref) }));
     }
   }
 
   handleResizeStop({ id, widthMultiple, heightMultiple }) {
     console.log('resize stop');
-    const { layout, updateEntity } = this.props;
-    const entity = layout.entities[id];
-    debugger;
+
+    const { layout: entities, updateEntity } = this.props;
+    const entity = entities[id];
     if (entity && (entity.meta.width !== widthMultiple || entity.meta.height !== heightMultiple)) {
       updateEntity({
         ...entity,
@@ -97,7 +87,7 @@ class DashboardGrid extends React.PureComponent {
     }
     this.setState(() => ({
       showGrid: false,
-      rowGuide: null,
+      rowGuideTop: null,
       disableDrag: false,
       disableDrop: false,
     }));
@@ -119,12 +109,16 @@ class DashboardGrid extends React.PureComponent {
   }
 
   render() {
-    const { layout, draggingEntity } = this.props;
-    const { showGrid, rowGuide, disableDrop, disableDrag, selectedEntityId } = this.state;
-    const { entities } = layout;
-    const rootEntity = entities[DROPPABLE_ID_DASHBOARD_ROOT];
+    const { layout: entities, onDrop, canDrop } = this.props;
+    const {
+      showGrid,
+      rowGuideTop,
+      disableDrop,
+      disableDrag,
+      // selectedEntityId,
+    } = this.state;
 
-    console.log('dragging', draggingEntity, 'selected', selectedEntityId);
+    const rootEntity = entities[DASHBOARD_ROOT_ID];
 
     return (
       <div
@@ -136,84 +130,50 @@ class DashboardGrid extends React.PureComponent {
             // account for (COLUMN_COUNT - 1) gutters
             const columnPlusGutterWidth = (width + GRID_GUTTER_SIZE) / GRID_COLUMN_COUNT;
             const columnWidth = columnPlusGutterWidth - GRID_GUTTER_SIZE;
+            const gridProps = {
+              columnWidth,
+              rowWidth: width,
+              onResizeStart: this.handleResizeStart,
+              onResize: this.handleResize,
+              onResizeStop: this.handleResizeStop,
+            };
 
             return width < 50 ? null : (
-              <Droppable
-                droppableId={DROPPABLE_ID_DASHBOARD_ROOT}
-                isDropDisabled={disableDrop || !isValidChild({
-                  childType: draggingEntity && draggingEntity.type,
-                  parentType: GRID_ROOT_TYPE,
-                })}
-              >
-                {(droppableProvided, droppableSnapshot) => (
-                  <div
-                    ref={droppableProvided.innerRef}
-                    style={{ backgroundColor: droppableSnapshot.isDraggingOver ? '#eee' : undefined }}
-                  >
-                    {rootEntity.children.map((id, index) => {
-                      const entity = entities[id] || {};
-                      const Component = COMPONENT_TYPE_LOOKUP[entity.type];
-                      return (
-                        <Draggable
-                          key={id}
-                          draggableId={id}
-                          index={index}
-                        >
-                          {draggableProvided => (
-                            <div className="draggable-row">
-                              <div
-                                ref={draggableProvided.innerRef}
-                                {...draggableProvided.draggableProps}
-                              >
-                                <div
-                                  className={cx(!disableDrag && 'draggable-row-handle')}
-                                  {...draggableProvided.dragHandleProps}
-                                />
-                                <Component
-                                  id={id}
-                                  entity={entities[id]}
-                                  entities={entities}
-                                  rowWidth={width}
-                                  columnWidth={columnWidth}
-                                  toggleSelectEntity={this.handleToggleSelectEntityId}
-                                  selectedEntityId={selectedEntityId}
-                                  onResizeStart={this.handleResizeStart}
-                                  onResize={this.handleResize}
-                                  onResizeStop={this.handleResizeStop}
-                                  draggingEntity={draggingEntity}
-                                  disableDrop={disableDrop}
-                                  disableDrag={disableDrag}
-                                />
-                              </div>
-                              {draggableProvided.placeholder}
-                            </div>
-                          )}
-                        </Draggable>
-                      );
-                    })}
-                    {droppableProvided.placeholder}
-                    {showGrid && Array(GRID_COLUMN_COUNT).fill(null).map((_, i) => (
-                      <div
-                        key={`grid-column-${i}`}
-                        className="grid-column-guide"
-                        style={{
-                          left: (i * GRID_GUTTER_SIZE) + (i * columnWidth),
-                          width: columnWidth,
-                        }}
-                      />
-                    ))}
+              <div style={{ height: '100%', display: 'flex', flexDirection: 'column' }}>
+                {rootEntity.children.map((id, index) => (
+                  <DraggableRow
+                    key={id}
+                    index={index}
+                    entity={entities[id]}
+                    entities={entities}
+                    parentId={rootEntity.id}
+                    onDrop={onDrop}
+                    disableDrop={disableDrop}
+                    disableDrag={disableDrag}
+                    gridProps={gridProps}
+                  />
+                ))}
 
-                    {showGrid && rowGuide &&
-                      <div
-                        className="grid-row-guide"
-                        style={{
-                          top: rowGuide,
-                          width,
-                        }}
-                      />}
-                  </div>
-                )}
-              </Droppable>
+                {showGrid && Array(GRID_COLUMN_COUNT).fill(null).map((_, i) => (
+                  <div
+                    key={`grid-column-${i}`}
+                    className="grid-column-guide"
+                    style={{
+                      left: (i * GRID_GUTTER_SIZE) + (i * columnWidth),
+                      width: columnWidth,
+                    }}
+                  />
+                ))}
+
+                {showGrid && rowGuideTop &&
+                  <div
+                    className="grid-row-guide"
+                    style={{
+                      top: rowGuideTop,
+                      width,
+                    }}
+                  />}
+              </div>
             );
           }}
         </ParentSize>

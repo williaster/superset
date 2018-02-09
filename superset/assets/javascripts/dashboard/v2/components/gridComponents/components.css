@@ -8,6 +8,11 @@
   padding: 16px 0;
   color: #263238;
 }
+  .draggable-row .draggable-row .dashboard-component-header,
+  .draggable-row .draggable-row .dashboard-component-divider {
+    padding-left: 16px;
+    padding-right: 16px;
+  }
 
 .grid-row-container .dashboard-component-header {
     padding-left: 16px;
@@ -51,7 +56,7 @@
 }
 
 .dashboard-component-tabs .nav-tabs {
-  border-bottom: 1px solid #CFD8DC;
+  border-bottom: none;
 }
 
 /* by moving padding from <a/> to <li/> we can restrict the selected tab indicator to text width */
