@@ -1,6 +1,6 @@
 import React from 'react';
 
-import { ROW_TYPE } from '../../util/componentTypes';
+import { ROW_TYPE } from '../../../util/componentTypes';
 import DraggableNewComponent from './DraggableNewComponent';
 
 const propTypes = {

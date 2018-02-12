@@ -46,7 +46,7 @@ const defaultProps = {
 };
 
 // because columns are not actually multiples of a single variable (width = n*cols + (n-1)*gutters)
-// we snap to the base unit and then snap to columns on resize stop
+// we snap to the base unit and then snap to actual column multiples on stop
 const snapToGrid = [GRID_BASE_UNIT, GRID_BASE_UNIT];
 
 class ResizableContainer extends React.PureComponent {

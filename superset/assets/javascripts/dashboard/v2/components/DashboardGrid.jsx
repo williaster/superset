@@ -2,7 +2,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import ParentSize from '@vx/responsive/build/components/ParentSize';
 import cx from 'classnames';
-import DraggableRow from './dnd/DraggableRow';
+import DashboardComponent from './DashboardComponent';
 
 import {
   DASHBOARD_ROOT_ID,
@@ -26,12 +26,11 @@ class DashboardGrid extends React.PureComponent {
   constructor(props) {
     super(props);
     this.state = {
-      showGrid: false,
+      isResizing: false,
       rowGuideTop: null,
-      disableDrop: false,
-      disableDrag: false,
-      selectedEntityId: null,
-      dropIndicatorTop: null,
+      // disableDrop: false,
+      // disableDrag: false,
+      // selectedComponentId: null,
     };
 
     this.handleToggleSelectEntityId = this.handleToggleSelectEntityId.bind(this);
@@ -49,112 +48,87 @@ class DashboardGrid extends React.PureComponent {
   }
 
   handleResizeStart({ ref, direction }) {
-    console.log('resize start');
     let rowGuideTop = null;
     if (direction === 'bottom' || direction === 'bottomRight') {
       rowGuideTop = this.getRowGuidePosition(ref);
     }
 
     this.setState(() => ({
-      showGrid: true,
+      isResizing: true,
       rowGuideTop,
-      disableDrag: true,
-      disableDrop: true,
     }));
   }
 
   handleResize({ ref, direction }) {
-    console.log('resize');
     if (direction === 'bottom' || direction === 'bottomRight') {
       this.setState(() => ({ rowGuideTop: this.getRowGuidePosition(ref) }));
     }
   }
 
   handleResizeStop({ id, widthMultiple, heightMultiple }) {
-    console.log('resize stop');
-
-    const { layout: entities, updateEntity } = this.props;
-    const entity = entities[id];
-    if (entity && (entity.meta.width !== widthMultiple || entity.meta.height !== heightMultiple)) {
+    const { layout: components, updateEntity } = this.props;
+    const component = components[id];
+    if (
+      component &&
+      (component.meta.width !== widthMultiple || component.meta.height !== heightMultiple)
+    ) {
       updateEntity({
-        ...entity,
+        ...component,
         meta: {
-          ...entity.meta,
-          width: widthMultiple || entity.meta.width,
-          height: heightMultiple || entity.meta.height,
+          ...component.meta,
+          width: widthMultiple || component.meta.width,
+          height: heightMultiple || component.meta.height,
         },
       });
     }
     this.setState(() => ({
-      showGrid: false,
+      isResizing: false,
       rowGuideTop: null,
-      disableDrag: false,
-      disableDrop: false,
     }));
   }
 
   handleToggleSelectEntityId(id) {
-    // only enable selection if no drag is occurring
-    if (!this.props.draggingEntity) {
-      this.setState(({ selectedEntityId }) => {
-        const nextSelectedEntityId = id === selectedEntityId ? null : id;
-        const disableDragDrop = Boolean(nextSelectedEntityId);
-        return {
-          selectedEntityId: nextSelectedEntityId,
-          disableDrop: disableDragDrop,
-          disableDrag: disableDragDrop,
-        };
-      });
-    }
+    this.setState(({ selectedComponentId }) => ({
+      selectedComponentId: id === selectedComponentId ? null : id,
+    }));
   }
 
   render() {
-    const { layout: entities, onDrop, canDrop } = this.props;
-    const {
-      showGrid,
-      rowGuideTop,
-      disableDrop,
-      disableDrag,
-      // selectedEntityId,
-    } = this.state;
-
-    const rootEntity = entities[DASHBOARD_ROOT_ID];
+    const { layout: components, onDrop, canDrop } = this.props;
+    const { isResizing, rowGuideTop } = this.state;
+    const rootComponent = components[DASHBOARD_ROOT_ID];
 
     return (
       <div
         ref={(ref) => { this.grid = ref; }}
-        className={cx('grid-container', showGrid && 'grid-container--resizing')}
+        className={cx('grid-container', isResizing && 'grid-container--resizing')}
       >
         <ParentSize>
           {({ width }) => {
             // account for (COLUMN_COUNT - 1) gutters
             const columnPlusGutterWidth = (width + GRID_GUTTER_SIZE) / GRID_COLUMN_COUNT;
             const columnWidth = columnPlusGutterWidth - GRID_GUTTER_SIZE;
-            const gridProps = {
-              columnWidth,
-              rowWidth: width,
-              onResizeStart: this.handleResizeStart,
-              onResize: this.handleResize,
-              onResizeStop: this.handleResizeStop,
-            };
 
             return width < 50 ? null : (
               <div style={{ height: '100%', display: 'flex', flexDirection: 'column' }}>
-                {rootEntity.children.map((id, index) => (
-                  <DraggableRow
+                {(rootComponent.children || []).map((id, index) => (
+                  <DashboardComponent
                     key={id}
+                    depth={0}
                     index={index}
-                    entity={entities[id]}
-                    entities={entities}
-                    parentId={rootEntity.id}
+                    component={components[id]}
+                    components={components}
+                    parentId={rootComponent.id}
                     onDrop={onDrop}
-                    disableDrop={disableDrop}
-                    disableDrag={disableDrag}
-                    gridProps={gridProps}
+                    availableColumnCount={GRID_COLUMN_COUNT}
+                    columnWidth={columnWidth}
+                    onResizeStart={this.handleResizeStart}
+                    onResize={this.handleResize}
+                    onResizeStop={this.handleResizeStop}
                   />
                 ))}
 
-                {showGrid && Array(GRID_COLUMN_COUNT).fill(null).map((_, i) => (
+                {isResizing && Array(GRID_COLUMN_COUNT).fill(null).map((_, i) => (
                   <div
                     key={`grid-column-${i}`}
                     className="grid-column-guide"
@@ -165,7 +139,7 @@ class DashboardGrid extends React.PureComponent {
                   />
                 ))}
 
-                {showGrid && rowGuideTop &&
+                {isResizing && rowGuideTop &&
                   <div
                     className="grid-row-guide"
                     style={{

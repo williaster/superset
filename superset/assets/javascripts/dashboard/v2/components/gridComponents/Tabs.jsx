@@ -1,21 +1,27 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import cx from 'classnames';
 import { Tabs as BootstrapTabs, Tab } from 'react-bootstrap';
 
-import DraggableRow from '../dnd/DraggableRow';
+import DashboardComponent from '../DashboardComponent';
+import { componentShape } from '../../util/propShapes';
 
 const propTypes = {
-  tabs: PropTypes.arrayOf(
+  tabs: PropTypes.arrayOf( // @TODO this should be parth of the component definition
     PropTypes.shape({
       label: PropTypes.string,
     }),
   ),
   onChangeTab: PropTypes.func,
-  entity: PropTypes.shape({
-    children: PropTypes.arrayOf(PropTypes.string),
-  }),
-  entities: PropTypes.object, // @TODO shape
+  component: componentShape.isRequired,
+  components: PropTypes.object,
+  depth: PropTypes.number.isRequired,
+
+  // grid props
+  availableColumnCount: PropTypes.number.isRequired,
+  columnWidth: PropTypes.number.isRequired,
+  onResizeStart: PropTypes.func.isRequired,
+  onResize: PropTypes.func.isRequired,
+  onResizeStop: PropTypes.func.isRequired,
 };
 
 const defaultProps = {
@@ -48,11 +54,14 @@ class Tabs extends React.Component {
   render() {
     const {
       tabs,
-      entity: tabEntity,
-      entities,
-      gridProps,
-      disableDrop,
-      disableDrag,
+      depth,
+      component: tabEntity,
+      components,
+      availableColumnCount,
+      columnWidth,
+      onResizeStart,
+      onResize,
+      onResizeStop,
       onDrop,
     } = this.props;
 
@@ -68,20 +77,25 @@ class Tabs extends React.Component {
             <Tab key={i} eventKey={i} title={<div>{tab.label}</div>} />
           ))}
         </BootstrapTabs>
+        <div className="dashboard-component-tabs-content">
 
-        {(tabEntity.children || []).map((id, index) => (
-          <DraggableRow
-            key={id}
-            index={index}
-            entity={entities[id]}
-            entities={entities}
-            parentId={tabEntity.id}
-            onDrop={onDrop}
-            disableDrop={disableDrop}
-            disableDrag={disableDrag}
-            gridProps={gridProps}
-          />
-        ))}
+          {(tabEntity.children || []).map((id, index) => (
+            <DashboardComponent
+              key={id}
+              depth={depth}
+              index={index}
+              component={components[id]}
+              components={components}
+              parentId={tabEntity.id}
+              onDrop={onDrop}
+              availableColumnCount={availableColumnCount}
+              columnWidth={columnWidth}
+              onResizeStart={onResizeStart}
+              onResize={onResize}
+              onResizeStop={onResizeStop}
+            />
+          ))}
+        </div>
       </div>
     );
   }

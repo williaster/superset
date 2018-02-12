@@ -1,21 +1,21 @@
 import React from 'react';
 // import PropTypes from 'prop-types';
 
-import { HEADER_TYPE } from '../../util/componentTypes';
+import { SPACER_TYPE } from '../../../util/componentTypes';
 import DraggableNewComponent from './DraggableNewComponent';
 
 const propTypes = {
 };
 
-export default class DraggableNewHeader extends React.Component {
+export default class DraggableNewChart extends React.PureComponent {
   render() {
     return (
       <DraggableNewComponent
-        type={HEADER_TYPE}
-        label="Header"
+        type={SPACER_TYPE}
+        label="Spacer"
       />
     );
   }
 }
 
-DraggableNewHeader.propTypes = propTypes;
+DraggableNewChart.propTypes = propTypes;

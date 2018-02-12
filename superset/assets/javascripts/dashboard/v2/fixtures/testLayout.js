@@ -7,29 +7,31 @@ import {
   TABS_TYPE,
   CHART_TYPE,
   DIVIDER_TYPE,
+  GRID_ROOT_TYPE,
 } from '../util/componentTypes';
 
 import { DASHBOARD_ROOT_ID } from '../util/constants';
 
 export default {
   [DASHBOARD_ROOT_ID]: {
+    type: GRID_ROOT_TYPE,
     id: DASHBOARD_ROOT_ID,
     children: [
       'header0',
       'row0',
-      'divider0',
-      'row1',
-      'tabs0',
-      'divider1',
+      // 'divider0',
+      // 'row1',
+      // 'tabs0',
+      // 'divider1',
     ],
   },
   row0: {
     id: 'row0',
-    type: INVISIBLE_ROW_TYPE,
+    type: ROW_TYPE,
     children: [
       'charta',
-      'chartb',
-      'chartc',
+      // 'chartb',
+      // 'chartc',
     ],
   },
   row1: {
@@ -107,7 +109,7 @@ export default {
     id: 'chartd',
     type: CHART_TYPE,
     meta: {
-      width: 6,
+      width: 3,
       height: 10,
     },
   },
@@ -115,7 +117,7 @@ export default {
     id: 'charte',
     type: CHART_TYPE,
     meta: {
-      width: 6,
+      width: 3,
       height: 10,
     },
   },

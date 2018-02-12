@@ -1,21 +1,21 @@
 import React from 'react';
 // import PropTypes from 'prop-types';
 
-import { DIVIDER_TYPE } from '../../util/componentTypes';
+import { CHART_TYPE } from '../../../util/componentTypes';
 import DraggableNewComponent from './DraggableNewComponent';
 
 const propTypes = {
 };
 
-export default class DraggableNewDivider extends React.PureComponent {
+export default class DraggableNewChart extends React.PureComponent {
   render() {
     return (
       <DraggableNewComponent
-        type={DIVIDER_TYPE}
-        label="Divider"
+        type={CHART_TYPE}
+        label="Chart"
       />
     );
   }
 }
 
-DraggableNewDivider.propTypes = propTypes;
+DraggableNewChart.propTypes = propTypes;

@@ -26,7 +26,7 @@ const typeToValidChildType = {
     [MARKDOWN_TYPE]: true,
     [COLUMN_TYPE]: true,
     [SPACER_TYPE]: true,
-    [HEADER_TYPE]: true,
+    // [HEADER_TYPE]: true,
   },
 
   [INVISIBLE_ROW_TYPE]: {

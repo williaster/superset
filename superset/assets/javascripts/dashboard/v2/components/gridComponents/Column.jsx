@@ -1,91 +1,78 @@
 import React from 'react';
 import PropTypes from 'prop-types';
+import cx from 'classnames';
 
-import ResizableContainer from '../resizable/ResizableContainer';
+import DashboardComponent from '../DashboardComponent';
+import { componentShape } from '../../util/propShapes';
 
-import { COMPONENT_TYPE_LOOKUP } from './';
-import componentIsResizable from '../../util/componentIsResizable';
-
-import {
-  GRID_GUTTER_SIZE,
-  GRID_ROW_HEIGHT_UNIT,
-  GRID_MIN_ROW_UNITS,
-  GRID_MAX_ROW_UNITS,
-} from '../../util/constants';
-
-import { SPACER_TYPE } from '../../util/componentTypes';
+import { GRID_GUTTER_SIZE } from '../../util/constants';
 
 const propTypes = {
-  entity: PropTypes.object,
-  entities: PropTypes.object,
-  onResizeStart: PropTypes.func,
-  onResize: PropTypes.func,
-  onResizeStop: PropTypes.func,
+  component: componentShape.isRequired,
+  components: PropTypes.object.isRequired,
+  depth: PropTypes.number.isRequired,
+  parentId: PropTypes.string.isRequired,
+
+  // grid related
+  availableColumnCount: PropTypes.number.isRequired,
+  columnWidth: PropTypes.number.isRequired,
+  onResizeStart: PropTypes.func.isRequired,
+  onResize: PropTypes.func.isRequired,
+  onResizeStop: PropTypes.func.isRequired,
 };
 
 const defaultProps = {
-  entity: {},
-  entities: {},
-  onResizeStop: null,
-  onResize: null,
-  onResizeStart: null,
 };
 
 class Column extends React.PureComponent {
   render() {
-    const { entity: columnEntity, entities, onResizeStop, onResize, onResizeStart } = this.props;
+    const {
+      component: columnComponent,
+      components,
+      depth,
+      availableColumnCount,
+      columnWidth,
+      onResizeStart,
+      onResize,
+      onResizeStop,
+      onDrop,
+    } = this.props;
 
     const columnItems = [];
 
-    (columnEntity.children || []).forEach((id, index) => {
-      const entity = entities[id];
-      columnItems.push(entity);
-      if (index < columnEntity.children.length - 1) columnItems.push(`gutter-${index}`);
+    (columnComponent.children || []).forEach((id, index) => {
+      const component = components[id];
+      columnItems.push(component);
+      if (index < columnComponent.children.length - 1) columnItems.push(`gutter-${index}`);
     });
 
     return (
-      <div className="grid-column">
-        {columnItems.map((entity) => {
-          const id = entity.id || entity;
-          const Component = COMPONENT_TYPE_LOOKUP[entity.type];
-          const isResizable = componentIsResizable(entity);
-
-          let ColumnItem = Component ? (
-            <Component
-              key={id}
-              id={id}
-              entity={entity}
-              entities={entities}
-              onResizeStop={onResizeStop}
-              onResize={onResize}
+      <div
+        className={cx(
+          'grid-column',
+          columnItems.length === 0 && 'grid-column--empty',
+        )}
+      >
+        {columnItems.map((component, index) => (
+          !component.id ? (
+            <div key={component} style={{ height: GRID_GUTTER_SIZE }} />
+          ) : (
+            <DashboardComponent
+              key={component.id}
+              depth={depth + 1}
+              index={index / 2} // account for gutters!
+              component={component}
+              components={components}
+              parentId={rowComponent.id}
+              onDrop={onDrop}
+              availableColumnCount={availableColumnCount}
+              rowHeight={rowHeight}
+              columnWidth={columnWidth}
               onResizeStart={onResizeStart}
+              onResize={onResize}
+              onResizeStop={onResizeStop}
             />
-          ) : <div key={id} style={{ height: GRID_GUTTER_SIZE }} />;
-
-          if (isResizable) {
-            ColumnItem = (
-              <ResizableContainer
-                key={id}
-                id={id}
-                adjustableWidth={false} // everything in a column inherits the Columns's width
-                adjustableHeight
-                heightStep={GRID_ROW_HEIGHT_UNIT}
-                heightMultiple={entity.meta.height}
-                minHeightMultiple={entity.type === SPACER_TYPE ? 1 : GRID_MIN_ROW_UNITS}
-                maxHeightMultiple={GRID_MAX_ROW_UNITS}
-                onResizeStop={onResizeStop}
-                onResize={onResize}
-                onResizeStart={onResizeStart}
-              >
-                {ColumnItem}
-              </ResizableContainer>
-            );
-          }
-          return ColumnItem;
-        })}
-
-        {(!columnEntity.children || !columnEntity.children.length)
-          && 'Empty column'}
+          )))}
       </div>
     );
   }

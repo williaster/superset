@@ -1,17 +1,14 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 
+import { componentShape } from '../../util/propShapes';
+
 const propTypes = {
-  entity: PropTypes.shape({
-    id: PropTypes.string.isRequired,
-    meta: PropTypes.shape({
-      text: PropTypes.string,
-    }),
-  }),
+  component: componentShape.isRequired,
 };
 
 const defaultProps = {
-  entity: {},
+  component: {},
 };
 
 class Header extends React.PureComponent {
@@ -21,7 +18,7 @@ class Header extends React.PureComponent {
   }
 
   render() {
-    const { entity: { id, meta } } = this.props;
+    const { component: { id, meta } } = this.props;
     return !meta || !id ? null : (
       <div className="dashboard-component dashboard-component-header">
         {meta.text}

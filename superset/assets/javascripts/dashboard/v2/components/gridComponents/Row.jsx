@@ -2,84 +2,87 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import cx from 'classnames';
 
-import DraggableColumn from '../dnd/DraggableColumn';
+import DashboardComponent from '../DashboardComponent';
+import { componentShape } from '../../util/propShapes';
 import { GRID_GUTTER_SIZE } from '../../util/constants';
 import { INVISIBLE_ROW_TYPE } from '../../util/componentTypes';
 
 const propTypes = {
-  entity: PropTypes.object, // @TODO shape
-  entities: PropTypes.object,
-  columnWidth: PropTypes.number,
-  onResizeStart: PropTypes.func,
-  onResize: PropTypes.func,
-  onResizeStop: PropTypes.func,
+  component: componentShape.isRequired,
+  components: PropTypes.object.isRequired,
+  depth: PropTypes.number.isRequired,
+  parentId: PropTypes.string.isRequired,
+
+  // grid related
+  availableColumnCount: PropTypes.number.isRequired,
+  columnWidth: PropTypes.number.isRequired,
+  onResizeStart: PropTypes.func.isRequired,
+  onResize: PropTypes.func.isRequired,
+  onResizeStop: PropTypes.func.isRequired,
 };
 
 const defaultProps = {
-  entity: {},
-  entities: {},
-  columnWidth: 0,
-  onResizeStop: null,
-  onResize: null,
-  onResizeStart: null,
 };
 
 class Row extends React.PureComponent {
-  // shouldComponentUpdate() {
-  //   // @TODO check for updates to this row only
-  // }
-
   render() {
     const {
-      entities,
-      entity: rowEntity,
-      disableDrop,
-      disableDrag,
+      component: rowComponent,
+      components,
+      depth,
+      availableColumnCount,
+      columnWidth,
+      onResizeStart,
+      onResize,
+      onResizeStop,
       onDrop,
-      gridProps,
+      bubbleUpHover,
     } = this.props;
 
     let occupiedColumnCount = 0;
-    let currentRowHeight = 0;
+    let rowHeight = 0;
     const rowItems = [];
 
     // this adds a gutter between each child in the row.
-    (rowEntity.children || []).forEach((id, index) => {
-      const entity = entities[id];
-      occupiedColumnCount += (entity.meta || {}).width || 0;
-      rowItems.push(entity);
-      if (index < rowEntity.children.length - 1) rowItems.push(`gutter-${index}`);
-      if ((entity.meta || {}).height) {
-        currentRowHeight = Math.max(currentRowHeight, entity.meta.height);
+    (rowComponent.children || []).forEach((id, index) => {
+      const component = components[id];
+      occupiedColumnCount += (component.meta || {}).width || 0;
+      rowItems.push(component);
+      if (index < rowComponent.children.length - 1) rowItems.push(`gutter-${index}`);
+      if ((component.meta || {}).height) {
+        rowHeight = Math.max(rowHeight, component.meta.height);
       }
     });
-
-    const modifiedGridProps = { ...gridProps, occupiedColumnCount, currentRowHeight };
 
     return (
       <div
         className={cx(
           'grid-row',
-          rowEntity.type !== INVISIBLE_ROW_TYPE && 'grid-row-container',
+          rowItems.length === 0 && 'grid-row--empty',
+          rowComponent.type !== INVISIBLE_ROW_TYPE && 'grid-row-container',
         )}
       >
-        {rowItems.map((entity, index) => (
-          !entity.id ? (
-            <div key={entity} style={{ width: GRID_GUTTER_SIZE }} />
+        {rowItems.map((component, index) => (
+          !component.id ? (
+            <div key={component} style={{ width: GRID_GUTTER_SIZE }} />
           ) : (
-            <DraggableColumn
-              key={entity.id}
-              entity={entity}
-              entities={entities}
+            <DashboardComponent
+              key={component.id}
+              depth={depth + 1}
               index={index / 2} // account for gutters!
-              parentId={rowEntity.id}
-              gridProps={modifiedGridProps}
-              disableDrop={disableDrop}
-              disableDrag={disableDrag}
+              component={component}
+              components={components}
+              parentId={rowComponent.id}
               onDrop={onDrop}
+              availableColumnCount={availableColumnCount - occupiedColumnCount}
+              rowHeight={rowHeight}
+              columnWidth={columnWidth}
+              onResizeStart={onResizeStart}
+              onResize={onResize}
+              onResizeStop={onResizeStop}
+              bubbleUpHover={bubbleUpHover}
             />
-          )
-        ))}
+          )))}
       </div>
     );
   }

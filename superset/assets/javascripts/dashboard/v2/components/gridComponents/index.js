@@ -27,7 +27,7 @@ export { default as Row } from './Row';
 export { default as Spacer } from './Spacer';
 export { default as Tabs } from './Tabs';
 
-export const COMPONENT_TYPE_LOOKUP = {
+export default {
   [CHART_TYPE]: Chart,
   [COLUMN_TYPE]: Column,
   [DIVIDER_TYPE]: Divider,
