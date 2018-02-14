@@ -1,4 +1,5 @@
-const TYPE = 'DRAG_DROPPABLE'; // 'type' hook is not useful for us
+// note: the 'type' hook is not useful for us as dropping is contigent on other properties
+const TYPE = 'DRAG_DROPPABLE';
 
 export const dragConfig = [
   TYPE,
@@ -22,25 +23,25 @@ export const dropConfig = [
   {
     hover(props, monitor, component) {
       if (
-        monitor.isOver({ shallow: true })
-        && component
+        component
         && component.decoratedComponentInstance
         && component.decoratedComponentInstance.handleHover
-      ) {
-        component.decoratedComponentInstance.handleHover(monitor);
+      ) { // use the component instance so we can throttle calls
+        component.decoratedComponentInstance.handleHover(
+          props,
+          monitor,
+          component.decoratedComponentInstance,
+        );
       }
     },
     // note:
-    //  it's important that the drop() method return a result in order for the react-dnd
-    //  monitor.didDrop() method to bubble up properly up nested droppables
+    //  the react-dnd api requires that the drop() method return a result or undefined
+    //  monitor.didDrop() cannot be used because it returns true only for the most-nested target
     drop(props, monitor, component) {
-      if (
-        !monitor.didDrop()
-        && component
-        && component.decoratedComponentInstance
-        && component.decoratedComponentInstance.handleDrop
-      ) {
-        return component.decoratedComponentInstance.handleDrop(monitor);
+      const Component = component.decoratedComponentInstance;
+      const dropResult = monitor.getDropResult();
+      if ((!dropResult || !dropResult.destination) && Component.props.handleDrop) {
+        return Component.props.handleDrop(props, monitor, Component);
       }
       return undefined;
     },

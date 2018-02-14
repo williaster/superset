@@ -17,11 +17,21 @@ export const componentShape = PropTypes.shape({
   }),
 });
 
-// export const gridPropsShape = PropTypes.shape({
-//   availableColumnCount: PropTypes.number.isRequired,
-//   columnWidth: PropTypes.number.isRequired,
-//   rowWidth: PropTypes.number.isRequired,
-//   onResizeStart: PropTypes.func.isRequired,
-//   onResize: PropTypes.func.isRequired,
-//   onResizeStop: PropTypes.func.isRequired,
-// });
+export const componentProps = {
+  component: componentShape.isRequired,
+  components: PropTypes.object.isRequired,
+  depth: PropTypes.number.isRequired,
+  index: PropTypes.number.isRequired,
+  parentId: PropTypes.string.isRequired,
+
+  // grid related
+  availableColumnCount: PropTypes.number.isRequired,
+  columnWidth: PropTypes.number.isRequired,
+  rowHeight: PropTypes.number,
+  onResizeStart: PropTypes.func.isRequired,
+  onResize: PropTypes.func.isRequired,
+  onResizeStop: PropTypes.func.isRequired,
+
+  // dnd
+  onDrop: PropTypes.func.isRequired,
+};

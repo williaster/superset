@@ -11,6 +11,7 @@ export default class DraggableNewChart extends React.PureComponent {
   render() {
     return (
       <DraggableNewComponent
+        id={CHART_TYPE}
         type={CHART_TYPE}
         label="Chart"
       />

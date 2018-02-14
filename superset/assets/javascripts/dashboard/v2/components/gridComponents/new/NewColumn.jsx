@@ -11,6 +11,7 @@ export default class DraggableNewColumn extends React.PureComponent {
   render() {
     return (
       <DraggableNewComponent
+        id={COLUMN_TYPE}
         type={COLUMN_TYPE}
         label="Column"
       />

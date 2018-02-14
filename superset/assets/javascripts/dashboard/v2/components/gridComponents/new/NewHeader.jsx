@@ -11,6 +11,7 @@ export default class DraggableNewHeader extends React.Component {
   render() {
     return (
       <DraggableNewComponent
+        id={HEADER_TYPE}
         type={HEADER_TYPE}
         label="Header"
       />

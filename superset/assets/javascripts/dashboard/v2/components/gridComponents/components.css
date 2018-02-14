@@ -56,6 +56,7 @@
 }
 .dashboard-component-tabs .dashboard-component-tabs-content {
   min-height: 48px;
+  margin-top: 1px;
 }
 
 .dashboard-component-tabs .nav-tabs {
@@ -92,6 +93,29 @@
   color: #000000;
 }
 
+
+.dashboard-component-tabs .nav-tabs > li > a:focus {
+  outline: none;
+  background: #fff;
+}
+
+.dashboard-component-tabs .nav-tabs > li .dragdroppable-tab {
+  cursor: move;
+}
+
+.dashboard-component-tabs .nav-tabs > li .drop-indicator {
+  height: 40px !important;
+  top: -10px !important;
+}
+
+.dashboard-component-tabs .fa-plus-square {
+  background: linear-gradient(to right, #E32464, #2C2261);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  display: initial;
+  font-size: 16px;
+}
+
 /* New components */
 .new-component {
   display: flex;
@@ -119,9 +143,10 @@
    position: relative;
 }
 
+/* columns and rows */
 .grid-column {
   width: 100%;
-  min-height: 48px;
+  min-height: 56px;
 }
 
 .grid-row {
@@ -129,15 +154,30 @@
   flex-direction: row;
   flex-wrap: wrap;
   align-items: flex-start;
-  min-height: 48px;
+  min-height: 56px;
   width: 100%;
   height: fit-content;
   background-color: transparent;
 }
 
-.grid-row--empty {
+.grid-row--empty:after {
   content: "Empty row";
-  padding: 16px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 100%;
+  color: #aaa;
+}
+
+.grid-column--empty:after {
+  content: "Empty column";
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 100%;
+  color: #aaa;
 }
 
 .grid-row-container {

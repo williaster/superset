@@ -57,7 +57,7 @@ class DimensionProvider extends React.PureComponent {
         heightStep={GRID_ROW_HEIGHT_UNIT}
         widthMultiple={component.meta.width || null}
         heightMultiple={
-          component.meta.height || (component.type !== COLUMN_TYPE ? rowHeight : null)
+          component.meta.height || (component.type === COLUMN_TYPE ? rowHeight : null)
         }
         minWidthMultiple={isSpacer ? 1 : GRID_MIN_COLUMN_COUNT}
         maxWidthMultiple={availableColumnCount + (component.meta.width || 0)}

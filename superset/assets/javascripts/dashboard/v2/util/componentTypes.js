@@ -8,6 +8,7 @@ export const MARKDOWN_TYPE = 'DASHBOARD_MARKDOWN_TYPE';
 export const ROW_TYPE = 'DASHBOARD_ROW_TYPE';
 export const SPACER_TYPE = 'DASHBOARD_SPACER_TYPE';
 export const TABS_TYPE = 'DASHBOARD_TABS_TYPE';
+export const TAB_TYPE = 'DASHBOARD_TAB_TYPE';
 
 export default {
   CHART_TYPE,
@@ -20,4 +21,5 @@ export default {
   ROW_TYPE,
   SPACER_TYPE,
   TABS_TYPE,
+  TAB_TYPE,
 };

@@ -11,6 +11,7 @@ export default class DraggableNewDivider extends React.PureComponent {
   render() {
     return (
       <DraggableNewComponent
+        id={DIVIDER_TYPE}
         type={DIVIDER_TYPE}
         label="Divider"
       />

@@ -2,7 +2,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import ParentSize from '@vx/responsive/build/components/ParentSize';
 import cx from 'classnames';
-import DashboardComponent from './DashboardComponent';
+import ComponentLookup from './gridComponents';
 
 import {
   DASHBOARD_ROOT_ID,
@@ -15,11 +15,13 @@ import './gridComponents/grid.css';
 const propTypes = {
   layout: PropTypes.object,
   updateEntity: PropTypes.func,
+  onDrop: PropTypes.func,
 };
 
 const defaultProps = {
   layout: {},
   updateEntity() {},
+  onDrop() {},
 };
 
 class DashboardGrid extends React.PureComponent {
@@ -28,9 +30,6 @@ class DashboardGrid extends React.PureComponent {
     this.state = {
       isResizing: false,
       rowGuideTop: null,
-      // disableDrop: false,
-      // disableDrag: false,
-      // selectedComponentId: null,
     };
 
     this.handleToggleSelectEntityId = this.handleToggleSelectEntityId.bind(this);
@@ -94,7 +93,7 @@ class DashboardGrid extends React.PureComponent {
   }
 
   render() {
-    const { layout: components, onDrop, canDrop } = this.props;
+    const { layout: components, onDrop } = this.props;
     const { isResizing, rowGuideTop } = this.state;
     const rootComponent = components[DASHBOARD_ROOT_ID];
 
@@ -111,22 +110,28 @@ class DashboardGrid extends React.PureComponent {
 
             return width < 50 ? null : (
               <div style={{ height: '100%', display: 'flex', flexDirection: 'column' }}>
-                {(rootComponent.children || []).map((id, index) => (
-                  <DashboardComponent
-                    key={id}
-                    depth={0}
-                    index={index}
-                    component={components[id]}
-                    components={components}
-                    parentId={rootComponent.id}
-                    onDrop={onDrop}
-                    availableColumnCount={GRID_COLUMN_COUNT}
-                    columnWidth={columnWidth}
-                    onResizeStart={this.handleResizeStart}
-                    onResize={this.handleResize}
-                    onResizeStop={this.handleResizeStop}
-                  />
-                ))}
+                {(rootComponent.children || []).map((id, index) => {
+                  const component = components[id];
+                  const componentType = component.type;
+                  const Component = ComponentLookup[componentType];
+
+                  return (
+                    <Component
+                      key={id}
+                      depth={0}
+                      index={index}
+                      component={component}
+                      components={components}
+                      parentId={rootComponent.id}
+                      onDrop={onDrop}
+                      availableColumnCount={GRID_COLUMN_COUNT}
+                      columnWidth={columnWidth}
+                      onResizeStart={this.handleResizeStart}
+                      onResize={this.handleResize}
+                      onResizeStop={this.handleResizeStop}
+                    />
+                  );
+                })}
 
                 {isResizing && Array(GRID_COLUMN_COUNT).fill(null).map((_, i) => (
                   <div

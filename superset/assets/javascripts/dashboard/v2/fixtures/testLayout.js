@@ -4,6 +4,7 @@ import {
   ROW_TYPE,
   INVISIBLE_ROW_TYPE,
   SPACER_TYPE,
+  TAB_TYPE,
   TABS_TYPE,
   CHART_TYPE,
   DIVIDER_TYPE,
@@ -17,7 +18,7 @@ export default {
     type: GRID_ROOT_TYPE,
     id: DASHBOARD_ROOT_ID,
     children: [
-      'header0',
+      // 'header0',
       'row0',
       // 'divider0',
       // 'row1',
@@ -27,9 +28,9 @@ export default {
   },
   row0: {
     id: 'row0',
-    type: ROW_TYPE,
+    type: INVISIBLE_ROW_TYPE,
     children: [
-      'charta',
+      // 'charta',
       // 'chartb',
       // 'chartc',
     ],
@@ -54,9 +55,39 @@ export default {
     id: 'tabs0',
     type: TABS_TYPE,
     children: [
-      'row2',
+      'tab0',
+      'tab1',
+      'tab3',
     ],
     meta: {
+    },
+  },
+  tab0: {
+    id: 'tab0',
+    type: TAB_TYPE,
+    children: [
+      // 'row2',
+    ],
+    meta: {
+      text: 'Tab A',
+    },
+  },
+  tab1: {
+    id: 'tab1',
+    type: TAB_TYPE,
+    children: [
+    ],
+    meta: {
+      text: 'Tab B',
+    },
+  },
+  tab3: {
+    id: 'tab3',
+    type: TAB_TYPE,
+    children: [
+    ],
+    meta: {
+      text: 'Tab C',
     },
   },
   header0: {

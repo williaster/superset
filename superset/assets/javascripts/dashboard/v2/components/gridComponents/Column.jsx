@@ -2,7 +2,10 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import cx from 'classnames';
 
-import DashboardComponent from '../DashboardComponent';
+import DragDroppable from '../dnd/DragDroppable';
+import DragHandle from '../dnd/DragHandle';
+import DimensionProvider from '../resizable/DimensionProvider';
+import ComponentLookup from '../gridComponents';
 import { componentShape } from '../../util/propShapes';
 
 import { GRID_GUTTER_SIZE } from '../../util/constants';
@@ -10,8 +13,10 @@ import { GRID_GUTTER_SIZE } from '../../util/constants';
 const propTypes = {
   component: componentShape.isRequired,
   components: PropTypes.object.isRequired,
+  index: PropTypes.number.isRequired,
   depth: PropTypes.number.isRequired,
   parentId: PropTypes.string.isRequired,
+  rowHeight: PropTypes.number,
 
   // grid related
   availableColumnCount: PropTypes.number.isRequired,
@@ -19,9 +24,13 @@ const propTypes = {
   onResizeStart: PropTypes.func.isRequired,
   onResize: PropTypes.func.isRequired,
   onResizeStop: PropTypes.func.isRequired,
+
+  // dnd
+  onDrop: PropTypes.func.isRequired,
 };
 
 const defaultProps = {
+  rowHeight: null,
 };
 
 class Column extends React.PureComponent {
@@ -29,9 +38,12 @@ class Column extends React.PureComponent {
     const {
       component: columnComponent,
       components,
-      depth,
+      index,
+      parentId,
       availableColumnCount,
       columnWidth,
+      rowHeight,
+      depth,
       onResizeStart,
       onResize,
       onResizeStop,
@@ -40,40 +52,73 @@ class Column extends React.PureComponent {
 
     const columnItems = [];
 
-    (columnComponent.children || []).forEach((id, index) => {
+    (columnComponent.children || []).forEach((id, childIndex) => {
       const component = components[id];
       columnItems.push(component);
-      if (index < columnComponent.children.length - 1) columnItems.push(`gutter-${index}`);
+      if (index < columnComponent.children.length - 1) {
+        columnItems.push(`gutter-${childIndex}`);
+      }
     });
 
     return (
-      <div
-        className={cx(
-          'grid-column',
-          columnItems.length === 0 && 'grid-column--empty',
-        )}
+      <DragDroppable
+        component={columnComponent}
+        components={components}
+        orientation="vertical"
+        index={index}
+        parentId={parentId}
+        onDrop={onDrop}
       >
-        {columnItems.map((component, index) => (
-          !component.id ? (
-            <div key={component} style={{ height: GRID_GUTTER_SIZE }} />
-          ) : (
-            <DashboardComponent
-              key={component.id}
-              depth={depth + 1}
-              index={index / 2} // account for gutters!
-              component={component}
-              components={components}
-              parentId={rowComponent.id}
-              onDrop={onDrop}
-              availableColumnCount={availableColumnCount}
-              rowHeight={rowHeight}
-              columnWidth={columnWidth}
-              onResizeStart={onResizeStart}
-              onResize={onResize}
-              onResizeStop={onResizeStop}
-            />
-          )))}
-      </div>
+        {({ dropIndicatorProps, dragSourceRef }) => (
+          <DimensionProvider
+            component={columnComponent}
+            availableColumnCount={availableColumnCount}
+            columnWidth={columnWidth}
+            rowHeight={rowHeight}
+            onResizeStart={onResizeStart}
+            onResize={onResize}
+            onResizeStop={onResizeStop}
+          >
+            <div
+              className={cx(
+                'grid-column',
+                columnItems.length === 0 && 'grid-column--empty',
+              )}
+            >
+              <DragHandle
+                innerRef={dragSourceRef}
+                position="top"
+              />
+
+              {columnItems.map((component, itemIndex) => {
+                if (!component.id) {
+                  return <div key={component} style={{ height: GRID_GUTTER_SIZE }} />;
+                }
+                const { type: componentType } = component;
+                const Component = ComponentLookup[componentType];
+                return (
+                  <Component
+                    key={component.id}
+                    depth={depth + 1}
+                    index={itemIndex / 2} // account for gutters!
+                    component={component}
+                    components={components}
+                    parentId={columnComponent.id}
+                    onDrop={onDrop}
+                    availableColumnCount={availableColumnCount}
+                    columnWidth={columnWidth}
+                    onResizeStart={onResizeStart}
+                    onResize={onResize}
+                    onResizeStop={onResizeStop}
+                  />
+                );
+              })}
+              {dropIndicatorProps && <div {...dropIndicatorProps} />}
+            </div>
+          </DimensionProvider>
+        )}
+      </DragDroppable>
+
     );
   }
 }

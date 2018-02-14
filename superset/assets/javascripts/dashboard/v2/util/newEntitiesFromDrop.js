@@ -10,6 +10,7 @@ import {
   ROW_TYPE,
   SPACER_TYPE,
   TABS_TYPE,
+  TAB_TYPE,
 } from './componentTypes';
 
 const typeToDefaultMetaData = {
@@ -22,6 +23,7 @@ const typeToDefaultMetaData = {
   [ROW_TYPE]: null,
   [SPACER_TYPE]: { width: 1 },
   [TABS_TYPE]: null,
+  [TAB_TYPE]: { text: 'New Tab' },
 };
 
 // @TODO this should be replaced by a more robust algorithm
@@ -70,6 +72,10 @@ export default function newEntitiesFromDrop({ dropResult, entitiesMap }) {
     rowWrapper.children = [newDropChild.id];
     newEntities[rowWrapper.id] = rowWrapper;
     newDropChild = rowWrapper;
+  } else if (dragType === TABS_TYPE) {
+    const tabChild = entityFactory(TAB_TYPE);
+    newDropChild.children = [tabChild.id];
+    newEntities[tabChild.id] = tabChild;
   }
 
   const nextDropChildren = [...dropEntity.children];

@@ -1,10 +1,31 @@
 import React from 'react';
-// import PropTypes from 'prop-types';
+import PropTypes from 'prop-types';
+
+import DimensionProvider from '../resizable/DimensionProvider';
+import DragDroppable from '../dnd/DragDroppable';
+import DragHandle from '../dnd/DragHandle';
+import { componentShape } from '../../util/propShapes';
 
 const propTypes = {
+  component: componentShape.isRequired,
+  components: PropTypes.object.isRequired,
+  index: PropTypes.number.isRequired,
+  parentId: PropTypes.string.isRequired,
+
+  // grid related
+  availableColumnCount: PropTypes.number.isRequired,
+  columnWidth: PropTypes.number.isRequired,
+  rowHeight: PropTypes.number,
+  onResizeStart: PropTypes.func.isRequired,
+  onResize: PropTypes.func.isRequired,
+  onResizeStop: PropTypes.func.isRequired,
+
+  // dnd
+  onDrop: PropTypes.func.isRequired,
 };
 
 const defaultProps = {
+  rowHeight: null,
 };
 
 class Chart extends React.Component {
@@ -15,8 +36,50 @@ class Chart extends React.Component {
   }
 
   render() {
+    const {
+      component,
+      components,
+      index,
+      parentId,
+      availableColumnCount,
+      columnWidth,
+      rowHeight,
+      onResizeStart,
+      onResize,
+      onResizeStop,
+      onDrop,
+    } = this.props;
+
     return (
-      <div className="dashboard-component dashboard-component-chart">Chart</div>
+      <DragDroppable
+        component={component}
+        components={components}
+        orientation="vertical"
+        index={index}
+        parentId={parentId}
+        onDrop={onDrop}
+      >
+        {({ dropIndicatorProps, dragSourceRef }) => (
+          <DimensionProvider
+            component={component}
+            availableColumnCount={availableColumnCount}
+            columnWidth={columnWidth}
+            rowHeight={rowHeight}
+            onResizeStart={onResizeStart}
+            onResize={onResize}
+            onResizeStop={onResizeStop}
+          >
+            <DragHandle
+              innerRef={dragSourceRef}
+              position="top"
+            />
+            <div className="dashboard-component dashboard-component-chart">
+              Chart
+            </div>
+            {dropIndicatorProps && <div {...dropIndicatorProps} />}
+          </DimensionProvider>
+        )}
+      </DragDroppable>
     );
   }
 }

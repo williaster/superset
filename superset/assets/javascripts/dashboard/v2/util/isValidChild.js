@@ -9,6 +9,7 @@ import {
   ROW_TYPE,
   SPACER_TYPE,
   TABS_TYPE,
+  TAB_TYPE,
 } from './componentTypes';
 
 const typeToValidChildType = {
@@ -26,7 +27,6 @@ const typeToValidChildType = {
     [MARKDOWN_TYPE]: true,
     [COLUMN_TYPE]: true,
     [SPACER_TYPE]: true,
-    // [HEADER_TYPE]: true,
   },
 
   [INVISIBLE_ROW_TYPE]: {
@@ -37,6 +37,10 @@ const typeToValidChildType = {
   },
 
   [TABS_TYPE]: {
+    [TAB_TYPE]: true,
+  },
+
+  [TAB_TYPE]: {
     [ROW_TYPE]: true,
     [INVISIBLE_ROW_TYPE]: true,
     [DIVIDER_TYPE]: true,

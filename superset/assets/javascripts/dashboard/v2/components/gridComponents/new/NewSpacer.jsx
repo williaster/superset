@@ -11,6 +11,7 @@ export default class DraggableNewChart extends React.PureComponent {
   render() {
     return (
       <DraggableNewComponent
+        id={SPACER_TYPE}
         type={SPACER_TYPE}
         label="Spacer"
       />

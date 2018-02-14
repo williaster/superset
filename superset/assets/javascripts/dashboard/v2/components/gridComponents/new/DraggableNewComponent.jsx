@@ -1,28 +1,29 @@
 import React from 'react';
 import PropTypes from 'prop-types';
+
 import DragDroppable from '../../dnd/DragDroppable';
 
 const propTypes = {
-  // id: PropTypes.string.isRequired,
+  id: PropTypes.string.isRequired,
   type: PropTypes.string.isRequired,
   label: PropTypes.string.isRequired,
 };
 
 export default class DraggableNewComponent extends React.PureComponent {
   render() {
-    const { type, label } = this.props;
+    const { label, id, type } = this.props;
     return (
       <DragDroppable
-        component={{ type, id: type }}
+        component={{ type, id }}
         components={{}}
         index={0}
-        depth={0}
-        useChildAsDragHandle
       >
-        <div className="new-component">
-          <div className="new-component-placeholder" />
-          {label}
-        </div>
+        {({ dragSourceRef }) => (
+          <div ref={dragSourceRef} className="new-component">
+            <div className="new-component-placeholder" />
+            {label}
+          </div>
+        )}
       </DragDroppable>
     );
   }

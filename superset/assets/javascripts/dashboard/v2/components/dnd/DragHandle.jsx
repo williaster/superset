@@ -5,26 +5,28 @@ import cx from 'classnames';
 const propTypes = {
   position: PropTypes.oneOf(['left', 'top']),
   innerRef: PropTypes.func,
+  dotCount: PropTypes.number,
 };
 
 const defaultProps = {
   position: 'left',
   innerRef: null,
+  dotCount: 8,
 };
 
 export default class DragHandle extends React.PureComponent {
   render() {
-    const { innerRef, position } = this.props;
+    const { innerRef, position, dotCount } = this.props;
     return (
       <div
         ref={innerRef}
         className={cx(
-          position === 'left' && 'draggable-row-handle', // @TODO change class names
+          position === 'left' && 'draggable-row-handle', // @TODO change to row/column
           position === 'top' && 'draggable-row-item-handle',
         )}
       >
         <div className="handle">
-          {Array(8).fill(null).map((_, i) => (
+          {Array(dotCount).fill(null).map((_, i) => (
             <div key={`handle-dot-${i}`} className="handle-dot" />
           ))}
         </div>

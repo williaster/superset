@@ -55,6 +55,7 @@ class DashboardBuilder extends React.Component {
   handleNewEntity(dropResult) {
     console.log('new entity');
     this.setState(({ layout }) => {
+      debugger;
       const newEntities = newEntitiesFromDrop({ dropResult, entitiesMap: layout });
       return {
         layout: {
@@ -65,7 +66,7 @@ class DashboardBuilder extends React.Component {
     });
   }
 
-  handleMoveEntity({ source, destination, draggableId }) {
+  handleMoveEntity({ source, destination }) {
     this.setState(({ layout }) => {
       const nextEntities = reorderItem({
         entitiesMap: layout,

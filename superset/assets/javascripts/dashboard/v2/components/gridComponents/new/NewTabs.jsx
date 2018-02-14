@@ -11,6 +11,7 @@ export default class DraggableNewTabs extends React.PureComponent {
   render() {
     return (
       <DraggableNewComponent
+        id={TABS_TYPE}
         type={TABS_TYPE}
         label="Tabs"
       />
