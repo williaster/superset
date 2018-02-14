@@ -5,6 +5,7 @@ import { Tabs as BootstrapTabs, Tab } from 'react-bootstrap';
 import DragDroppable from '../dnd/DragDroppable';
 import DragHandle from '../dnd/DragHandle';
 import DashboardComponent from '../../containers/DashboardComponent';
+import HoverMenu from '../menu/HoverMenu';
 import { componentShape } from '../../util/propShapes';
 import { TAB_TYPE } from '../../util/componentTypes';
 
@@ -100,7 +101,9 @@ class Tabs extends React.Component {
       >
         {({ dropIndicatorProps: tabsDropIndicatorProps, dragSourceRef: tabsDragSourceRef }) => (
           <div className="dashboard-component dashboard-component-tabs">
-            <DragHandle orientation="left" innerRef={tabsDragSourceRef} />
+            <HoverMenu innerRef={tabsDragSourceRef} position="left">
+              <DragHandle position="left" />
+            </HoverMenu>
 
             <BootstrapTabs
               id={tabsComponent.id}

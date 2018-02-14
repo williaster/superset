@@ -175,7 +175,7 @@
   justify-content: center;
   width: 100%;
   height: 100%;
-  color: #ccc;
+  color: #CFD8DC;
 }
 
 .grid-column--empty:after {
@@ -185,7 +185,7 @@
   justify-content: center;
   width: 100%;
   height: 100%;
-  color: #ccc;
+  color: #CFD8DC;
 }
 
 .grid-row-container {
@@ -200,4 +200,96 @@
 
 .dragdroppable:hover .grid-spacer {
   box-shadow: inset 0 0 0 1px #CFD8DC;
+}
+
+/* Delete component button */
+.delete-component-button {
+  color: #879399;
+  font-size: 16px;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
+}
+
+.delete-component-button:hover,
+.delete-component-button:active {
+  color: #484848;
+}
+
+.delete-component-button:focus {
+  outline: none;
+}
+
+
+/* popover menu */
+.with-popover-menu {
+  position: relative;
+  outline: none;
+}
+
+.with-popover-menu--focused:after {
+  content: "";
+  position: absolute;
+  top: 1;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  box-shadow: inset 0 0 0 2px #44C0FF;
+}
+
+.popover-menu {
+  position: absolute;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  flex-wrap: nowrap;
+  left: 0;
+  top: -42px;
+  height: 40px;
+  padding: 0 16px;
+  background: #fff;
+  box-shadow: 0 2px 2px 0 rgba(0, 0, 0, 0.2);
+  font-size: 14px;
+  cursor: default;
+}
+
+.popover-menu-vertical-separator {
+  width: 1;
+  height: 100%;
+  background: #CFD8DC;
+  margin: 0 16px;
+}
+
+/* hover menu */
+.hover-menu {
+  opacity: 0;
+  position: absolute;
+  z-index: 1;
+}
+
+.hover-menu--left {
+  width: 20px;
+  height: 100%;
+  top: 0;
+  left: -20px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-around;
+}
+
+  .dragdroppable-row .dragdroppable-row .hover-menu--left {
+    left: -2px;
+  }
+
+.hover-menu--top {
+  width: 100%;
+  height: 20px;
+  top: 0;
+  left: 0;
+}
+
+.dragdroppable:hover .hover-menu,
+.dragdroppable .hover-menu:hover {
+  opacity: 1;
 }

@@ -2,7 +2,8 @@ import React from 'react';
 import PropTypes from 'prop-types';
 
 import DragDroppable from '../dnd/DragDroppable';
-import DragHandle from '../dnd/DragHandle';
+import HoverMenu from '../menu/HoverMenu';
+import DeleteComponentButton from '../DeleteComponentButton';
 import { componentShape } from '../../util/propShapes';
 
 const propTypes = {
@@ -11,9 +12,20 @@ const propTypes = {
   index: PropTypes.number.isRequired,
   parentId: PropTypes.string.isRequired,
   handleComponentDrop: PropTypes.func.isRequired,
+  deleteComponent: PropTypes.func.isRequired,
 };
 
 class Divider extends React.PureComponent {
+  constructor(props) {
+    super(props);
+    this.handleDeleteComponent = this.handleDeleteComponent.bind(this);
+  }
+
+  handleDeleteComponent() {
+    const { deleteComponent, component, parentId } = this.props;
+    deleteComponent(component.id, parentId);
+  }
+
   render() {
     const {
       component,
@@ -34,7 +46,9 @@ class Divider extends React.PureComponent {
       >
         {({ dropIndicatorProps, dragSourceRef }) => (
           <div ref={dragSourceRef}>
-            <DragHandle position="left" />
+            <HoverMenu position="left">
+              <DeleteComponentButton onDelete={this.handleDeleteComponent} />
+            </HoverMenu>
 
             <div className="dashboard-component dashboard-component-divider">
               <div />

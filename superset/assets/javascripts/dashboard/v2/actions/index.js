@@ -9,11 +9,12 @@ export function updateComponents(nextComponents) {
 }
 
 export const DELETE_COMPONENT = 'DELETE_COMPONENT';
-export function deleteComponent(id) {
+export function deleteComponent(id, parentId) {
   return {
     type: DELETE_COMPONENT,
     payload: {
       id,
+      parentId,
     },
   };
 }

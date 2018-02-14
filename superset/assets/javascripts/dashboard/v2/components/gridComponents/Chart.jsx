@@ -4,6 +4,7 @@ import PropTypes from 'prop-types';
 import DimensionProvider from '../resizable/DimensionProvider';
 import DragDroppable from '../dnd/DragDroppable';
 import DragHandle from '../dnd/DragHandle';
+import HoverMenu from '../menu/HoverMenu';
 import { componentShape } from '../../util/propShapes';
 
 const propTypes = {
@@ -69,10 +70,9 @@ class Chart extends React.Component {
             onResize={onResize}
             onResizeStop={onResizeStop}
           >
-            <DragHandle
-              innerRef={dragSourceRef}
-              position="top"
-            />
+            <HoverMenu innerRef={dragSourceRef} position="top">
+              <DragHandle position="top" />
+            </HoverMenu>
             <div className="dashboard-component dashboard-component-chart">
               Chart
             </div>

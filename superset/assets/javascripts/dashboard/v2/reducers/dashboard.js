@@ -18,11 +18,35 @@ const actionHandlers = {
   },
 
   [DELETE_COMPONENT](state, action) {
-    // const { payload: id } = action;
-    // recursively delete children
-    console.log('@TODO implement', DELETE_COMPONENT);
+    const { payload: { id, parentId } } = action;
 
-    return state;
+    if (!parentId || !id || !state[id] || !state[parentId]) return state;
+
+    const nextComponents = { ...state };
+
+    // recursively find children to remove
+    let deleteCount = 0;
+    function recursivelyDeleteChildren(componentId, componentParentId) {
+      const component = nextComponents[componentId];
+      const parent = nextComponents[componentParentId];
+
+      if (parent && component) {
+        const componentIndex = (parent.children || []).indexOf(componentId);
+        if (componentIndex > -1) {
+          parent.children.splice(componentIndex, 1);
+          delete nextComponents[componentId];
+          deleteCount += 1;
+
+          const { children = [] } = component;
+          children.forEach((childId) => { recursivelyDeleteChildren(childId, componentId); });
+        }
+      }
+    }
+
+    recursivelyDeleteChildren(id, parentId);
+    console.log('Deleted', deleteCount, 'total components');
+
+    return nextComponents;
   },
 
   [CREATE_COMPONENT](state, action) {

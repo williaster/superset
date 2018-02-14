@@ -4,6 +4,7 @@ import PropTypes from 'prop-types';
 import DimensionProvider from '../resizable/DimensionProvider';
 import DragDroppable from '../dnd/DragDroppable';
 import DragHandle from '../dnd/DragHandle';
+import HoverMenu from '../menu/HoverMenu';
 import { componentShape } from '../../util/propShapes';
 
 const propTypes = {
@@ -46,6 +47,7 @@ class Spacer extends React.PureComponent {
       handleComponentDrop,
     } = this.props;
 
+    const hoverMenuPosition = depth % 2 !== 0 ? 'left' : 'top';
     return (
       <DragDroppable
         component={component}
@@ -65,10 +67,9 @@ class Spacer extends React.PureComponent {
             onResize={onResize}
             onResizeStop={onResizeStop}
           >
-            <DragHandle
-              innerRef={dragSourceRef}
-              position={depth % 2 !== 0 ? 'left' : 'top'}
-            />
+            <HoverMenu innerRef={dragSourceRef} position={hoverMenuPosition}>
+              <DragHandle position={hoverMenuPosition} />
+            </HoverMenu>
 
             <div className="grid-spacer" />
 

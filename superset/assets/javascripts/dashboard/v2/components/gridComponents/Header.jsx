@@ -3,6 +3,8 @@ import PropTypes from 'prop-types';
 
 import DragDroppable from '../dnd/DragDroppable';
 import DragHandle from '../dnd/DragHandle';
+import HoverMenu from '../menu/HoverMenu';
+import WithPopoverMenu from '../menu/WithPopoverMenu';
 import { componentShape } from '../../util/propShapes';
 
 const propTypes = {
@@ -10,8 +12,8 @@ const propTypes = {
   components: PropTypes.object.isRequired,
   index: PropTypes.number.isRequired,
   parentId: PropTypes.string.isRequired,
-  // dnd
   handleComponentDrop: PropTypes.func.isRequired,
+  deleteComponent: PropTypes.func.isRequired,
 };
 
 const defaultProps = {
@@ -22,6 +24,12 @@ class Header extends React.PureComponent {
   constructor(props) {
     super(props);
     this.state = {};
+    this.handleDeleteComponent = this.handleDeleteComponent.bind(this);
+  }
+
+  handleDeleteComponent() {
+    const { deleteComponent, component, parentId } = this.props;
+    deleteComponent(component.id, parentId);
   }
 
   render() {
@@ -44,11 +52,17 @@ class Header extends React.PureComponent {
       >
         {({ dropIndicatorProps, dragSourceRef }) => (
           <div ref={dragSourceRef}>
-            <DragHandle position="left" />
+            <HoverMenu position="left">
+              <DragHandle position="left" />
+            </HoverMenu>
 
-            <div className="dashboard-component dashboard-component-header">
-              {component.meta.text}
-            </div>
+            <WithPopoverMenu
+              onPressDelete={this.handleDeleteComponent}
+            >
+              <div className="dashboard-component dashboard-component-header">
+                {component.meta.text}
+              </div>
+            </WithPopoverMenu>
 
             {dropIndicatorProps && <div {...dropIndicatorProps} />}
           </div>

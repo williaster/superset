@@ -4,7 +4,7 @@
 }
 
 /* after ensures border visibility on top of any children */
-.grid-resizable-container--resizing::after {
+.grid-resizable-container--resizing:after {
   content: "";
   position: absolute;
   top: 0;

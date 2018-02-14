@@ -6,6 +6,7 @@ import DragDroppable from '../dnd/DragDroppable';
 import DragHandle from '../dnd/DragHandle';
 import DimensionProvider from '../resizable/DimensionProvider';
 import DashboardComponent from '../../containers/DashboardComponent';
+import HoverMenu from '../menu/HoverMenu';
 import { componentShape } from '../../util/propShapes';
 
 import { GRID_GUTTER_SIZE } from '../../util/constants';
@@ -85,10 +86,9 @@ class Column extends React.PureComponent {
                 columnItems.length === 0 && 'grid-column--empty',
               )}
             >
-              <DragHandle
-                innerRef={dragSourceRef}
-                position="top"
-              />
+              <HoverMenu innerRef={dragSourceRef} position="top">
+                <DragHandle position="top" />
+              </HoverMenu>
 
               {columnItems.map((component, itemIndex) => {
                 if (!component.id) {

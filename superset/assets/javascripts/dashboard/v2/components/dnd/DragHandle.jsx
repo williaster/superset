@@ -21,15 +21,14 @@ export default class DragHandle extends React.PureComponent {
       <div
         ref={innerRef}
         className={cx(
-          position === 'left' && 'draggable-row-handle', // @TODO change to row/column
-          position === 'top' && 'draggable-row-item-handle',
+          'drag-handle',
+          position === 'left' && 'drag-handle--left',
+          position === 'top' && 'drag-handle--top',
         )}
       >
-        <div className="handle">
-          {Array(dotCount).fill(null).map((_, i) => (
-            <div key={`handle-dot-${i}`} className="handle-dot" />
-          ))}
-        </div>
+        {Array(dotCount).fill(null).map((_, i) => (
+          <div key={`handle-dot-${i}`} className="drag-handle-dot" />
+        ))}
       </div>
     );
   }

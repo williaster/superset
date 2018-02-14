@@ -26,74 +26,33 @@
     border: 1px dashed #aaa;
   }
 
-.draggable-row-handle {
-  opacity: 0;
-  position: absolute;
-  width: 20px;
-  height: 100%;
-  top: 0;
-  left: -20px;
-  cursor: move;
-  z-index: 1;
-  display: flex;
-  flex-direction: column;
-  justify-content: space-around;
-}
-
-  /* offset nested row handles */
-  .dragdroppable-row .dragdroppable-row .draggable-row-handle {
-    left: -2px;
-  }
-
-.draggable-row-handle .handle {
-  padding-left: 7px;
+/* Drag handle */
+.drag-handle {
   overflow: hidden;
-  width: 15px
+  width: 16px;
+  cursor: move;
 }
 
-.draggable-row-handle .handle .handle-dot,
-.draggable-row-item-handle .handle .handle-dot {
+.drag-handle--left {
+  padding-left: 7px;
+}
+
+.drag-handle--top {
+  margin: 10px auto;
+}
+
+.drag-handle-dot {
   float: left;
   height: 2px;
   margin: 1px;
   width: 2px
 }
 
-.draggable-row-handle .handle .handle-dot:after,
-.draggable-row-item-handle .handle .handle-dot:after {
-  background: #aaa;
+.drag-handle-dot:after {
   content: "";
+  background: #aaa;
   float: left;
   height: 2px;
   margin: -1px;
   width: 2px;
 }
-
-
-.draggable-row-item-handle {
-  opacity: 0;
-  position: absolute;
-  width: 100%;
-  height: 20px;
-  top: 0;
-  left: 0;
-  cursor: move;
-  z-index: 1;
-}
-
-.draggable-row-item-handle .handle {
-  overflow: hidden;
-  width: 16px;
-  margin: 10px auto;
-}
-
-.dragdroppable:hover .draggable-row-handle,
-.draggable-row-handle:hover,
-.dragdroppable:hover .draggable-row-item-handle,
-.draggable-row-item-handle:hover,
-.dragdroppable-row .dragdroppable-row:hover .draggable-row-handle,
-.dragdroppable-row .dragdroppable-row:hover .draggable-row-item-handle {
-  opacity: 1;
-}
-
-/*top: -20px;*/

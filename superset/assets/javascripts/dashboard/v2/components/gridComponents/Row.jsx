@@ -5,6 +5,7 @@ import cx from 'classnames';
 import DragDroppable from '../dnd/DragDroppable';
 import DragHandle from '../dnd/DragHandle';
 import DashboardComponent from '../../containers/DashboardComponent';
+import HoverMenu from '../menu/HoverMenu';
 import { componentShape } from '../../util/propShapes';
 import { GRID_GUTTER_SIZE } from '../../util/constants';
 import { INVISIBLE_ROW_TYPE } from '../../util/componentTypes';
@@ -82,10 +83,9 @@ class Row extends React.PureComponent {
               rowComponent.type !== INVISIBLE_ROW_TYPE && 'grid-row-container',
             )}
           >
-            <DragHandle
-              innerRef={dragSourceRef}
-              position="left"
-            />
+            <HoverMenu innerRef={dragSourceRef} position="left">
+              <DragHandle position="left" />
+            </HoverMenu>
 
             {rowItems.map((component, itemIndex) => {
               if (!component.id) {
