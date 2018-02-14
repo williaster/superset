@@ -49,6 +49,10 @@
   background-color: #CFD8DC;
 }
 
+.dragdroppable .dashboard-component-divider {
+  cursor: move;
+}
+
 /* Tabs -- this overwrites Superset bootstrap theme tab styling */
 .dashboard-component-tabs {
   width: 100%;

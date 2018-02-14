@@ -54,7 +54,7 @@ export default function handleDrop(props, monitor, Component) {
     const clientOffset = monitor.getClientOffset();
 
     if (clientOffset) {
-      if (orientation === 'horizontal') {
+      if (orientation === 'row') {
         const refMiddleY =
           refBoundingRect.top + ((refBoundingRect.bottom - refBoundingRect.top) / 2);
         nextIndex += clientOffset.y >= refMiddleY ? 1 : 0;

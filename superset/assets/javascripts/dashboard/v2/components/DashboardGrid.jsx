@@ -123,7 +123,7 @@ class DashboardGrid extends React.PureComponent {
                   <DragDroppable
                     component={rootComponent}
                     components={components}
-                    orientation="vertical"
+                    orientation="column"
                     index={0}
                     parentId={null}
                     onDrop={handleComponentDrop}

@@ -16,7 +16,7 @@ const propTypes = {
   children: PropTypes.func,
   component: componentShape.isRequired,
   components: PropTypes.object.isRequired,
-  orientation: PropTypes.oneOf(['horizontal', 'vertical']),
+  orientation: PropTypes.oneOf(['row', 'column']),
   index: PropTypes.number.isRequired,
   parentId: PropTypes.string,
 
@@ -40,7 +40,7 @@ const defaultProps = {
   children() {},
   onDrop() {},
   parentId: null,
-  orientation: 'horizontal',
+  orientation: 'row',
   handleDrop,
   handleHover,
   isValidChild,
@@ -92,8 +92,8 @@ class DragDroppable extends React.Component {
         }}
         className={cx(
           'dragdroppable',
-          orientation === 'horizontal' && 'dragdroppable-row',
-          orientation === 'vertical' && 'dragdroppable-column',
+          orientation === 'row' && 'dragdroppable-row',
+          orientation === 'column' && 'dragdroppable-column',
           isDragging && 'dragdroppable--dragging',
         )}
       >

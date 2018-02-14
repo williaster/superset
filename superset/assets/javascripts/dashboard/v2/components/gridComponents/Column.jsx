@@ -64,7 +64,7 @@ class Column extends React.PureComponent {
       <DragDroppable
         component={columnComponent}
         components={components}
-        orientation="vertical"
+        orientation="column"
         index={index}
         parentId={parentId}
         onDrop={handleComponentDrop}

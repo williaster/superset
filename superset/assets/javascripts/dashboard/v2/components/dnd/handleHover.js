@@ -34,17 +34,17 @@ export default function handleHover(props, monitor, Component) {
 
   if (validChild) { // indicate drop in container
     console.log('valid child', component.type, draggingItem.type);
-    const indicatorOrientation = orientation === 'horizontal' ? 'vertical' : 'horizontal';
+    const indicatorOrientation = orientation === 'row' ? 'column' : 'row';
 
     Component.setState(() => ({
       dropIndicator: {
         top: 0,
         right: component.children.length ? 8 : null,
         left: component.children.length ? null : null,
-        height: indicatorOrientation === 'vertical' ? '100%' : 3,
-        width: indicatorOrientation === 'vertical' ? 3 : '100%',
-        minHeight: indicatorOrientation === 'vertical' ? 16 : null,
-        minWidth: indicatorOrientation === 'vertical' ? null : 16,
+        height: indicatorOrientation === 'column' ? '100%' : 3,
+        width: indicatorOrientation === 'column' ? 3 : '100%',
+        minHeight: indicatorOrientation === 'column' ? 16 : null,
+        minWidth: indicatorOrientation === 'column' ? null : 16,
         margin: 'auto',
         backgroundColor: '#44C0FF',
         position: 'absolute',
@@ -58,7 +58,7 @@ export default function handleHover(props, monitor, Component) {
 
     if (clientOffset) {
       let dropOffset;
-      if (orientation === 'horizontal') {
+      if (orientation === 'row') {
         const refMiddleY =
           refBoundingRect.top + ((refBoundingRect.bottom - refBoundingRect.top) / 2);
         dropOffset = clientOffset.y < refMiddleY ? 0 : refBoundingRect.height;
@@ -70,10 +70,10 @@ export default function handleHover(props, monitor, Component) {
 
       Component.setState(() => ({
         dropIndicator: {
-          top: orientation === 'vertical' ? 0 : dropOffset,
-          left: orientation === 'vertical' ? dropOffset : 0,
-          height: orientation === 'vertical' ? '100%' : 3,
-          width: orientation === 'vertical' ? 3 : '100%',
+          top: orientation === 'column' ? 0 : dropOffset,
+          left: orientation === 'column' ? dropOffset : 0,
+          height: orientation === 'column' ? '100%' : 3,
+          width: orientation === 'column' ? 3 : '100%',
           backgroundColor: '#44C0FF',
           position: 'absolute',
           zIndex: 10,

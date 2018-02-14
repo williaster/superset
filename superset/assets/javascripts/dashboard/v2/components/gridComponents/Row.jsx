@@ -69,7 +69,7 @@ class Row extends React.PureComponent {
       <DragDroppable
         component={rowComponent}
         components={components}
-        orientation="horizontal"
+        orientation="row"
         index={index}
         parentId={parentId}
         onDrop={handleComponentDrop}

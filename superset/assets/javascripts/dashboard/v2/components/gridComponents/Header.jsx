@@ -37,7 +37,7 @@ class Header extends React.PureComponent {
       <DragDroppable
         component={component}
         components={components}
-        orientation="horizontal"
+        orientation="row"
         index={index}
         parentId={parentId}
         onDrop={handleComponentDrop}

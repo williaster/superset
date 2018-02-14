@@ -54,7 +54,7 @@ class Chart extends React.Component {
       <DragDroppable
         component={component}
         components={components}
-        orientation="vertical"
+        orientation="column"
         index={index}
         parentId={parentId}
         onDrop={handleComponentDrop}

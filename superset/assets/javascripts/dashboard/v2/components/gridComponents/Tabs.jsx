@@ -8,6 +8,9 @@ import DashboardComponent from '../../containers/DashboardComponent';
 import { componentShape } from '../../util/propShapes';
 import { TAB_TYPE } from '../../util/componentTypes';
 
+const NEW_TAB_INDEX = -1;
+const MAX_TAB_COUNT = 5;
+
 const propTypes = {
   component: componentShape.isRequired,
   components: PropTypes.object.isRequired,
@@ -32,8 +35,6 @@ const defaultProps = {
   onChangeTab: null,
   children: null,
 };
-
-const NEW_TAB_INDEX = -1;
 
 class Tabs extends React.Component {
   constructor(props) {
@@ -92,7 +93,7 @@ class Tabs extends React.Component {
       <DragDroppable
         component={tabsComponent}
         components={components}
-        orientation="horizontal"
+        orientation="row"
         index={index}
         parentId={parentId}
         onDrop={handleComponentDrop}
@@ -117,7 +118,7 @@ class Tabs extends React.Component {
                       <DragDroppable
                         component={tabComponent}
                         components={components}
-                        orientation="vertical"
+                        orientation="column"
                         index={tabIndex}
                         parentId={tabsComponent.id}
                         onDrop={(dropResult) => {
@@ -175,7 +176,7 @@ class Tabs extends React.Component {
                 );
               })}
 
-              {tabIds.length < 5 &&
+              {tabIds.length < MAX_TAB_COUNT &&
                 <Tab
                   key="new-tab"
                   eventKey={NEW_TAB_INDEX}

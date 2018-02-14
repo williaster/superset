@@ -50,7 +50,7 @@ class Spacer extends React.PureComponent {
       <DragDroppable
         component={component}
         components={components}
-        orientation={depth % 2 !== 0 ? 'horizontal' : 'vertical'}
+        orientation={depth % 2 !== 0 ? 'row' : 'column'}
         index={index}
         parentId={parentId}
         onDrop={handleComponentDrop}
@@ -77,8 +77,6 @@ class Spacer extends React.PureComponent {
         )}
       </DragDroppable>
     );
-
-    return ;
   }
 }
 
