@@ -4,8 +4,9 @@ import { Tabs as BootstrapTabs, Tab } from 'react-bootstrap';
 
 import DragDroppable from '../dnd/DragDroppable';
 import DragHandle from '../dnd/DragHandle';
-import ComponentLookup from '../gridComponents';
+import DashboardComponent from '../../containers/DashboardComponent';
 import { componentShape } from '../../util/propShapes';
+import { TAB_TYPE } from '../../util/componentTypes';
 
 const propTypes = {
   component: componentShape.isRequired,
@@ -22,7 +23,8 @@ const propTypes = {
   onResizeStop: PropTypes.func.isRequired,
 
   // dnd
-  onDrop: PropTypes.func.isRequired,
+  createComponent: PropTypes.func.isRequired,
+  handleComponentDrop: PropTypes.func.isRequired,
   onChangeTab: PropTypes.func,
 };
 
@@ -42,18 +44,29 @@ class Tabs extends React.Component {
     this.handleClicKTab = this.handleClicKTab.bind(this);
   }
 
+  componentWillReceiveProps(nextProps) {
+    const maxIndex = Math.max(0, nextProps.component.children.length - 1);
+    if (this.state.tabIndex >= maxIndex) {
+      this.setState(() => ({ tabIndex: maxIndex }));
+    }
+  }
+
   handleClicKTab(tabIndex) {
-    const { onChangeTab, component, components } = this.props;
+    const { onChangeTab, component, createComponent } = this.props;
+
     if (tabIndex !== NEW_TAB_INDEX) {
       this.setState(() => ({ tabIndex }));
       if (onChangeTab) {
         onChangeTab({ tabIndex, tab: component.children[tabIndex] });
       }
     } else {
-      const newTabId = `new-tab-${component.children.length}`;
-      component.children.push(newTabId);
-      components[newTabId] = { id: newTabId, type: 'DASHBOARD_TAB_TYPE', meta: { text: 'New Tab' } };
-      this.setState(() => ({ forceUpdate: Math.random() }));
+      createComponent({
+        destination: {
+          droppableId: component.id,
+          index: component.children.length,
+        },
+        draggableId: TAB_TYPE,
+      });
     }
   }
 
@@ -69,7 +82,7 @@ class Tabs extends React.Component {
       onResizeStart,
       onResize,
       onResizeStop,
-      onDrop,
+      handleComponentDrop,
     } = this.props;
 
     const { tabIndex: selectedTabIndex } = this.state;
@@ -82,7 +95,7 @@ class Tabs extends React.Component {
         orientation="horizontal"
         index={index}
         parentId={parentId}
-        onDrop={onDrop}
+        onDrop={handleComponentDrop}
       >
         {({ dropIndicatorProps: tabsDropIndicatorProps, dragSourceRef: tabsDragSourceRef }) => (
           <div className="dashboard-component dashboard-component-tabs">
@@ -108,9 +121,9 @@ class Tabs extends React.Component {
                         index={tabIndex}
                         parentId={tabsComponent.id}
                         onDrop={(dropResult) => {
-                          onDrop(dropResult);
+                          handleComponentDrop(dropResult);
 
-                          // Ensure dropped tab is now visible
+                          // Ensure dropped tab is visible
                           const { destination } = dropResult;
                           if (destination) {
                             const dropTabIndex = destination.droppableId === tabsComponent.id
@@ -142,37 +155,32 @@ class Tabs extends React.Component {
                     */}
                     {tabIndex === selectedTabIndex &&
                       <div className="dashboard-component-tabs-content">
-                        {tabComponent.children.map((componentId, componentIndex) => {
-                          const component = components[componentId];
-                          const componentType = component.type;
-                          const Component = ComponentLookup[componentType];
-                          return (
-                            <Component
-                              key={componentId}
-                              depth={depth}
-                              index={componentIndex}
-                              component={components[componentId]}
-                              components={components}
-                              parentId={tabComponent.id}
-                              onDrop={onDrop}
-                              availableColumnCount={availableColumnCount}
-                              columnWidth={columnWidth}
-                              onResizeStart={onResizeStart}
-                              onResize={onResize}
-                              onResizeStop={onResizeStop}
-                            />
-                          );
-                        })}
+                        {tabComponent.children.map((componentId, componentIndex) => (
+                          <DashboardComponent
+                            key={componentId}
+                            id={componentId}
+                            depth={depth}
+                            index={componentIndex}
+                            parentId={tabComponent.id}
+                            onDrop={handleComponentDrop}
+                            availableColumnCount={availableColumnCount}
+                            columnWidth={columnWidth}
+                            onResizeStart={onResizeStart}
+                            onResize={onResize}
+                            onResizeStop={onResizeStop}
+                          />
+                        ))}
                       </div>}
                   </Tab>
                 );
               })}
 
-              <Tab
-                key="new-tab"
-                eventKey={NEW_TAB_INDEX}
-                title={<div className="fa fa-plus-square" />}
-              />
+              {tabIds.length < 5 &&
+                <Tab
+                  key="new-tab"
+                  eventKey={NEW_TAB_INDEX}
+                  title={<div className="fa fa-plus-square" />}
+                />}
             </BootstrapTabs>
 
             {tabsDropIndicatorProps

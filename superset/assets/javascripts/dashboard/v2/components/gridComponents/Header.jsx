@@ -11,7 +11,7 @@ const propTypes = {
   index: PropTypes.number.isRequired,
   parentId: PropTypes.string.isRequired,
   // dnd
-  onDrop: PropTypes.func.isRequired,
+  handleComponentDrop: PropTypes.func.isRequired,
 };
 
 const defaultProps = {
@@ -30,7 +30,7 @@ class Header extends React.PureComponent {
       components,
       index,
       parentId,
-      onDrop,
+      handleComponentDrop,
     } = this.props;
 
     return (
@@ -40,7 +40,7 @@ class Header extends React.PureComponent {
         orientation="horizontal"
         index={index}
         parentId={parentId}
-        onDrop={onDrop}
+        onDrop={handleComponentDrop}
       >
         {({ dropIndicatorProps, dragSourceRef }) => (
           <div ref={dragSourceRef}>

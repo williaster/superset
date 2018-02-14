@@ -52,7 +52,7 @@ class DimensionProvider extends React.PureComponent {
       <ResizableContainer
         id={component.id}
         adjustableWidth
-        adjustableHeight={[COLUMN_TYPE, SPACER_TYPE].indexOf(component.type) === -1}
+        adjustableHeight={[COLUMN_TYPE].indexOf(component.type) === -1}
         widthStep={columnWidth + GRID_GUTTER_SIZE} // step includes gutter!
         heightStep={GRID_ROW_HEIGHT_UNIT}
         widthMultiple={component.meta.width || null}
@@ -61,7 +61,7 @@ class DimensionProvider extends React.PureComponent {
         }
         minWidthMultiple={isSpacer ? 1 : GRID_MIN_COLUMN_COUNT}
         maxWidthMultiple={availableColumnCount + (component.meta.width || 0)}
-        minHeightMultiple={GRID_MIN_ROW_UNITS}
+        minHeightMultiple={isSpacer ? 2 : GRID_MIN_ROW_UNITS}
         maxHeightMultiple={GRID_MAX_ROW_UNITS}
         onResizeStop={onResizeStop}
         onResize={onResize}

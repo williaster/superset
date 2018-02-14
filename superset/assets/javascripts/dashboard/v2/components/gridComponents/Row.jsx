@@ -4,7 +4,7 @@ import cx from 'classnames';
 
 import DragDroppable from '../dnd/DragDroppable';
 import DragHandle from '../dnd/DragHandle';
-import ComponentLookup from '../gridComponents';
+import DashboardComponent from '../../containers/DashboardComponent';
 import { componentShape } from '../../util/propShapes';
 import { GRID_GUTTER_SIZE } from '../../util/constants';
 import { INVISIBLE_ROW_TYPE } from '../../util/componentTypes';
@@ -25,7 +25,7 @@ const propTypes = {
   onResizeStop: PropTypes.func.isRequired,
 
   // dnd
-  onDrop: PropTypes.func.isRequired,
+  handleComponentDrop: PropTypes.func.isRequired,
 };
 
 const defaultProps = {
@@ -45,7 +45,7 @@ class Row extends React.PureComponent {
       onResizeStart,
       onResize,
       onResizeStop,
-      onDrop,
+      handleComponentDrop,
     } = this.props;
 
     let occupiedColumnCount = 0;
@@ -72,7 +72,7 @@ class Row extends React.PureComponent {
         orientation="horizontal"
         index={index}
         parentId={parentId}
-        onDrop={onDrop}
+        onDrop={handleComponentDrop}
       >
         {({ dropIndicatorProps, dragSourceRef }) => (
           <div
@@ -92,17 +92,13 @@ class Row extends React.PureComponent {
                 return <div key={component} style={{ width: GRID_GUTTER_SIZE }} />;
               }
 
-              const { type: componentType } = component;
-              const Component = ComponentLookup[componentType];
               return (
-                <Component
+                <DashboardComponent
                   key={component.id}
+                  id={component.id}
                   depth={depth + 1}
                   index={itemIndex / 2} // account for gutters!
-                  component={component}
-                  components={components}
                   parentId={rowComponent.id}
-                  onDrop={onDrop}
                   availableColumnCount={availableColumnCount - occupiedColumnCount}
                   rowHeight={rowHeight}
                   columnWidth={columnWidth}
@@ -113,7 +109,7 @@ class Row extends React.PureComponent {
               );
             })}
             {dropIndicatorProps &&
-              <div {...dropIndicatorProps} style={{ ...dropIndicatorProps.style, left: 0 }} />}
+              <div {...dropIndicatorProps} />}
           </div>
         )}
       </DragDroppable>

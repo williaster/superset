@@ -20,6 +20,7 @@ const typeToValidChildType = {
     [TABS_TYPE]: true,
     [DIVIDER_TYPE]: true,
     [HEADER_TYPE]: true,
+    [SPACER_TYPE]: true,
   },
 
   [ROW_TYPE]: {

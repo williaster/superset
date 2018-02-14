@@ -2,7 +2,9 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import ParentSize from '@vx/responsive/build/components/ParentSize';
 import cx from 'classnames';
-import ComponentLookup from './gridComponents';
+
+import DragDroppable from './dnd/DragDroppable';
+import DashboardComponent from '../containers/DashboardComponent';
 
 import {
   DASHBOARD_ROOT_ID,
@@ -13,15 +15,12 @@ import {
 import './gridComponents/grid.css';
 
 const propTypes = {
-  layout: PropTypes.object,
-  updateEntity: PropTypes.func,
-  onDrop: PropTypes.func,
+  dashboard: PropTypes.object.isRequired,
+  updateComponents: PropTypes.func.isRequired,
+  handleComponentDrop: PropTypes.func.isRequired,
 };
 
 const defaultProps = {
-  layout: {},
-  updateEntity() {},
-  onDrop() {},
 };
 
 class DashboardGrid extends React.PureComponent {
@@ -32,7 +31,6 @@ class DashboardGrid extends React.PureComponent {
       rowGuideTop: null,
     };
 
-    this.handleToggleSelectEntityId = this.handleToggleSelectEntityId.bind(this);
     this.handleResizeStart = this.handleResizeStart.bind(this);
     this.handleResize = this.handleResize.bind(this);
     this.handleResizeStop = this.handleResizeStop.bind(this);
@@ -65,18 +63,20 @@ class DashboardGrid extends React.PureComponent {
   }
 
   handleResizeStop({ id, widthMultiple, heightMultiple }) {
-    const { layout: components, updateEntity } = this.props;
+    const { dashboard: components, updateComponents } = this.props;
     const component = components[id];
     if (
       component &&
       (component.meta.width !== widthMultiple || component.meta.height !== heightMultiple)
     ) {
-      updateEntity({
-        ...component,
-        meta: {
-          ...component.meta,
-          width: widthMultiple || component.meta.width,
-          height: heightMultiple || component.meta.height,
+      updateComponents({
+        [id]: {
+          ...component,
+          meta: {
+            ...component.meta,
+            width: widthMultiple || component.meta.width,
+            height: heightMultiple || component.meta.height,
+          },
         },
       });
     }
@@ -86,14 +86,8 @@ class DashboardGrid extends React.PureComponent {
     }));
   }
 
-  handleToggleSelectEntityId(id) {
-    this.setState(({ selectedComponentId }) => ({
-      selectedComponentId: id === selectedComponentId ? null : id,
-    }));
-  }
-
   render() {
-    const { layout: components, onDrop } = this.props;
+    const { dashboard: components, handleComponentDrop } = this.props;
     const { isResizing, rowGuideTop } = this.state;
     const rootComponent = components[DASHBOARD_ROOT_ID];
 
@@ -110,28 +104,36 @@ class DashboardGrid extends React.PureComponent {
 
             return width < 50 ? null : (
               <div style={{ height: '100%', display: 'flex', flexDirection: 'column' }}>
-                {(rootComponent.children || []).map((id, index) => {
-                  const component = components[id];
-                  const componentType = component.type;
-                  const Component = ComponentLookup[componentType];
+                {(rootComponent.children || []).map((id, index) => (
+                  <DashboardComponent
+                    key={id}
+                    id={id}
+                    depth={0}
+                    index={index}
+                    parentId={rootComponent.id}
+                    availableColumnCount={GRID_COLUMN_COUNT}
+                    columnWidth={columnWidth}
+                    onResizeStart={this.handleResizeStart}
+                    onResize={this.handleResize}
+                    onResizeStop={this.handleResizeStop}
+                  />
+                ))}
 
-                  return (
-                    <Component
-                      key={id}
-                      depth={0}
-                      index={index}
-                      component={component}
-                      components={components}
-                      parentId={rootComponent.id}
-                      onDrop={onDrop}
-                      availableColumnCount={GRID_COLUMN_COUNT}
-                      columnWidth={columnWidth}
-                      onResizeStart={this.handleResizeStart}
-                      onResize={this.handleResize}
-                      onResizeStop={this.handleResizeStop}
-                    />
-                  );
-                })}
+                {rootComponent.children.length === 0 &&
+                  <DragDroppable
+                    component={rootComponent}
+                    components={components}
+                    orientation="vertical"
+                    index={0}
+                    parentId={null}
+                    onDrop={handleComponentDrop}
+                  >
+                    {({ dropIndicatorProps }) => (
+                      <div style={{ width: '100%', height: '100%' }}>
+                        {dropIndicatorProps && <div {...dropIndicatorProps} />}
+                      </div>
+                    )}
+                  </DragDroppable>}
 
                 {isResizing && Array(GRID_COLUMN_COUNT).fill(null).map((_, i) => (
                   <div

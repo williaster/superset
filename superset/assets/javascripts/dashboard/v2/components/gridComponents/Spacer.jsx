@@ -22,7 +22,7 @@ const propTypes = {
   onResizeStop: PropTypes.func.isRequired,
 
   // dnd
-  onDrop: PropTypes.func.isRequired,
+  handleComponentDrop: PropTypes.func.isRequired,
 };
 
 const defaultProps = {
@@ -43,17 +43,17 @@ class Spacer extends React.PureComponent {
       onResizeStart,
       onResize,
       onResizeStop,
-      onDrop,
+      handleComponentDrop,
     } = this.props;
 
     return (
       <DragDroppable
         component={component}
         components={components}
-        orientation={depth % 2 === 0 ? 'horizontal' : 'vertical'}
+        orientation={depth % 2 !== 0 ? 'horizontal' : 'vertical'}
         index={index}
         parentId={parentId}
-        onDrop={onDrop}
+        onDrop={handleComponentDrop}
       >
         {({ dropIndicatorProps, dragSourceRef }) => (
           <DimensionProvider
@@ -67,7 +67,7 @@ class Spacer extends React.PureComponent {
           >
             <DragHandle
               innerRef={dragSourceRef}
-              position={depth % 2 === 0 ? 'left' : 'top'}
+              position={depth % 2 !== 0 ? 'left' : 'top'}
             />
 
             <div className="grid-spacer" />

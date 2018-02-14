@@ -10,7 +10,7 @@ const propTypes = {
   components: PropTypes.object.isRequired,
   index: PropTypes.number.isRequired,
   parentId: PropTypes.string.isRequired,
-  onDrop: PropTypes.func.isRequired,
+  handleComponentDrop: PropTypes.func.isRequired,
 };
 
 class Divider extends React.PureComponent {
@@ -20,7 +20,7 @@ class Divider extends React.PureComponent {
       components,
       index,
       parentId,
-      onDrop,
+      handleComponentDrop,
     } = this.props;
 
     return (
@@ -30,7 +30,7 @@ class Divider extends React.PureComponent {
         orientation="horizontal"
         index={index}
         parentId={parentId}
-        onDrop={onDrop}
+        onDrop={handleComponentDrop}
       >
         {({ dropIndicatorProps, dragSourceRef }) => (
           <div ref={dragSourceRef}>

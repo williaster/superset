@@ -5,7 +5,7 @@ import cx from 'classnames';
 import DragDroppable from '../dnd/DragDroppable';
 import DragHandle from '../dnd/DragHandle';
 import DimensionProvider from '../resizable/DimensionProvider';
-import ComponentLookup from '../gridComponents';
+import DashboardComponent from '../../containers/DashboardComponent';
 import { componentShape } from '../../util/propShapes';
 
 import { GRID_GUTTER_SIZE } from '../../util/constants';
@@ -26,7 +26,7 @@ const propTypes = {
   onResizeStop: PropTypes.func.isRequired,
 
   // dnd
-  onDrop: PropTypes.func.isRequired,
+  handleComponentDrop: PropTypes.func.isRequired,
 };
 
 const defaultProps = {
@@ -47,7 +47,7 @@ class Column extends React.PureComponent {
       onResizeStart,
       onResize,
       onResizeStop,
-      onDrop,
+      handleComponentDrop,
     } = this.props;
 
     const columnItems = [];
@@ -67,7 +67,7 @@ class Column extends React.PureComponent {
         orientation="vertical"
         index={index}
         parentId={parentId}
-        onDrop={onDrop}
+        onDrop={handleComponentDrop}
       >
         {({ dropIndicatorProps, dragSourceRef }) => (
           <DimensionProvider
@@ -94,17 +94,16 @@ class Column extends React.PureComponent {
                 if (!component.id) {
                   return <div key={component} style={{ height: GRID_GUTTER_SIZE }} />;
                 }
-                const { type: componentType } = component;
-                const Component = ComponentLookup[componentType];
+
                 return (
-                  <Component
+                  <DashboardComponent
                     key={component.id}
+                    id={component.id}
                     depth={depth + 1}
                     index={itemIndex / 2} // account for gutters!
                     component={component}
                     components={components}
                     parentId={columnComponent.id}
-                    onDrop={onDrop}
                     availableColumnCount={availableColumnCount}
                     columnWidth={columnWidth}
                     onResizeStart={onResizeStart}

@@ -58,8 +58,16 @@ class DragDroppable extends React.Component {
     this.handleHover = throttle(this.hover.bind(this), HOVER_THROTTLE_MS).bind(this);
   }
 
+  componentDidMount() {
+    this.mounted = true;
+  }
+
+  componentWillUnmount() {
+    this.mounted = false;
+  }
+
   hover(props, monitor, Component) {
-    this.props.handleHover(props, monitor, Component);
+    if (this.mounted) this.props.handleHover(props, monitor, Component);
   }
 
   render() {

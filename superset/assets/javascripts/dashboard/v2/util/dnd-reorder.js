@@ -6,7 +6,7 @@ export function reorder(list, startIndex, endIndex) {
   return result;
 }
 
-export function reorderItem({
+export default function reorderItem({
   entitiesMap,
   source,
   destination,

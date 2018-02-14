@@ -14,12 +14,12 @@ import {
 } from './componentTypes';
 
 const typeToDefaultMetaData = {
-  [CHART_TYPE]: { width: 3, height: 10 },
+  [CHART_TYPE]: { width: 3, height: 15 },
   [COLUMN_TYPE]: { width: 3 },
   [DIVIDER_TYPE]: null,
   [HEADER_TYPE]: { text: 'New header' },
   [INVISIBLE_ROW_TYPE]: null,
-  [MARKDOWN_TYPE]: { width: 3, height: 10 },
+  [MARKDOWN_TYPE]: { width: 3, height: 15 },
   [ROW_TYPE]: null,
   [SPACER_TYPE]: { width: 1 },
   [TABS_TYPE]: null,
@@ -43,11 +43,11 @@ function entityFactory(type) {
   };
 }
 
-export default function newEntitiesFromDrop({ dropResult, entitiesMap }) {
+export default function newEntitiesFromDrop({ dropResult, components }) {
   const { draggableId, destination } = dropResult;
 
-  const dragType = draggableId; // @TODO will need to fix this
-  const dropEntity = entitiesMap[destination.droppableId];
+  const dragType = draggableId; // @TODO idToType
+  const dropEntity = components[destination.droppableId];
 
   if (!dropEntity) {
     console.warn('Drop target entity', destination.droppableId, 'not found');
@@ -72,6 +72,7 @@ export default function newEntitiesFromDrop({ dropResult, entitiesMap }) {
     rowWrapper.children = [newDropChild.id];
     newEntities[rowWrapper.id] = rowWrapper;
     newDropChild = rowWrapper;
+
   } else if (dragType === TABS_TYPE) {
     const tabChild = entityFactory(TAB_TYPE);
     newDropChild.children = [tabChild.id];

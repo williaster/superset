@@ -21,7 +21,7 @@ const propTypes = {
   onResizeStop: PropTypes.func.isRequired,
 
   // dnd
-  onDrop: PropTypes.func.isRequired,
+  handleComponentDrop: PropTypes.func.isRequired,
 };
 
 const defaultProps = {
@@ -47,7 +47,7 @@ class Chart extends React.Component {
       onResizeStart,
       onResize,
       onResizeStop,
-      onDrop,
+      handleComponentDrop,
     } = this.props;
 
     return (
@@ -57,7 +57,7 @@ class Chart extends React.Component {
         orientation="vertical"
         index={index}
         parentId={parentId}
-        onDrop={onDrop}
+        onDrop={handleComponentDrop}
       >
         {({ dropIndicatorProps, dragSourceRef }) => (
           <DimensionProvider
