@@ -2,16 +2,17 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import cx from 'classnames';
 
-import DeleteComponentButton from '../DeleteComponentButton';
-
 const propTypes = {
   children: PropTypes.node,
-  onPressDelete: PropTypes.func,
+  menuItems: PropTypes.arrayOf(PropTypes.node),
+  onChangeFocus: PropTypes.func,
 };
 
 const defaultProps = {
   children: null,
+  onChangeFocus: null,
   onPressDelete() {},
+  menuItems: [],
 };
 
 class WithPopoverMenu extends React.Component {
@@ -25,7 +26,7 @@ class WithPopoverMenu extends React.Component {
   }
 
   componentWillUnmount() {
-    document.removeEventListener('click', this.handleClick, true);
+    document.removeEventListener('mousedown', this.handleClick, true);
   }
 
   setRef(ref) {
@@ -33,39 +34,32 @@ class WithPopoverMenu extends React.Component {
   }
 
   handleClick(event) {
+    const { onChangeFocus } = this.props;
     if (!this.state.isFocused) {
       // if not focused, set focus and add a window event listener to capture outside clicks
       // this enables us to not set a click listener for ever item on a dashboard
-      document.addEventListener('click', this.handleClick, true);
+      document.addEventListener('mousedown', this.handleClick, true);
       this.setState(() => ({ isFocused: true }));
+      if (onChangeFocus) {
+        onChangeFocus(true);
+      }
     } else if (!this.container.contains(event.target)) {
-      console.log('outside click');
-      document.removeEventListener('click', this.handleClick, true);
+      document.removeEventListener('mousedown', this.handleClick, true);
       this.setState(() => ({ isFocused: false }));
-    } else {
-      console.log('inside click');
+      if (onChangeFocus) {
+        onChangeFocus(false);
+      }
     }
   }
 
-  renderMenu() {
-    const { onPressDelete } = this.props;
-    return (
-      <div className="popover-menu" >
-        Menu
-        <div className="popover-menu-vertical-separator" />
-        <DeleteComponentButton onDelete={onPressDelete} />
-      </div>
-    );
-  }
-
   render() {
-    const { children } = this.props;
+    const { children, menuItems } = this.props;
     const { isFocused } = this.state;
     return (
       <div
         ref={this.setRef}
         onClick={this.handleClick}
-        role="button" // @TODO maybe consider
+        role="button" // @TODO consider others?
         tabIndex="0"
         className={cx(
           'with-popover-menu',
@@ -73,7 +67,12 @@ class WithPopoverMenu extends React.Component {
         )}
       >
         {children}
-        {isFocused && this.renderMenu()}
+        {isFocused && menuItems.length &&
+          <div className="popover-menu" >
+            {menuItems.map((node, i) => (
+              <div className="menu-item" key={`menu-item-${i}`}>{node}</div>
+            ))}
+          </div>}
       </div>
     );
   }

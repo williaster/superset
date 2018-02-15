@@ -13,11 +13,15 @@ import {
   TAB_TYPE,
 } from './componentTypes';
 
+import {
+  MEDIUM_HEADER,
+} from './constants';
+
 const typeToDefaultMetaData = {
   [CHART_TYPE]: { width: 3, height: 15 },
   [COLUMN_TYPE]: { width: 3 },
   [DIVIDER_TYPE]: null,
-  [HEADER_TYPE]: { text: 'New header' },
+  [HEADER_TYPE]: { text: 'New header', style: MEDIUM_HEADER },
   [INVISIBLE_ROW_TYPE]: null,
   [MARKDOWN_TYPE]: { width: 3, height: 15 },
   [ROW_TYPE]: null,

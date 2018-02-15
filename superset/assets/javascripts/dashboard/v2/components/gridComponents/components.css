@@ -1,13 +1,25 @@
 /* Header */
 .dashboard-component-header {
   width: 100%;
-  font-size: 24px; /* @TODO will need different sizes */
-  line-height: 24px;
+  line-height: 1em;
   font-weight: 700;
   background-color: inherit;
   padding: 16px 0;
   color: #263238;
 }
+
+.header-small {
+  font-size: 16px;
+}
+
+.header-medium {
+  font-size: 22px;
+}
+
+.header-large {
+  font-size: 32px;
+}
+
   .dragdroppable-row .dragdroppable-row .dashboard-component-header,
   .dragdroppable-row .dragdroppable-row .dashboard-component-divider {
     padding-left: 16px;
@@ -232,10 +244,11 @@
   content: "";
   position: absolute;
   top: 1;
-  left: 0;
+  left: -1;
   width: 100%;
   height: 100%;
   box-shadow: inset 0 0 0 2px #44C0FF;
+  pointer-events: none;
 }
 
 .popover-menu {
@@ -244,21 +257,47 @@
   flex-direction: row;
   align-items: center;
   flex-wrap: nowrap;
-  left: 0;
+  left: 1px;
   top: -42px;
   height: 40px;
   padding: 0 16px;
   background: #fff;
-  box-shadow: 0 2px 2px 0 rgba(0, 0, 0, 0.2);
+  box-shadow: 0 1px 2px 1px rgba(0, 0, 0, 0.2);
   font-size: 14px;
   cursor: default;
 }
 
-.popover-menu-vertical-separator {
+.popover-menu .menu-item {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+}
+
+/* vertical spacer after each menu item */
+.popover-menu .menu-item:nth-child(odd):after {
+  content: "";
   width: 1;
   height: 100%;
   background: #CFD8DC;
   margin: 0 16px;
+}
+
+.popover-menu .popover-dropdown.btn {
+  border: none;
+  padding: 0;
+  font-size: inherit;
+}
+
+.popover-menu .popover-dropdown.btn:hover,
+.popover-menu .popover-dropdown.btn:active,
+.popover-menu .popover-dropdown.btn:focus {
+  background: initial;
+  box-shadow: none;
+}
+
+.popover-menu li.dropdown-item:hover a,
+.popover-menu li.dropdown-item.active a {
+  background: #CFD8DC;
 }
 
 /* hover menu */

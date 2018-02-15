@@ -16,6 +16,7 @@ const propTypes = {
   children: PropTypes.func,
   component: componentShape.isRequired,
   components: PropTypes.object.isRequired,
+  disableDragDrop: PropTypes.bool,
   orientation: PropTypes.oneOf(['row', 'column']),
   index: PropTypes.number.isRequired,
   parentId: PropTypes.string,
@@ -37,6 +38,7 @@ const propTypes = {
 };
 
 const defaultProps = {
+  disableDragDrop: false,
   children() {},
   onDrop() {},
   parentId: null,

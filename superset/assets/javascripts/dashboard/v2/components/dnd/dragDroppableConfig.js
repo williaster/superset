@@ -4,6 +4,9 @@ const TYPE = 'DRAG_DROPPABLE';
 export const dragConfig = [
   TYPE,
   {
+    canDrag(props) {
+      return !props.disableDragDrop;
+    },
     beginDrag(props /* , monitor, component */) {
       const { component, index, parentId } = props;
       return { draggableId: component.id, index, parentId, type: component.type };

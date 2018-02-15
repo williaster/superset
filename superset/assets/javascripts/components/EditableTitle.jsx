@@ -1,5 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
+import cx from 'classnames';
 import TooltipWrapper from './TooltipWrapper';
 import { t } from '../locales';
 
@@ -110,7 +111,9 @@ class EditableTitle extends React.PureComponent {
       );
     }
     return (
-      <span className="editable-title">{input}</span>
+      <span className={cx('editable-title', this.props.canEdit && 'editable-title--editable')}>
+        {input}
+      </span>
     );
   }
 }

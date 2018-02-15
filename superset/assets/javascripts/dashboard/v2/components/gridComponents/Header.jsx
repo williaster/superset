@@ -1,11 +1,16 @@
 import React from 'react';
 import PropTypes from 'prop-types';
+import cx from 'classnames';
 
 import DragDroppable from '../dnd/DragDroppable';
 import DragHandle from '../dnd/DragHandle';
+import EditableTitle from '../../../../components/EditableTitle';
 import HoverMenu from '../menu/HoverMenu';
 import WithPopoverMenu from '../menu/WithPopoverMenu';
+import DeleteComponentButton from '../DeleteComponentButton';
+import HeaderStyleDropdown, { headerStyleOptions } from '../menu/HeaderStyleDropdown';
 import { componentShape } from '../../util/propShapes';
+import { SMALL_HEADER } from '../../util/constants';
 
 const propTypes = {
   component: componentShape.isRequired,
@@ -14,17 +19,54 @@ const propTypes = {
   parentId: PropTypes.string.isRequired,
   handleComponentDrop: PropTypes.func.isRequired,
   deleteComponent: PropTypes.func.isRequired,
+  updateComponents: PropTypes.func.isRequired,
 };
 
 const defaultProps = {
-  component: {},
 };
 
 class Header extends React.PureComponent {
   constructor(props) {
     super(props);
-    this.state = {};
+    this.state = {
+      isFocused: false,
+    };
     this.handleDeleteComponent = this.handleDeleteComponent.bind(this);
+    this.handleChangeFocus = this.handleChangeFocus.bind(this);
+    this.handleChangeStyle = this.handleChangeStyle.bind(this);
+    this.handleChangeText = this.handleChangeText.bind(this);
+  }
+
+  handleChangeFocus(nextFocus) {
+    this.setState(() => ({ isFocused: nextFocus }));
+  }
+
+  handleChangeStyle(nextStyle) {
+    const { updateComponents, component } = this.props;
+    updateComponents({
+      [component.id]: {
+        ...component,
+        meta: {
+          ...component.meta,
+          style: nextStyle.value,
+        },
+      },
+    });
+  }
+
+  handleChangeText(nextText) {
+    const { updateComponents, component } = this.props;
+    if (nextText && nextText !== component.meta.text) {
+      updateComponents({
+        [component.id]: {
+          ...component,
+          meta: {
+            ...component.meta,
+            text: nextText,
+          },
+        },
+      });
+    }
   }
 
   handleDeleteComponent() {
@@ -33,6 +75,8 @@ class Header extends React.PureComponent {
   }
 
   render() {
+    const { isFocused } = this.state;
+
     const {
       component,
       components,
@@ -40,6 +84,10 @@ class Header extends React.PureComponent {
       parentId,
       handleComponentDrop,
     } = this.props;
+
+    const headerStyle = headerStyleOptions.find(
+      opt => opt.value === (component.meta.style || SMALL_HEADER),
+    );
 
     return (
       <DragDroppable
@@ -49,6 +97,7 @@ class Header extends React.PureComponent {
         index={index}
         parentId={parentId}
         onDrop={handleComponentDrop}
+        disableDragDrop={isFocused}
       >
         {({ dropIndicatorProps, dragSourceRef }) => (
           <div ref={dragSourceRef}>
@@ -57,10 +106,29 @@ class Header extends React.PureComponent {
             </HoverMenu>
 
             <WithPopoverMenu
-              onPressDelete={this.handleDeleteComponent}
+              onChangeFocus={this.handleChangeFocus}
+              menuItems={[
+                <HeaderStyleDropdown
+                  id={component.id}
+                  value={component.meta.style}
+                  onChange={this.handleChangeStyle}
+                />,
+                <DeleteComponentButton onDelete={this.handleDeleteComponent} />,
+              ]}
             >
-              <div className="dashboard-component dashboard-component-header">
-                {component.meta.text}
+              <div
+                className={cx(
+                  'dashboard-component',
+                  'dashboard-component-header',
+                  headerStyle.className,
+                )}
+              >
+                <EditableTitle
+                  title={component.meta.text}
+                  canEdit={isFocused}
+                  onSaveTitle={this.handleChangeText}
+                  showTooltip={false}
+                />
               </div>
             </WithPopoverMenu>
 
