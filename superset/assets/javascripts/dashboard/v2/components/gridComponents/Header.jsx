@@ -8,7 +8,9 @@ import EditableTitle from '../../../../components/EditableTitle';
 import HoverMenu from '../menu/HoverMenu';
 import WithPopoverMenu from '../menu/WithPopoverMenu';
 import DeleteComponentButton from '../DeleteComponentButton';
-import HeaderStyleDropdown, { headerStyleOptions } from '../menu/HeaderStyleDropdown';
+import PopoverDropdown from '../menu/PopoverDropdown';
+import headerStyleOptions from '../menu/headerStyleOptions';
+import rowStyleOptions from '../menu/rowStyleOptions';
 import { componentShape } from '../../util/propShapes';
 import { SMALL_HEADER } from '../../util/constants';
 
@@ -33,36 +35,25 @@ class Header extends React.PureComponent {
     };
     this.handleDeleteComponent = this.handleDeleteComponent.bind(this);
     this.handleChangeFocus = this.handleChangeFocus.bind(this);
-    this.handleChangeStyle = this.handleChangeStyle.bind(this);
-    this.handleChangeText = this.handleChangeText.bind(this);
+    this.handleUpdateMeta = this.handleUpdateMeta.bind(this);
+    this.handleChangeSize = this.handleUpdateMeta.bind(this, 'size');
+    this.handleChangeRowStyle = this.handleUpdateMeta.bind(this, 'rowStyle');
+    this.handleChangeText = this.handleUpdateMeta.bind(this, 'text');
   }
 
   handleChangeFocus(nextFocus) {
     this.setState(() => ({ isFocused: nextFocus }));
   }
 
-  handleChangeStyle(nextStyle) {
+  handleUpdateMeta(metaKey, nextValue) {
     const { updateComponents, component } = this.props;
-    updateComponents({
-      [component.id]: {
-        ...component,
-        meta: {
-          ...component.meta,
-          style: nextStyle.value,
-        },
-      },
-    });
-  }
-
-  handleChangeText(nextText) {
-    const { updateComponents, component } = this.props;
-    if (nextText && nextText !== component.meta.text) {
+    if (nextValue && component.meta[metaKey] !== nextValue) {
       updateComponents({
         [component.id]: {
           ...component,
           meta: {
             ...component.meta,
-            text: nextText,
+            [metaKey]: nextValue,
           },
         },
       });
@@ -86,7 +77,11 @@ class Header extends React.PureComponent {
     } = this.props;
 
     const headerStyle = headerStyleOptions.find(
-      opt => opt.value === (component.meta.style || SMALL_HEADER),
+      opt => opt.value === (component.meta.size || SMALL_HEADER),
+    );
+
+    const rowStyle = rowStyleOptions.find(
+      opt => opt.value === (component.meta.rowStyle || SMALL_HEADER),
     );
 
     return (
@@ -108,10 +103,28 @@ class Header extends React.PureComponent {
             <WithPopoverMenu
               onChangeFocus={this.handleChangeFocus}
               menuItems={[
-                <HeaderStyleDropdown
-                  id={component.id}
-                  value={component.meta.style}
-                  onChange={this.handleChangeStyle}
+                <PopoverDropdown
+                  id={`${component.id}-header-style`}
+                  options={headerStyleOptions}
+                  value={component.meta.size}
+                  onChange={this.handleChangeSize}
+                  renderTitle={option => `${option.label} header`}
+                />,
+                <PopoverDropdown
+                  id={`${component.id}-row-style`}
+                  options={rowStyleOptions}
+                  value={component.meta.rowStyle}
+                  onChange={this.handleChangeRowStyle}
+                  renderButton={option => (
+                    <div className={cx('row-style-option', option.className)}>
+                      {`${option.label} background`}
+                    </div>
+                  )}
+                  renderOption={option => (
+                    <div className={cx('row-style-option', option.className)}>
+                      {option.label}
+                    </div>
+                  )}
                 />,
                 <DeleteComponentButton onDelete={this.handleDeleteComponent} />,
               ]}
@@ -121,6 +134,7 @@ class Header extends React.PureComponent {
                   'dashboard-component',
                   'dashboard-component-header',
                   headerStyle.className,
+                  rowStyle.className,
                 )}
               >
                 <EditableTitle

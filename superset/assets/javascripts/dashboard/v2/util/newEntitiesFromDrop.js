@@ -15,13 +15,14 @@ import {
 
 import {
   MEDIUM_HEADER,
+  ROW_TRANSPARENT,
 } from './constants';
 
 const typeToDefaultMetaData = {
   [CHART_TYPE]: { width: 3, height: 15 },
   [COLUMN_TYPE]: { width: 3 },
   [DIVIDER_TYPE]: null,
-  [HEADER_TYPE]: { text: 'New header', style: MEDIUM_HEADER },
+  [HEADER_TYPE]: { text: 'New header', size: MEDIUM_HEADER, rowStyle: ROW_TRANSPARENT },
   [INVISIBLE_ROW_TYPE]: null,
   [MARKDOWN_TYPE]: { width: 3, height: 15 },
   [ROW_TYPE]: null,

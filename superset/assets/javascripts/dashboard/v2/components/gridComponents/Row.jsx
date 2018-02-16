@@ -5,6 +5,7 @@ import cx from 'classnames';
 import DragDroppable from '../dnd/DragDroppable';
 import DragHandle from '../dnd/DragHandle';
 import DashboardComponent from '../../containers/DashboardComponent';
+import DeleteComponentButton from '../DeleteComponentButton';
 import HoverMenu from '../menu/HoverMenu';
 import { componentShape } from '../../util/propShapes';
 import { GRID_GUTTER_SIZE } from '../../util/constants';
@@ -27,6 +28,7 @@ const propTypes = {
 
   // dnd
   handleComponentDrop: PropTypes.func.isRequired,
+  deleteComponent: PropTypes.func.isRequired,
 };
 
 const defaultProps = {
@@ -34,6 +36,16 @@ const defaultProps = {
 };
 
 class Row extends React.PureComponent {
+  constructor(props) {
+    super(props);
+    this.handleDeleteComponent = this.handleDeleteComponent.bind(this);
+  }
+
+  handleDeleteComponent() {
+    const { deleteComponent, component, parentId } = this.props;
+    deleteComponent(component.id, parentId);
+  }
+
   render() {
     const {
       component: rowComponent,
@@ -85,6 +97,7 @@ class Row extends React.PureComponent {
           >
             <HoverMenu innerRef={dragSourceRef} position="left">
               <DragHandle position="left" />
+              <DeleteComponentButton onDelete={this.handleDeleteComponent} />
             </HoverMenu>
 
             {rowItems.map((component, itemIndex) => {
@@ -108,8 +121,8 @@ class Row extends React.PureComponent {
                 />
               );
             })}
-            {dropIndicatorProps &&
-              <div {...dropIndicatorProps} />}
+
+            {dropIndicatorProps && <div {...dropIndicatorProps} />}
           </div>
         )}
       </DragDroppable>

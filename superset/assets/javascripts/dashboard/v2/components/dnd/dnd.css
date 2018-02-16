@@ -34,7 +34,7 @@
 }
 
 .drag-handle--left {
-  padding-left: 7px;
+  width: 8px;
 }
 
 .drag-handle--top {

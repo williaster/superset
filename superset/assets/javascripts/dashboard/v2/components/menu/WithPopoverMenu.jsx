@@ -27,6 +27,7 @@ class WithPopoverMenu extends React.Component {
 
   componentWillUnmount() {
     document.removeEventListener('click', this.handleClick, true);
+    document.removeEventListener('drag', this.handleClick, true);
   }
 
   setRef(ref) {
@@ -39,12 +40,14 @@ class WithPopoverMenu extends React.Component {
       // if not focused, set focus and add a window event listener to capture outside clicks
       // this enables us to not set a click listener for ever item on a dashboard
       document.addEventListener('click', this.handleClick, true);
+      document.addEventListener('drag', this.handleClick, true);
       this.setState(() => ({ isFocused: true }));
       if (onChangeFocus) {
         onChangeFocus(true);
       }
     } else if (!this.container.contains(event.target)) {
       document.removeEventListener('click', this.handleClick, true);
+      document.removeEventListener('drag', this.handleClick, true);
       this.setState(() => ({ isFocused: false }));
       if (onChangeFocus) {
         onChangeFocus(false);

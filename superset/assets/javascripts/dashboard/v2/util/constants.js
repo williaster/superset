@@ -18,5 +18,5 @@ export const MEDIUM_HEADER = 'MEDIUM_HEADER';
 export const LARGE_HEADER = 'LARGE_HEADER';
 
 // Row types
-export const WHITE_ROW = 'WHITE_ROW';
-export const TRANSPARENT_ROW = 'TRANSPARENT_ROW';
+export const ROW_WHITE = 'ROW_WHITE';
+export const ROW_TRANSPARENT = 'ROW_TRANSPARENT';

@@ -189,7 +189,7 @@ class Tabs extends React.PureComponent {
                         index={tabIndex}
                         parentId={tabsComponent.id}
                         onDrop={this.handleDropOnTab}
-                        disableDragDrop={Boolean(focusedId)}
+                        disableDragDrop={tabId === focusedId}
                       >
                         {({ dropIndicatorProps, dragSourceRef }) => (
                           <div className="dragdroppable-tab" ref={dragSourceRef}>
