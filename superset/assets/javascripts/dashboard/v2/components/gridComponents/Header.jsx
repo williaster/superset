@@ -12,7 +12,7 @@ import PopoverDropdown from '../menu/PopoverDropdown';
 import headerStyleOptions from '../menu/headerStyleOptions';
 import rowStyleOptions from '../menu/rowStyleOptions';
 import { componentShape } from '../../util/propShapes';
-import { SMALL_HEADER } from '../../util/constants';
+import { SMALL_HEADER, ROW_TRANSPARENT } from '../../util/constants';
 
 const propTypes = {
   component: componentShape.isRequired,
@@ -81,7 +81,7 @@ class Header extends React.PureComponent {
     );
 
     const rowStyle = rowStyleOptions.find(
-      opt => opt.value === (component.meta.rowStyle || SMALL_HEADER),
+      opt => opt.value === (component.meta.rowStyle || ROW_TRANSPARENT),
     );
 
     return (

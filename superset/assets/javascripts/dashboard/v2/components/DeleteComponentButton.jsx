@@ -15,7 +15,7 @@ export default class DeleteComponentButton extends React.PureComponent {
     return (
       <div
         onClick={onDelete}
-        className={cx('delete-component-button', 'fa fa-trash')}
+        className={cx('fa fa-trash')}
         role="button"
         tabIndex="-1"
       />

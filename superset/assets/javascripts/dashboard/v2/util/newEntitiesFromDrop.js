@@ -5,7 +5,6 @@ import {
   COLUMN_TYPE,
   DIVIDER_TYPE,
   HEADER_TYPE,
-  INVISIBLE_ROW_TYPE,
   MARKDOWN_TYPE,
   ROW_TYPE,
   SPACER_TYPE,
@@ -23,9 +22,8 @@ const typeToDefaultMetaData = {
   [COLUMN_TYPE]: { width: 3 },
   [DIVIDER_TYPE]: null,
   [HEADER_TYPE]: { text: 'New header', size: MEDIUM_HEADER, rowStyle: ROW_TRANSPARENT },
-  [INVISIBLE_ROW_TYPE]: null,
   [MARKDOWN_TYPE]: { width: 3, height: 15 },
-  [ROW_TYPE]: null,
+  [ROW_TYPE]: { rowStyle: ROW_TRANSPARENT },
   [SPACER_TYPE]: { width: 1 },
   [TABS_TYPE]: null,
   [TAB_TYPE]: { text: 'New Tab' },
@@ -51,7 +49,7 @@ function entityFactory(type) {
 export default function newEntitiesFromDrop({ dropResult, components }) {
   const { draggableId, destination } = dropResult;
 
-  const dragType = draggableId; // @TODO idToType
+  const dragType = draggableId; // @TODO newComponentIdToType lookup
   const dropEntity = components[destination.droppableId];
 
   if (!dropEntity) {
@@ -68,16 +66,15 @@ export default function newEntitiesFromDrop({ dropResult, components }) {
   };
 
   if (!isValidDrop) {
-    console.log('wrapping', dragType, 'in invisible row');
-    if (!isValidChild({ parentType: dropType, childType: INVISIBLE_ROW_TYPE })) {
+    console.log('wrapping', dragType, 'in row');
+    if (!isValidChild({ parentType: dropType, childType: ROW_TYPE })) {
       console.warn('wrapping in an invalid component');
     }
 
-    const rowWrapper = entityFactory(INVISIBLE_ROW_TYPE);
+    const rowWrapper = entityFactory(ROW_TYPE);
     rowWrapper.children = [newDropChild.id];
     newEntities[rowWrapper.id] = rowWrapper;
     newDropChild = rowWrapper;
-
   } else if (dragType === TABS_TYPE) {
     const tabChild = entityFactory(TAB_TYPE);
     newDropChild.children = [tabChild.id];
