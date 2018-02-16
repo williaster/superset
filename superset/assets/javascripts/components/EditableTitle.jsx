@@ -28,9 +28,12 @@ class EditableTitle extends React.PureComponent {
     this.handleClick = this.handleClick.bind(this);
     this.handleBlur = this.handleBlur.bind(this);
     this.handleChange = this.handleChange.bind(this);
+    this.handleKeyDown = this.handleKeyDown.bind(this);
     this.handleKeyPress = this.handleKeyPress.bind(this);
   }
+
   componentWillReceiveProps(nextProps) {
+    console.log('new props')
     if (nextProps.title !== this.state.title) {
       this.setState({
         lastTitle: this.state.title,
@@ -38,8 +41,9 @@ class EditableTitle extends React.PureComponent {
       });
     }
   }
+
   handleClick() {
-    if (!this.props.canEdit) {
+    if (!this.props.canEdit || this.state.isEditing) {
       return;
     }
 
@@ -47,7 +51,9 @@ class EditableTitle extends React.PureComponent {
       isEditing: true,
     });
   }
+
   handleBlur() {
+    console.log('blur')
     if (!this.props.canEdit) {
       return;
     }
@@ -68,9 +74,31 @@ class EditableTitle extends React.PureComponent {
       this.setState({
         lastTitle: this.state.title,
       });
+    }
+
+    if (this.props.title !== this.state.title) {
       this.props.onSaveTitle(this.state.title);
     }
   }
+
+  handleKeyDown(ev) {
+    // this entire method exists to support using EditableTitle as the title of a
+    // react-bootstrap Tab, as a workaround for this line in react-bootstrap https://goo.gl/ZVLmv4
+    //
+    // tl;dr when a Tab EditableTitle is being edited, typically the Tab it's within has been
+    // clicked and is focused/active. for accessibility, when focused the Tab <a /> intercepts
+    // the ' ' key (among others, including all arrows) and onChange() doesn't fire. somehow
+    // keydown is still called so we can detect this and manually add a ' ' to the current title
+    if (ev.key === ' ') {
+      let title = ev.target.value;
+      const titleLength = (title || '').length;
+      if (title && title[titleLength - 1] !== ' ') {
+        title = `${title} `;
+        this.setState(() => ({ title }));
+      }
+    }
+  }
+
   handleChange(ev) {
     if (!this.props.canEdit) {
       return;
@@ -80,6 +108,7 @@ class EditableTitle extends React.PureComponent {
       title: ev.target.value,
     });
   }
+
   handleKeyPress(ev) {
     if (ev.key === 'Enter') {
       ev.preventDefault();
@@ -87,12 +116,14 @@ class EditableTitle extends React.PureComponent {
       this.handleBlur();
     }
   }
+
   render() {
     let input = (
       <input
         required
         type={this.state.isEditing ? 'text' : 'button'}
         value={this.state.title}
+        onKeyDown={this.handleKeyDown}
         onChange={this.handleChange}
         onBlur={this.handleBlur}
         onClick={this.handleClick}

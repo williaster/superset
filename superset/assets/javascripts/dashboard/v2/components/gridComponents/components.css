@@ -265,6 +265,7 @@
   box-shadow: 0 1px 2px 1px rgba(0, 0, 0, 0.2);
   font-size: 14px;
   cursor: default;
+  z-index: 10;
 }
 
 .popover-menu .menu-item {
@@ -274,7 +275,7 @@
 }
 
 /* vertical spacer after each menu item */
-.popover-menu .menu-item:nth-child(odd):after {
+.popover-menu .menu-item:nth-child(even):before {
   content: "";
   width: 1;
   height: 100%;
@@ -314,7 +315,11 @@
   left: -20px;
   display: flex;
   flex-direction: column;
-  justify-content: space-around;
+  justify-content: center;
+}
+
+.hover-menu--left > div:nth-child(odd):not(:only-child) {
+  padding-bottom: 8px;
 }
 
   .dragdroppable-row .dragdroppable-row .hover-menu--left {

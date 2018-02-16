@@ -5,7 +5,10 @@ import { Tabs as BootstrapTabs, Tab } from 'react-bootstrap';
 import DragDroppable from '../dnd/DragDroppable';
 import DragHandle from '../dnd/DragHandle';
 import DashboardComponent from '../../containers/DashboardComponent';
+import EditableTitle from '../../../../components/EditableTitle';
+import DeleteComponentButton from '../DeleteComponentButton';
 import HoverMenu from '../menu/HoverMenu';
+import WithPopoverMenu from '../menu/WithPopoverMenu';
 import { componentShape } from '../../util/propShapes';
 import { TAB_TYPE } from '../../util/componentTypes';
 
@@ -30,6 +33,8 @@ const propTypes = {
   createComponent: PropTypes.func.isRequired,
   handleComponentDrop: PropTypes.func.isRequired,
   onChangeTab: PropTypes.func,
+  deleteComponent: PropTypes.func.isRequired,
+  updateComponents: PropTypes.func.isRequired,
 };
 
 const defaultProps = {
@@ -37,31 +42,37 @@ const defaultProps = {
   children: null,
 };
 
-class Tabs extends React.Component {
+class Tabs extends React.PureComponent {
   constructor(props) {
     super(props);
     this.state = {
       tabIndex: 0,
+      focusedId: null,
     };
     this.handleClicKTab = this.handleClicKTab.bind(this);
+    this.handleDeleteComponent = this.handleDeleteComponent.bind(this);
+    this.handleDropOnTab = this.handleDropOnTab.bind(this);
+    this.handleChangeFocus = this.handleChangeFocus.bind(this);
+    this.handleChangeText = this.handleChangeText.bind(this);
   }
 
   componentWillReceiveProps(nextProps) {
     const maxIndex = Math.max(0, nextProps.component.children.length - 1);
-    if (this.state.tabIndex >= maxIndex) {
+    if (this.state.tabIndex > maxIndex) {
       this.setState(() => ({ tabIndex: maxIndex }));
     }
   }
 
   handleClicKTab(tabIndex) {
     const { onChangeTab, component, createComponent } = this.props;
+    const { focusedId } = this.state;
 
-    if (tabIndex !== NEW_TAB_INDEX) {
+    if (!focusedId && tabIndex !== NEW_TAB_INDEX && tabIndex !== this.state.tabIndex) {
       this.setState(() => ({ tabIndex }));
       if (onChangeTab) {
         onChangeTab({ tabIndex, tab: component.children[tabIndex] });
       }
-    } else {
+    } else if (!focusedId && tabIndex === NEW_TAB_INDEX) {
       createComponent({
         destination: {
           droppableId: component.id,
@@ -69,6 +80,53 @@ class Tabs extends React.Component {
         },
         draggableId: TAB_TYPE,
       });
+    }
+  }
+
+  handleChangeFocus(nextFocus) {
+    if (this.state.focusedId !== nextFocus) {
+      this.setState(() => ({ focusedId: nextFocus }));
+    }
+  }
+
+  handleChangeText({ id, nextTabText }) {
+    const { updateComponents, components } = this.props;
+    const tab = components[id];
+    if (nextTabText && tab && nextTabText !== tab.meta.text) {
+      updateComponents({
+        [tab.id]: {
+          ...tab,
+          meta: {
+            ...tab.meta,
+            text: nextTabText,
+          },
+        },
+      });
+    }
+  }
+
+  handleDeleteComponent(id) {
+    const { deleteComponent, component, parentId } = this.props;
+    const isTabsComponent = id === component.id;
+    deleteComponent(id, isTabsComponent ? parentId : component.id);
+  }
+
+  handleDropOnTab(dropResult) {
+    const { component, handleComponentDrop } = this.props;
+    handleComponentDrop(dropResult);
+
+    // Ensure dropped tab is visible
+    const { destination } = dropResult;
+    if (destination) {
+      const dropTabIndex = destination.droppableId === component.id
+        ? destination.index // dropped ON tab
+        : component.children.indexOf(destination.droppableId); // dropped IN tab
+
+      if (dropTabIndex > -1) {
+        setTimeout(() => {
+          this.handleClicKTab(dropTabIndex);
+        }, 30);
+      }
     }
   }
 
@@ -87,7 +145,7 @@ class Tabs extends React.Component {
       handleComponentDrop,
     } = this.props;
 
-    const { tabIndex: selectedTabIndex } = this.state;
+    const { tabIndex: selectedTabIndex, focusedId } = this.state;
     const { children: tabIds } = tabsComponent;
 
     return (
@@ -98,11 +156,17 @@ class Tabs extends React.Component {
         index={index}
         parentId={parentId}
         onDrop={handleComponentDrop}
+        disableDragDrop={Boolean(focusedId)}
       >
         {({ dropIndicatorProps: tabsDropIndicatorProps, dragSourceRef: tabsDragSourceRef }) => (
           <div className="dashboard-component dashboard-component-tabs">
             <HoverMenu innerRef={tabsDragSourceRef} position="left">
               <DragHandle position="left" />
+              <DeleteComponentButton
+                onDelete={() => {
+                  this.handleDeleteComponent(tabsComponent.id);
+                }}
+              />
             </HoverMenu>
 
             <BootstrapTabs
@@ -113,7 +177,7 @@ class Tabs extends React.Component {
             >
               {tabIds.map((tabId, tabIndex) => {
                 const tabComponent = components[tabId];
-                return (
+                return ( // Bootstrap doesn't render a Tab if we move this to its own Tab.jsx
                   <Tab
                     key={tabId}
                     eventKey={tabIndex}
@@ -124,27 +188,33 @@ class Tabs extends React.Component {
                         orientation="column"
                         index={tabIndex}
                         parentId={tabsComponent.id}
-                        onDrop={(dropResult) => {
-                          handleComponentDrop(dropResult);
-
-                          // Ensure dropped tab is visible
-                          const { destination } = dropResult;
-                          if (destination) {
-                            const dropTabIndex = destination.droppableId === tabsComponent.id
-                              ? destination.index // dropped ON tab
-                              : tabIds.indexOf(destination.droppableId); // dropped IN tab
-
-                            if (dropTabIndex > -1) {
-                              setTimeout(() => {
-                                this.handleClicKTab(dropTabIndex);
-                              }, 20);
-                            }
-                          }
-                        }}
+                        onDrop={this.handleDropOnTab}
+                        disableDragDrop={Boolean(focusedId)}
                       >
                         {({ dropIndicatorProps, dragSourceRef }) => (
                           <div className="dragdroppable-tab" ref={dragSourceRef}>
-                            {tabComponent.meta.text}
+                            <WithPopoverMenu
+                              onChangeFocus={(nextFocus) => {
+                                this.handleChangeFocus(nextFocus && tabId);
+                              }}
+                              menuItems={[
+                                <DeleteComponentButton
+                                  onDelete={() => {
+                                    this.handleDeleteComponent(tabId);
+                                  }}
+                                />,
+                              ]}
+                            >
+                              <EditableTitle
+                                title={tabComponent.meta.text}
+                                canEdit={focusedId === tabId}
+                                onSaveTitle={(nextTabText) => {
+                                  this.handleChangeText({ id: tabId, nextTabText });
+                                }}
+                                showTooltip={false}
+                              />
+                            </WithPopoverMenu>
+
                             {dropIndicatorProps &&
                               <div {...dropIndicatorProps} />}
                           </div>
