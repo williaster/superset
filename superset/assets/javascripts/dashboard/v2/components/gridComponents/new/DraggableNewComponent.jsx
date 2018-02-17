@@ -1,5 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
+import cx from 'classnames';
 
 import DragDroppable from '../../dnd/DragDroppable';
 
@@ -11,7 +12,7 @@ const propTypes = {
 
 export default class DraggableNewComponent extends React.PureComponent {
   render() {
-    const { label, id, type } = this.props;
+    const { label, id, type, className } = this.props;
     return (
       <DragDroppable
         component={{ type, id }}
@@ -20,7 +21,7 @@ export default class DraggableNewComponent extends React.PureComponent {
       >
         {({ dragSourceRef }) => (
           <div ref={dragSourceRef} className="new-component">
-            <div className="new-component-placeholder" />
+            <div className={cx('new-component-placeholder', className)} />
             {label}
           </div>
         )}

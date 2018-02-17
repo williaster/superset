@@ -14,6 +14,7 @@ export default class DraggableNewColumn extends React.PureComponent {
         id={COLUMN_TYPE}
         type={COLUMN_TYPE}
         label="Column"
+        className="fa fa-long-arrow-down"
       />
     );
   }

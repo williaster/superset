@@ -14,6 +14,7 @@ export default class DraggableNewHeader extends React.Component {
         id={HEADER_TYPE}
         type={HEADER_TYPE}
         label="Header"
+        className="fa fa-header"
       />
     );
   }

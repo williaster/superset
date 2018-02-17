@@ -38,6 +38,11 @@
   justify-content: center;
 }
 
+.dashboard-component-chart .fa {
+  font-size: 100px;
+  opacity: 0.3;
+}
+
 .grid-container--resizing .dashboard-component-chart,
 .dashboard-builder--dragging .dashboard-component-chart,
 .dashboard-component-chart:hover {
@@ -145,6 +150,11 @@
   height: 40px;
   margin-right: 16px;
   box-shadow: 0 0 1px #fff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #aaa;
+  font-size: 1.5em;
 }
 
 /* Spacer */
@@ -196,7 +206,7 @@
   justify-content: center;
   width: 100%;
   height: 100%;
-  color: #CFD8DC;
+  color: #aaa;
 }
 
 .grid-column--empty:after {

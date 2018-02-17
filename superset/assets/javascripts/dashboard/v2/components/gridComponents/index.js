@@ -9,7 +9,6 @@ import {
   ROW_TYPE,
   SPACER_TYPE,
   TABS_TYPE,
-  TAB_TYPE,
 } from '../../util/componentTypes';
 
 import Chart from './Chart';
@@ -19,7 +18,6 @@ import Header from './Header';
 import Row from './Row';
 import Spacer from './Spacer';
 import Tabs from './Tabs';
-import Tab from './Tab';
 
 export { default as Chart } from './Chart';
 export { default as Column } from './Column';
@@ -28,7 +26,6 @@ export { default as Header } from './Header';
 export { default as Row } from './Row';
 export { default as Spacer } from './Spacer';
 export { default as Tabs } from './Tabs';
-export { default as Tab } from './Tab';
 
 export default {
   [CHART_TYPE]: Chart,
@@ -39,5 +36,4 @@ export default {
   [ROW_TYPE]: Row,
   [SPACER_TYPE]: Spacer,
   [TABS_TYPE]: Tabs,
-  [TAB_TYPE]: Tab,
 };

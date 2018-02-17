@@ -14,6 +14,7 @@ export default class DraggableNewChart extends React.PureComponent {
         id={CHART_TYPE}
         type={CHART_TYPE}
         label="Chart"
+        className="fa fa-area-chart"
       />
     );
   }

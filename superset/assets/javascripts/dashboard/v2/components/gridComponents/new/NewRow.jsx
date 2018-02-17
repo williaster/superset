@@ -13,6 +13,7 @@ export default class DraggableNewRow extends React.PureComponent {
         id={ROW_TYPE}
         type={ROW_TYPE}
         label="Row"
+        className="fa fa-long-arrow-right"
       />
     );
   }
