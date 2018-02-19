@@ -56,8 +56,17 @@
   background-color: transparent;
 }
 
-.dashboard-component-divider > div {
+.dashboard-component-divider:after {
+  content: "";
   height: 1px;
+  width: 100%;
+  background-color: #CFD8DC;
+  display: block;
+}
+
+.new-component-placeholder.divider-placeholder:after {
+  content: "";
+  height: 2px;
   width: 100%;
   background-color: #CFD8DC;
 }
@@ -145,6 +154,7 @@
 }
 
 .new-component-placeholder {
+  position: relative;
   background: #f5f5f5;
   width: 40px;
   height: 40px;
@@ -166,10 +176,26 @@
    position: relative;
 }
 
+.new-component-placeholder.spacer-placeholder {
+  font-size: 1em;
+}
+
+.new-component-placeholder.spacer-placeholder:after {
+  content: "";
+  position: absolute;
+  height: 60%;
+  width: 60%;
+  border: 1px dashed #aaa;
+}
+
 /* columns and rows */
 .grid-column {
   width: 100%;
   min-height: 56px;
+}
+
+.grid-column .hover-menu--top {
+  top: -20px;
 }
 
 .grid-row {
@@ -196,10 +222,13 @@
 
 .grid-row.grid-row--empty {
   align-items: center; /* this centers the empty note content */
-  min-height: 72px;
+  height: 80px;
 }
 
 .grid-row--empty:after {
+  position: absolute;
+  top: 0;
+  left: 0;
   content: "Empty row";
   display: flex;
   align-items: center;
@@ -211,11 +240,14 @@
 
 .grid-column--empty:after {
   content: "Empty column";
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 100%;
-  height: 100%;
   color: #CFD8DC;
 }
 
@@ -233,6 +265,11 @@
 .with-popover-menu {
   position: relative;
   outline: none;
+}
+
+.grid-row.grid-row--empty .with-popover-menu { /* indicator doesn't show up without this */
+  width: 100%;
+  height: 100%;
 }
 
 .with-popover-menu--focused:after {
@@ -271,7 +308,7 @@
 }
 
 /* vertical spacer after each menu item */
-.popover-menu .menu-item:nth-child(n+2):before {
+.popover-menu .menu-item:not(:only-child):not(:last-child):after {
   content: "";
   width: 1;
   height: 100%;
@@ -300,6 +337,12 @@
 .popover-menu li.dropdown-item:hover a {
   background: #CFD8DC;
 }
+
+.popover-dropdown .caret { /* without this the caret doesn't take up full width / is clipped */
+  width: auto;
+  border-top-color: transparent;
+}
+
 
 .hover-dropdown li.dropdown-item.active a,
 .popover-menu li.dropdown-item.active a {
@@ -354,7 +397,7 @@
   align-items: center;
 }
 
-.hover-menu--left > div:nth-child(n):not(:only-child):not(:last-child) {
+.hover-menu--left > :nth-child(n):not(:only-child):not(:last-child) {
   padding-bottom: 8px;
 }
 
@@ -376,24 +419,20 @@
 
 
 /* Menu fa buttons */
-.hover-menu .fa,
-.popover-menu .fa {
+.icon-button {
   color: #879399;
   font-size: 1em;
   display: flex;
   flex-direction: row;
   align-items: center;
   justify-content: center;
-}
-
-.hover-menu .fa:hover,
-.hover-menu .fa:active,
-.popover-menu .fa:hover,
-.popover-menu .fa:active {
-  color: #484848;
-}
-
-.hover-menu .fa:focus,
-.popover-menu .fa:focus {
   outline: none;
+}
+
+.icon-button:hover,
+.icon-button:active,
+.icon-button:focus {
+  color: #484848;
+  outline: none;
+  text-decoration: none;
 }

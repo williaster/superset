@@ -122,8 +122,8 @@ class ResizableContainer extends React.PureComponent {
     } = this.props;
 
     const size = {
-      width: adjustableWidth ? (widthStep * widthMultiple) - gutterWidth : 'auto',
-      height: (adjustableHeight || heightMultiple) ? heightStep * heightMultiple : 'auto',
+      width: adjustableWidth ? (widthStep * widthMultiple) - gutterWidth : null,
+      height: (adjustableHeight || heightMultiple) ? heightStep * heightMultiple : null,
     };
 
     let enableConfig = resizableConfig.widthAndHeight;
@@ -136,10 +136,10 @@ class ResizableContainer extends React.PureComponent {
       <Resizable
         enable={enableConfig}
         grid={snapToGrid}
-        minWidth={adjustableWidth ? minWidthMultiple * widthStep - gutterWidth : size.width}
-        minHeight={adjustableHeight ? minHeightMultiple * heightStep : size.height}
-        maxWidth={adjustableWidth ? maxWidthMultiple * widthStep - gutterWidth : size.width}
-        maxHeight={adjustableHeight ? maxHeightMultiple * heightStep : size.height}
+        minWidth={adjustableWidth ? (minWidthMultiple * widthStep) - gutterWidth : size.width}
+        minHeight={adjustableHeight ? (minHeightMultiple * heightStep) : size.height}
+        maxWidth={adjustableWidth ? (maxWidthMultiple * widthStep) - gutterWidth : size.width}
+        maxHeight={adjustableHeight ? (maxHeightMultiple * heightStep) : size.height}
         size={size}
         onResizeStart={this.handleResizeStart}
         onResize={this.handleResize}

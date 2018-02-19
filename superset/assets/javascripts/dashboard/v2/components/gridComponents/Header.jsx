@@ -7,7 +7,9 @@ import DragHandle from '../dnd/DragHandle';
 import EditableTitle from '../../../../components/EditableTitle';
 import HoverMenu from '../menu/HoverMenu';
 import WithPopoverMenu from '../menu/WithPopoverMenu';
+import RowStyleDropdown from '../menu/RowStyleDropdown';
 import DeleteComponentButton from '../DeleteComponentButton';
+import IconButton from '../IconButton';
 import PopoverDropdown from '../menu/PopoverDropdown';
 import headerStyleOptions from '../menu/headerStyleOptions';
 import rowStyleOptions from '../menu/rowStyleOptions';
@@ -110,21 +112,10 @@ class Header extends React.PureComponent {
                   onChange={this.handleChangeSize}
                   renderTitle={option => `${option.label} header`}
                 />,
-                <PopoverDropdown
+                <RowStyleDropdown
                   id={`${component.id}-row-style`}
-                  options={rowStyleOptions}
                   value={component.meta.rowStyle}
                   onChange={this.handleChangeRowStyle}
-                  renderButton={option => (
-                    <div className={cx('row-style-option', option.className)}>
-                      {`${option.label} background`}
-                    </div>
-                  )}
-                  renderOption={option => (
-                    <div className={cx('row-style-option', option.className)}>
-                      {option.label}
-                    </div>
-                  )}
                 />,
                 <DeleteComponentButton onDelete={this.handleDeleteComponent} />,
               ]}

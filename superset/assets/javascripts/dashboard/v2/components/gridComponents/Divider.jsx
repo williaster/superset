@@ -50,9 +50,7 @@ class Divider extends React.PureComponent {
               <DeleteComponentButton onDelete={this.handleDeleteComponent} />
             </HoverMenu>
 
-            <div className="dashboard-component dashboard-component-divider">
-              <div />
-            </div>
+            <div className="dashboard-component dashboard-component-divider" />
 
             {dropIndicatorProps && <div {...dropIndicatorProps} />}
           </div>

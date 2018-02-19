@@ -1,5 +1,7 @@
 .dragdroppable {
   position: relative;
+  /*height: fit-content;
+  min-height: 2px;*/
 }
 
 .dragdroppable--dragging {

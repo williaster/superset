@@ -13,6 +13,7 @@ const propTypes = {
   component: componentShape.isRequired,
   components: PropTypes.object.isRequired,
   index: PropTypes.number.isRequired,
+  depth: PropTypes.number.isRequired,
   parentId: PropTypes.string.isRequired,
 
   // grid related
@@ -59,6 +60,7 @@ class Chart extends React.Component {
       component,
       components,
       index,
+      depth,
       parentId,
       availableColumnCount,
       columnWidth,
@@ -68,12 +70,12 @@ class Chart extends React.Component {
       onResizeStop,
       handleComponentDrop,
     } = this.props;
-
+    console.log('chart depth', depth)
     return (
       <DragDroppable
         component={component}
         components={components}
-        orientation="column"
+        orientation={depth % 2 === 1 ? 'column' : 'row'}
         index={index}
         parentId={parentId}
         onDrop={handleComponentDrop}
@@ -82,6 +84,7 @@ class Chart extends React.Component {
         {({ dropIndicatorProps, dragSourceRef }) => (
           <DimensionProvider
             component={component}
+            adjustableHeight={depth <= 1}
             availableColumnCount={availableColumnCount}
             columnWidth={columnWidth}
             rowHeight={rowHeight}

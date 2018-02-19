@@ -14,6 +14,7 @@ export default class DraggableNewTabs extends React.PureComponent {
         id={TABS_TYPE}
         type={TABS_TYPE}
         label="Tabs"
+        className="fa fa-window-restore"
       />
     );
   }

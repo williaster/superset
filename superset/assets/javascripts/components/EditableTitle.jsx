@@ -33,7 +33,6 @@ class EditableTitle extends React.PureComponent {
   }
 
   componentWillReceiveProps(nextProps) {
-    console.log('new props')
     if (nextProps.title !== this.state.title) {
       this.setState({
         lastTitle: this.state.title,
@@ -53,7 +52,6 @@ class EditableTitle extends React.PureComponent {
   }
 
   handleBlur() {
-    console.log('blur')
     if (!this.props.canEdit) {
       return;
     }

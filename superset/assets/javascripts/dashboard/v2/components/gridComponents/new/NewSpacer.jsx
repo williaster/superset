@@ -14,6 +14,7 @@ export default class DraggableNewChart extends React.PureComponent {
         id={SPACER_TYPE}
         type={SPACER_TYPE}
         label="Spacer"
+        className="spacer-placeholder fa fa-arrows"
       />
     );
   }

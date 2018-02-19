@@ -1,6 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import cx from 'classnames';
+
+import IconButton from './IconButton';
 
 const propTypes = {
   onDelete: PropTypes.func.isRequired,
@@ -13,12 +14,7 @@ export default class DeleteComponentButton extends React.PureComponent {
   render() {
     const { onDelete } = this.props;
     return (
-      <div
-        onClick={onDelete}
-        className={cx('fa fa-trash')}
-        role="button"
-        tabIndex="-1"
-      />
+      <IconButton onClick={onDelete} className="fa fa-trash" />
     );
   }
 }

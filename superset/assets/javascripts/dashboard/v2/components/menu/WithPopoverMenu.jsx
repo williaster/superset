@@ -4,25 +4,38 @@ import cx from 'classnames';
 
 const propTypes = {
   children: PropTypes.node,
+  disableClick: PropTypes.bool,
   menuItems: PropTypes.arrayOf(PropTypes.node),
   onChangeFocus: PropTypes.func,
+  isFocused: PropTypes.bool,
 };
 
 const defaultProps = {
   children: null,
+  disableClick: false,
   onChangeFocus: null,
   onPressDelete() {},
   menuItems: [],
+  isFocused: false,
 };
 
-class WithPopoverMenu extends React.Component {
+class WithPopoverMenu extends React.PureComponent {
   constructor(props) {
     super(props);
     this.state = {
-      isFocused: false,
+      isFocused: props.isFocused,
     };
     this.setRef = this.setRef.bind(this);
+    // this.setPopoverRef = this.setPopoverRef.bind(this);
     this.handleClick = this.handleClick.bind(this);
+  }
+
+  componentWillReceiveProps(nextProps) {
+    if (nextProps.isFocused && !this.state.isFocused) {
+      document.addEventListener('click', this.handleClick, true);
+      document.addEventListener('drag', this.handleClick, true);
+      this.setState({ isFocused: true });
+    }
   }
 
   componentWillUnmount() {
@@ -33,6 +46,10 @@ class WithPopoverMenu extends React.Component {
   setRef(ref) {
     this.container = ref;
   }
+  //
+  // setPopoverRef(ref) {
+  //   this.popover = ref;
+  // }
 
   handleClick(event) {
     const { onChangeFocus } = this.props;
@@ -56,12 +73,13 @@ class WithPopoverMenu extends React.Component {
   }
 
   render() {
-    const { children, menuItems } = this.props;
+    const { children, menuItems, disableClick } = this.props;
     const { isFocused } = this.state;
+    console.log('render popover')
     return (
       <div
         ref={this.setRef}
-        onClick={this.handleClick}
+        onClick={!disableClick && this.handleClick}
         role="button" // @TODO consider others?
         tabIndex="0"
         className={cx(

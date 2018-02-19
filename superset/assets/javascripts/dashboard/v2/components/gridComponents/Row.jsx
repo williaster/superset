@@ -7,10 +7,12 @@ import DragHandle from '../dnd/DragHandle';
 import DashboardComponent from '../../containers/DashboardComponent';
 import DeleteComponentButton from '../DeleteComponentButton';
 import HoverMenu from '../menu/HoverMenu';
-import RowStyleHoverDropdown from '../menu/RowStyleHoverDropdown';
-// import PopoverDropdown from '../menu/PopoverDropdown';
-import rowStyleOptions from '../menu/rowStyleOptions';
+import IconButton from '../IconButton';
+import RowStyleDropdown from '../menu/RowStyleDropdown';
+import WithPopoverMenu from '../menu/WithPopoverMenu';
+
 import { componentShape } from '../../util/propShapes';
+import rowStyleOptions from '../menu/rowStyleOptions';
 import { GRID_GUTTER_SIZE, ROW_TRANSPARENT } from '../../util/constants';
 
 const propTypes = {
@@ -41,9 +43,17 @@ const defaultProps = {
 class Row extends React.PureComponent {
   constructor(props) {
     super(props);
+    this.state = {
+      isFocused: false,
+    };
     this.handleDeleteComponent = this.handleDeleteComponent.bind(this);
     this.handleUpdateMeta = this.handleUpdateMeta.bind(this);
     this.handleChangeRowStyle = this.handleUpdateMeta.bind(this, 'rowStyle');
+    this.handleChangeFocus = this.handleChangeFocus.bind(this);
+  }
+
+  handleChangeFocus(nextFocus) {
+    this.setState(() => ({ isFocused: Boolean(nextFocus) }));
   }
 
   handleUpdateMeta(metaKey, nextValue) {
@@ -112,47 +122,60 @@ class Row extends React.PureComponent {
         onDrop={handleComponentDrop}
       >
         {({ dropIndicatorProps, dragSourceRef }) => (
-          <div
-            className={cx(
-              'grid-row',
-              rowItems.length === 0 && 'grid-row--empty',
-              rowStyle.className,
-            )}
-          >
-            <HoverMenu innerRef={dragSourceRef} position="left">
-              <DragHandle position="left" />
-              <RowStyleHoverDropdown
+          <WithPopoverMenu
+            isFocused={this.state.isFocused}
+            onChangeFocus={this.handleChangeFocus}
+            disableClick
+            menuItems={[
+              <RowStyleDropdown
                 id={`${rowComponent.id}-row-style`}
                 value={rowComponent.meta.rowStyle}
                 onChange={this.handleChangeRowStyle}
-              />
-              <DeleteComponentButton onDelete={this.handleDeleteComponent} />
-            </HoverMenu>
+              />,
+            ]}
+          >
 
-            {rowItems.map((component, itemIndex) => {
-              if (!component.id) {
-                return <div key={component} style={{ width: GRID_GUTTER_SIZE }} />;
-              }
-
-              return (
-                <DashboardComponent
-                  key={component.id}
-                  id={component.id}
-                  depth={depth + 1}
-                  index={itemIndex / 2} // account for gutters!
-                  parentId={rowComponent.id}
-                  availableColumnCount={availableColumnCount - occupiedColumnCount}
-                  rowHeight={rowHeight}
-                  columnWidth={columnWidth}
-                  onResizeStart={onResizeStart}
-                  onResize={onResize}
-                  onResizeStop={onResizeStop}
+            <div
+              className={cx(
+                'grid-row',
+                rowItems.length === 0 && 'grid-row--empty',
+                rowStyle.className,
+              )}
+            >
+              <HoverMenu innerRef={dragSourceRef} position="left">
+                <DragHandle position="left" />
+                <DeleteComponentButton onDelete={this.handleDeleteComponent} />
+                <IconButton
+                  onClick={this.handleChangeFocus}
+                  className="fa fa-cog"
                 />
-              );
-            })}
+              </HoverMenu>
 
-            {dropIndicatorProps && <div {...dropIndicatorProps} />}
-          </div>
+              {rowItems.map((component, itemIndex) => {
+                if (!component.id) {
+                  return <div key={component} style={{ width: GRID_GUTTER_SIZE }} />;
+                }
+
+                return (
+                  <DashboardComponent
+                    key={component.id}
+                    id={component.id}
+                    depth={depth + 1}
+                    index={itemIndex / 2} // account for gutters!
+                    parentId={rowComponent.id}
+                    availableColumnCount={availableColumnCount - occupiedColumnCount}
+                    rowHeight={rowHeight}
+                    columnWidth={columnWidth}
+                    onResizeStart={onResizeStart}
+                    onResize={onResize}
+                    onResizeStop={onResizeStop}
+                  />
+                );
+              })}
+
+              {dropIndicatorProps && <div {...dropIndicatorProps} />}
+            </div>
+          </WithPopoverMenu>
         )}
       </DragDroppable>
     );
