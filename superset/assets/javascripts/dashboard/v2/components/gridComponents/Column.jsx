@@ -2,14 +2,15 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import cx from 'classnames';
 
+import DashboardComponent from '../../containers/DashboardComponent';
+import DeleteComponentButton from '../DeleteComponentButton';
 import DragDroppable from '../dnd/DragDroppable';
 import DragHandle from '../dnd/DragHandle';
-import DimensionProvider from '../resizable/DimensionProvider';
-import DashboardComponent from '../../containers/DashboardComponent';
 import HoverMenu from '../menu/HoverMenu';
+import ResizableContainer from '../resizable/ResizableContainer';
 import { componentShape } from '../../util/propShapes';
 
-import { GRID_GUTTER_SIZE } from '../../util/constants';
+import { GRID_GUTTER_SIZE, GRID_MIN_COLUMN_COUNT } from '../../util/constants';
 
 const propTypes = {
   component: componentShape.isRequired,
@@ -27,6 +28,7 @@ const propTypes = {
   onResizeStop: PropTypes.func.isRequired,
 
   // dnd
+  deleteComponent: PropTypes.func.isRequired,
   handleComponentDrop: PropTypes.func.isRequired,
 };
 
@@ -35,6 +37,16 @@ const defaultProps = {
 };
 
 class Column extends React.PureComponent {
+  constructor(props) {
+    super(props);
+    this.handleDeleteComponent = this.handleDeleteComponent.bind(this);
+  }
+
+  handleDeleteComponent() {
+    const { deleteComponent, component, parentId } = this.props;
+    deleteComponent(component.id, parentId);
+  }
+
   render() {
     const {
       component: columnComponent,
@@ -56,7 +68,7 @@ class Column extends React.PureComponent {
     (columnComponent.children || []).forEach((id, childIndex) => {
       const component = components[id];
       columnItems.push(component);
-      if (index < columnComponent.children.length - 1) {
+      if (childIndex < columnComponent.children.length - 1) {
         columnItems.push(`gutter-${childIndex}`);
       }
     });
@@ -71,11 +83,15 @@ class Column extends React.PureComponent {
         onDrop={handleComponentDrop}
       >
         {({ dropIndicatorProps, dragSourceRef }) => (
-          <DimensionProvider
-            component={columnComponent}
-            availableColumnCount={availableColumnCount}
-            columnWidth={columnWidth}
-            rowHeight={rowHeight}
+          <ResizableContainer
+            id={columnComponent.id}
+            adjustableWidth
+            adjustableHeight={false}
+            widthStep={columnWidth}
+            widthMultiple={columnComponent.meta.width}
+            heightMultiple={rowHeight}
+            minWidthMultiple={GRID_MIN_COLUMN_COUNT}
+            maxWidthMultiple={availableColumnCount + (columnComponent.meta.width || 0)}
             onResizeStart={onResizeStart}
             onResize={onResize}
             onResizeStop={onResizeStop}
@@ -88,6 +104,7 @@ class Column extends React.PureComponent {
             >
               <HoverMenu innerRef={dragSourceRef} position="top">
                 <DragHandle position="top" />
+                <DeleteComponentButton onDelete={this.handleDeleteComponent} />
               </HoverMenu>
 
               {columnItems.map((component, itemIndex) => {
@@ -114,7 +131,7 @@ class Column extends React.PureComponent {
               })}
               {dropIndicatorProps && <div {...dropIndicatorProps} />}
             </div>
-          </DimensionProvider>
+          </ResizableContainer>
         )}
       </DragDroppable>
 

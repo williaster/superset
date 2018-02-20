@@ -2,12 +2,17 @@ import React from 'react';
 import PropTypes from 'prop-types';
 
 import DeleteComponentButton from '../DeleteComponentButton';
-import DimensionProvider from '../resizable/DimensionProvider';
 import DragDroppable from '../dnd/DragDroppable';
 import DragHandle from '../dnd/DragHandle';
 import HoverMenu from '../menu/HoverMenu';
+import ResizableContainer from '../resizable/ResizableContainer';
 import WithPopoverMenu from '../menu/WithPopoverMenu';
 import { componentShape } from '../../util/propShapes';
+
+import {
+  GRID_MIN_COLUMN_COUNT,
+  GRID_MIN_ROW_UNITS,
+} from '../../util/constants';
 
 const propTypes = {
   component: componentShape.isRequired,
@@ -82,12 +87,16 @@ class Chart extends React.Component {
         disableDragDrop={isFocused}
       >
         {({ dropIndicatorProps, dragSourceRef }) => (
-          <DimensionProvider
-            component={component}
-            adjustableHeight={depth <= 1}
-            availableColumnCount={availableColumnCount}
-            columnWidth={columnWidth}
-            rowHeight={rowHeight}
+          <ResizableContainer
+            id={component.id}
+            adjustableWidth={depth <= 1}
+            adjustableHeight
+            widthStep={columnWidth}
+            widthMultiple={component.meta.width}
+            heightMultiple={component.meta.height}
+            minWidthMultiple={GRID_MIN_COLUMN_COUNT}
+            minHeightMultiple={GRID_MIN_ROW_UNITS}
+            maxWidthMultiple={availableColumnCount + (component.meta.width || 0)}
             onResizeStart={onResizeStart}
             onResize={onResize}
             onResizeStop={onResizeStop}
@@ -108,7 +117,7 @@ class Chart extends React.Component {
 
               {dropIndicatorProps && <div {...dropIndicatorProps} />}
             </WithPopoverMenu>
-          </DimensionProvider>
+          </ResizableContainer>
         )}
       </DragDroppable>
     );

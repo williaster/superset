@@ -1,7 +1,5 @@
 .dragdroppable {
   position: relative;
-  /*height: fit-content;
-  min-height: 2px;*/
 }
 
 .dragdroppable--dragging {
@@ -12,7 +10,8 @@
   width: 100%;
 }
 
-.grid-container .dragdroppable-row:after {
+.grid-container .dragdroppable-row:after,
+.grid-container .dragdroppable-column:after {
   border: 1px dashed transparent;
   content: "";
   position: absolute;
@@ -24,7 +23,8 @@
   pointer-events: none;
 }
 
-  .grid-container .dragdroppable-row:hover:after {
+  .grid-container .dragdroppable-row:hover:after,
+  .grid-container .dragdroppable-column:hover:after {
     border: 1px dashed #aaa;
   }
 
@@ -40,7 +40,7 @@
 }
 
 .drag-handle--top {
-  margin: 10px auto;
+  /*margin: 10px auto;*/
 }
 
 .drag-handle-dot {

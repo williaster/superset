@@ -27,24 +27,24 @@ const actionHandlers = {
     // recursively find children to remove
     let deleteCount = 0;
     function recursivelyDeleteChildren(componentId, componentParentId) {
+      // delete child and it's children
       const component = nextComponents[componentId];
-      const parent = nextComponents[componentParentId];
+      delete nextComponents[componentId];
+      deleteCount += 1;
+      const { children = [] } = component;
+      children.forEach((childId) => { recursivelyDeleteChildren(childId, componentId); });
 
-      if (parent && component) {
+      const parent = nextComponents[componentParentId];
+      if (parent) { // may have been deleted in another recursion
         const componentIndex = (parent.children || []).indexOf(componentId);
         if (componentIndex > -1) {
           parent.children.splice(componentIndex, 1);
-          delete nextComponents[componentId];
-          deleteCount += 1;
-
-          const { children = [] } = component;
-          children.forEach((childId) => { recursivelyDeleteChildren(childId, componentId); });
         }
       }
     }
 
     recursivelyDeleteChildren(id, parentId);
-    console.log('Deleted', deleteCount, 'total components');
+    console.log('Deleted', deleteCount, 'total components', nextComponents);
 
     return nextComponents;
   },

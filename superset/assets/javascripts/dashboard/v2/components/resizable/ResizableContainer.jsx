@@ -5,7 +5,12 @@ import cx from 'classnames';
 
 import ResizableHandle from './ResizableHandle';
 import resizableConfig from '../../util/resizableConfig';
-import { GRID_BASE_UNIT } from '../../util/constants';
+import {
+  GRID_BASE_UNIT,
+  GRID_ROW_HEIGHT_UNIT,
+  GRID_GUTTER_SIZE,
+} from '../../util/constants';
+
 import './resizable.css';
 
 const propTypes = {
@@ -31,9 +36,9 @@ const defaultProps = {
   children: null,
   adjustableWidth: true,
   adjustableHeight: true,
-  gutterWidth: 0,
+  gutterWidth: GRID_GUTTER_SIZE,
   widthStep: GRID_BASE_UNIT,
-  heightStep: GRID_BASE_UNIT,
+  heightStep: GRID_ROW_HEIGHT_UNIT,
   widthMultiple: 1,
   heightMultiple: 1,
   minWidthMultiple: 1,
@@ -89,11 +94,14 @@ class ResizableContainer extends React.PureComponent {
       heightMultiple,
       adjustableHeight,
       adjustableWidth,
+      gutterWidth,
     } = this.props;
 
     if (onResizeStop) {
-      const nextWidthMultiple = Math.round(widthMultiple + (delta.width / widthStep));
-      const nextHeightMultiple = Math.round(heightMultiple + (delta.height / heightStep));
+      const nextWidthMultiple =
+        Math.round(widthMultiple + (delta.width / (widthStep + gutterWidth)));
+      const nextHeightMultiple =
+        Math.round(heightMultiple + (delta.height / heightStep));
 
       onResizeStop({
         id,
@@ -122,8 +130,10 @@ class ResizableContainer extends React.PureComponent {
     } = this.props;
 
     const size = {
-      width: adjustableWidth ? (widthStep * widthMultiple) - gutterWidth : null,
-      height: (adjustableHeight || heightMultiple) ? heightStep * heightMultiple : null,
+      width: adjustableWidth
+        ? ((widthStep + gutterWidth) * widthMultiple) - gutterWidth : undefined,
+      height: adjustableHeight
+        ? heightStep * heightMultiple : undefined,
     };
 
     let enableConfig = resizableConfig.widthAndHeight;
@@ -136,10 +146,18 @@ class ResizableContainer extends React.PureComponent {
       <Resizable
         enable={enableConfig}
         grid={snapToGrid}
-        minWidth={adjustableWidth ? (minWidthMultiple * widthStep) - gutterWidth : size.width}
-        minHeight={adjustableHeight ? (minHeightMultiple * heightStep) : size.height}
-        maxWidth={adjustableWidth ? (maxWidthMultiple * widthStep) - gutterWidth : size.width}
-        maxHeight={adjustableHeight ? (maxHeightMultiple * heightStep) : size.height}
+        minWidth={adjustableWidth
+          ? (minWidthMultiple * (widthStep + gutterWidth)) - gutterWidth
+          : size.width}
+        minHeight={adjustableHeight
+          ? (minHeightMultiple * heightStep)
+          : size.height}
+        maxWidth={adjustableWidth
+          ? (maxWidthMultiple * (widthStep + gutterWidth)) - gutterWidth
+          : size.width}
+        maxHeight={adjustableHeight
+          ? (maxHeightMultiple * heightStep)
+          : size.height}
         size={size}
         onResizeStart={this.handleResizeStart}
         onResize={this.handleResize}

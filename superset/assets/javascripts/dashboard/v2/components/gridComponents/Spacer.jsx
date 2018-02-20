@@ -1,11 +1,17 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 
-import DimensionProvider from '../resizable/DimensionProvider';
+import DeleteComponentButton from '../DeleteComponentButton';
 import DragDroppable from '../dnd/DragDroppable';
 import DragHandle from '../dnd/DragHandle';
 import HoverMenu from '../menu/HoverMenu';
+import ResizableContainer from '../resizable/ResizableContainer';
 import { componentShape } from '../../util/propShapes';
+
+// import {
+//   GRID_MIN_COLUMN_COUNT,
+//   GRID_MIN_ROW_UNITS,
+// } from '../../util/constants';
 
 const propTypes = {
   component: componentShape.isRequired,
@@ -23,6 +29,7 @@ const propTypes = {
   onResizeStop: PropTypes.func.isRequired,
 
   // dnd
+  deleteComponent: PropTypes.func.isRequired,
   handleComponentDrop: PropTypes.func.isRequired,
 };
 
@@ -31,6 +38,16 @@ const defaultProps = {
 };
 
 class Spacer extends React.PureComponent {
+  constructor(props) {
+    super(props);
+    this.handleDeleteComponent = this.handleDeleteComponent.bind(this);
+  }
+
+  handleDeleteComponent() {
+    const { deleteComponent, component, parentId } = this.props;
+    deleteComponent(component.id, parentId);
+  }
+
   render() {
     const {
       component,
@@ -47,34 +64,42 @@ class Spacer extends React.PureComponent {
       handleComponentDrop,
     } = this.props;
 
-    const hoverMenuPosition = depth % 2 !== 0 ? 'left' : 'top';
+    const orientation = depth % 2 === 0 ? 'row' : 'column';
+    const hoverMenuPosition = depth % 2 === 0 ? 'left' : 'top';
+
     return (
       <DragDroppable
         component={component}
         components={components}
-        orientation={depth % 2 !== 0 ? 'row' : 'column'}
+        orientation={orientation}
         index={index}
         parentId={parentId}
         onDrop={handleComponentDrop}
       >
         {({ dropIndicatorProps, dragSourceRef }) => (
-          <DimensionProvider
-            component={component}
-            availableColumnCount={availableColumnCount}
-            columnWidth={columnWidth}
-            rowHeight={rowHeight}
+          <ResizableContainer
+            id={component.id}
+            adjustableWidth={depth % 2 !== 0}
+            adjustableHeight={depth % 2 === 0}
+            widthStep={columnWidth}
+            widthMultiple={component.meta.width}
+            heightMultiple={component.meta.height || rowHeight}
+            minWidthMultiple={1}
+            minHeightMultiple={1}
+            maxWidthMultiple={availableColumnCount + (component.meta.width || 0)}
             onResizeStart={onResizeStart}
             onResize={onResize}
             onResizeStop={onResizeStop}
           >
             <HoverMenu innerRef={dragSourceRef} position={hoverMenuPosition}>
               <DragHandle position={hoverMenuPosition} />
+              <DeleteComponentButton onDelete={this.handleDeleteComponent} />
             </HoverMenu>
 
             <div className="grid-spacer" />
 
             {dropIndicatorProps && <div {...dropIndicatorProps} />}
-          </DimensionProvider>
+          </ResizableContainer>
         )}
       </DragDroppable>
     );
