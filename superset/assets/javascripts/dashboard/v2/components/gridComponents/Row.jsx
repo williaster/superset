@@ -92,7 +92,7 @@ class Row extends React.PureComponent {
     } = this.props;
 
     let occupiedColumnCount = 0;
-    let rowHeight = 0;
+    let rowHeight = 0; // row items without height require this
     const rowItems = [];
 
     // this adds a gutter between each child in the row.

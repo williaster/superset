@@ -255,10 +255,15 @@
   color: #CFD8DC;
 }
 
+/* spacer */
 .grid-spacer {
   width: 100%;
   height: 100%;
   background-color: transparent;
+}
+
+.dragdroppable .grid-spacer {
+  cursor: move;
 }
 
 .dragdroppable:hover .grid-spacer {

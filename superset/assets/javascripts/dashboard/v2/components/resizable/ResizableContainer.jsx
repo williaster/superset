@@ -27,6 +27,7 @@ const propTypes = {
   maxWidthMultiple: PropTypes.number,
   minHeightMultiple: PropTypes.number,
   maxHeightMultiple: PropTypes.number,
+  staticHeightMultiple: PropTypes.number,
   onResizeStop: PropTypes.func,
   onResize: PropTypes.func,
   onResizeStart: PropTypes.func,
@@ -39,12 +40,13 @@ const defaultProps = {
   gutterWidth: GRID_GUTTER_SIZE,
   widthStep: GRID_BASE_UNIT,
   heightStep: GRID_ROW_HEIGHT_UNIT,
-  widthMultiple: 1,
-  heightMultiple: 1,
+  widthMultiple: null,
+  heightMultiple: null,
   minWidthMultiple: 1,
   maxWidthMultiple: Infinity,
   minHeightMultiple: 1,
   maxHeightMultiple: Infinity,
+  staticHeightMultiple: null,
   onResizeStop: null,
   onResize: null,
   onResizeStart: null,
@@ -120,6 +122,7 @@ class ResizableContainer extends React.PureComponent {
       adjustableHeight,
       widthStep,
       heightStep,
+      staticHeightMultiple,
       widthMultiple,
       heightMultiple,
       minWidthMultiple,
@@ -133,7 +136,8 @@ class ResizableContainer extends React.PureComponent {
       width: adjustableWidth
         ? ((widthStep + gutterWidth) * widthMultiple) - gutterWidth : undefined,
       height: adjustableHeight
-        ? heightStep * heightMultiple : undefined,
+        ? heightStep * heightMultiple
+        : (staticHeightMultiple && staticHeightMultiple * heightStep) || undefined,
     };
 
     let enableConfig = resizableConfig.widthAndHeight;

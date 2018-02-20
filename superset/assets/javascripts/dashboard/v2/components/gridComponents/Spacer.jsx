@@ -8,10 +8,10 @@ import HoverMenu from '../menu/HoverMenu';
 import ResizableContainer from '../resizable/ResizableContainer';
 import { componentShape } from '../../util/propShapes';
 
-// import {
+import {
 //   GRID_MIN_COLUMN_COUNT,
-//   GRID_MIN_ROW_UNITS,
-// } from '../../util/constants';
+  GRID_MIN_ROW_UNITS,
+} from '../../util/constants';
 
 const propTypes = {
   component: componentShape.isRequired,
@@ -65,7 +65,9 @@ class Spacer extends React.PureComponent {
     } = this.props;
 
     const orientation = depth % 2 === 0 ? 'row' : 'column';
-    const hoverMenuPosition = depth % 2 === 0 ? 'left' : 'top';
+    const hoverMenuPosition = orientation === 'row' ? 'left' : 'top';
+    const adjustableWidth = orientation === 'column';
+    const adjustableHeight = orientation === 'row';
 
     return (
       <DragDroppable
@@ -79,11 +81,12 @@ class Spacer extends React.PureComponent {
         {({ dropIndicatorProps, dragSourceRef }) => (
           <ResizableContainer
             id={component.id}
-            adjustableWidth={depth % 2 !== 0}
-            adjustableHeight={depth % 2 === 0}
+            adjustableWidth={adjustableWidth}
+            adjustableHeight={adjustableHeight}
             widthStep={columnWidth}
             widthMultiple={component.meta.width}
-            heightMultiple={component.meta.height || rowHeight}
+            heightMultiple={adjustableHeight ? component.meta.height || 1 : undefined}
+            staticHeightMultiple={!adjustableHeight ? rowHeight || 5 : undefined}
             minWidthMultiple={1}
             minHeightMultiple={1}
             maxWidthMultiple={availableColumnCount + (component.meta.width || 0)}
@@ -91,12 +94,11 @@ class Spacer extends React.PureComponent {
             onResize={onResize}
             onResizeStop={onResizeStop}
           >
-            <HoverMenu innerRef={dragSourceRef} position={hoverMenuPosition}>
-              <DragHandle position={hoverMenuPosition} />
+            <HoverMenu position={hoverMenuPosition}>
               <DeleteComponentButton onDelete={this.handleDeleteComponent} />
             </HoverMenu>
 
-            <div className="grid-spacer" />
+            <div ref={dragSourceRef} className="grid-spacer" />
 
             {dropIndicatorProps && <div {...dropIndicatorProps} />}
           </ResizableContainer>
