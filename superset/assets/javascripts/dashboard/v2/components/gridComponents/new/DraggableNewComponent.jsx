@@ -8,6 +8,11 @@ const propTypes = {
   id: PropTypes.string.isRequired,
   type: PropTypes.string.isRequired,
   label: PropTypes.string.isRequired,
+  className: PropTypes.string,
+};
+
+const defaultProps = {
+  className: null,
 };
 
 export default class DraggableNewComponent extends React.PureComponent {
@@ -31,3 +36,4 @@ export default class DraggableNewComponent extends React.PureComponent {
 }
 
 DraggableNewComponent.propTypes = propTypes;
+DraggableNewComponent.defaultProps = defaultProps;

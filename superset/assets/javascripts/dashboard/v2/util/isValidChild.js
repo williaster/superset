@@ -4,7 +4,6 @@ import {
   DIVIDER_TYPE,
   HEADER_TYPE,
   GRID_ROOT_TYPE,
-  INVISIBLE_ROW_TYPE,
   MARKDOWN_TYPE,
   ROW_TYPE,
   SPACER_TYPE,
@@ -13,24 +12,18 @@ import {
 } from './componentTypes';
 
 const typeToValidChildType = {
-  // root
+  // while some components are wrapped in Rows, most types are valid root children
   [GRID_ROOT_TYPE]: {
-    [ROW_TYPE]: true,
-    [INVISIBLE_ROW_TYPE]: true,
-    [TABS_TYPE]: true,
+    [CHART_TYPE]: true,
+    [COLUMN_TYPE]: true,
     [DIVIDER_TYPE]: true,
     [HEADER_TYPE]: true,
+    [ROW_TYPE]: true,
     [SPACER_TYPE]: true,
+    [TABS_TYPE]: true,
   },
 
   [ROW_TYPE]: {
-    [CHART_TYPE]: true,
-    [MARKDOWN_TYPE]: true,
-    [COLUMN_TYPE]: true,
-    [SPACER_TYPE]: true,
-  },
-
-  [INVISIBLE_ROW_TYPE]: {
     [CHART_TYPE]: true,
     [MARKDOWN_TYPE]: true,
     [COLUMN_TYPE]: true,
@@ -42,10 +35,12 @@ const typeToValidChildType = {
   },
 
   [TAB_TYPE]: {
-    [ROW_TYPE]: true,
-    [INVISIBLE_ROW_TYPE]: true,
+    [CHART_TYPE]: true,
+    [COLUMN_TYPE]: true,
     [DIVIDER_TYPE]: true,
     [HEADER_TYPE]: true,
+    [ROW_TYPE]: true,
+    [SPACER_TYPE]: true,
   },
 
   [COLUMN_TYPE]: {
@@ -53,7 +48,6 @@ const typeToValidChildType = {
     [MARKDOWN_TYPE]: true,
     [HEADER_TYPE]: true,
     [SPACER_TYPE]: true,
-    [DIVIDER_TYPE]: true,
   },
 
   // these have no valid children
@@ -66,6 +60,7 @@ const typeToValidChildType = {
 
 export default function isValidChild({ parentType, childType }) {
   if (!parentType || !childType) return false;
+
   const isValid = Boolean(
     typeToValidChildType[parentType][childType],
   );

@@ -8,7 +8,7 @@ export const componentShape = PropTypes.shape({ // eslint-disable-line
   type: PropTypes.oneOf(
     Object.values(componentTypes),
   ).isRequired,
-  children: PropTypes.arrayOf(PropTypes.string).isRequired,
+  children: PropTypes.arrayOf(PropTypes.string),
   meta: PropTypes.shape({
     // Dimensions
     width: PropTypes.number,

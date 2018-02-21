@@ -75,7 +75,7 @@ class WithPopoverMenu extends React.PureComponent {
   render() {
     const { children, menuItems, disableClick } = this.props;
     const { isFocused } = this.state;
-    console.log('render popover')
+
     return (
       <div
         ref={this.setRef}

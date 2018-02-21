@@ -53,11 +53,13 @@ export function handleComponentDrop(dropResult) {
       )
     ) {
       return dispatch(moveComponent(dropResult));
+
+      // new components don't have a source
     } else if (dropResult.destination && !dropResult.source) {
       return dispatch(createComponent(dropResult));
     }
     return null;
-  }
+  };
 }
 
 // Resize ---------------------------------------------------------------------

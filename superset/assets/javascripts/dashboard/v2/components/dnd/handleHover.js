@@ -13,7 +13,6 @@ export default function handleHover(props, monitor, Component) {
 
   if (!draggingItem || draggingItem.draggableId === component.id) {
     Component.setState(() => ({ dropIndicator: null }));
-    console.log(draggingItem ? 'drag self' : 'no item');
     return;
   }
 
@@ -40,7 +39,6 @@ export default function handleHover(props, monitor, Component) {
       dropIndicator: {
         top: 0,
         right: component.children.length ? 8 : null,
-        left: component.children.length ? null : null,
         height: indicatorOrientation === 'column' ? '100%' : 3,
         width: indicatorOrientation === 'column' ? 3 : '100%',
         minHeight: indicatorOrientation === 'column' ? 16 : null,

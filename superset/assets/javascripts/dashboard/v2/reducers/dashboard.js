@@ -1,5 +1,8 @@
+import newComponentFactory from '../util/newComponentFactory';
 import newEntitiesFromDrop from '../util/newEntitiesFromDrop';
 import reorderItem from '../util/dnd-reorder';
+import shouldWrapChildInRow from '../util/shouldWrapChildInRow';
+import { ROW_TYPE } from '../util/componentTypes';
 
 import {
   UPDATE_COMPONENTS,
@@ -44,7 +47,7 @@ const actionHandlers = {
     }
 
     recursivelyDeleteChildren(id, parentId);
-    console.log('Deleted', deleteCount, 'total components', nextComponents);
+    console.log('deleted', deleteCount, 'total components', nextComponents);
 
     return nextComponents;
   },
@@ -60,13 +63,32 @@ const actionHandlers = {
 
   [MOVE_COMPONENT](state, action) {
     const { payload: { dropResult } } = action;
-    const { source, destination } = dropResult;
+    const { source, destination, draggableId } = dropResult;
+
+    if (!source || !destination || !draggableId) return state;
 
     const nextEntities = reorderItem({
       entitiesMap: state,
       source,
       destination,
     });
+
+    // wrap the dragged component in a row depening on destination type
+    const destinationType = (state[destination.droppableId] || {}).type;
+    const draggableType = (state[draggableId] || {}).type;
+    const wrapInRow = shouldWrapChildInRow({
+      parentType: destinationType,
+      childType: draggableType,
+    });
+
+    if (wrapInRow) {
+      const destinationEntity = nextEntities[destination.droppableId];
+      const destinationChildren = destinationEntity.children;
+      const newRow = newComponentFactory(ROW_TYPE);
+      newRow.children = [destinationChildren[destination.index]];
+      destinationChildren[destination.index] = newRow.id;
+      nextEntities[newRow.id] = newRow;
+    }
 
     return {
       ...state,

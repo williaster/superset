@@ -2,6 +2,7 @@ import React from 'react';
 // import PropTypes from 'prop-types';
 
 import { COLUMN_TYPE } from '../../../util/componentTypes';
+import { NEW_COLUMN_ID } from '../../../util/constants';
 import DraggableNewComponent from './DraggableNewComponent';
 
 const propTypes = {
@@ -11,7 +12,7 @@ export default class DraggableNewColumn extends React.PureComponent {
   render() {
     return (
       <DraggableNewComponent
-        id={COLUMN_TYPE}
+        id={NEW_COLUMN_ID}
         type={COLUMN_TYPE}
         label="Column"
         className="fa fa-long-arrow-down"

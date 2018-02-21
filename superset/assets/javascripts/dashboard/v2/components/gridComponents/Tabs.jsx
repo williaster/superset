@@ -108,7 +108,9 @@ class Tabs extends React.PureComponent {
   handleDeleteComponent(id) {
     const { deleteComponent, component, parentId } = this.props;
     const isTabsComponent = id === component.id;
-    deleteComponent(id, isTabsComponent ? parentId : component.id);
+    if (isTabsComponent || component.children.length > 1) {
+      deleteComponent(id, isTabsComponent ? parentId : component.id);
+    }
   }
 
   handleDropOnTab(dropResult) {
@@ -177,11 +179,15 @@ class Tabs extends React.PureComponent {
             >
               {tabIds.map((tabId, tabIndex) => {
                 const tabComponent = components[tabId];
-                return ( // Bootstrap doesn't render a Tab if we move this to its own Tab.jsx
+                return (
+                  // react-bootstrap doesn't render a Tab if we move this to its own Tab.jsx
+                  // so we set the title as the Tab.jsx component. This also enables not needing
+                  // the entire dashboard component lookup to render Tabs.jsx
                   <Tab
                     key={tabId}
                     eventKey={tabIndex}
                     title={
+                      // @TODO to Tab.jsx
                       <DragDroppable
                         component={tabComponent}
                         components={components}

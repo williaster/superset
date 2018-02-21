@@ -49,9 +49,15 @@ export default function handleDrop(props, monitor, Component) {
       index: component.children.length,
     };
   } else { // insert as sibling
-    let nextIndex = componentIndex;
+    // if the item is in the same list with a smaller index, you must account for the
+    // "missing" index upon movement within the list
+    const sameList = draggingItem.parentId && draggingItem.parentId === parentId;
+    const sameListLowerIndex = sameList && draggingItem.index < componentIndex;
+
+    let nextIndex = sameListLowerIndex ? componentIndex - 1 : componentIndex;
     const refBoundingRect = Component.ref.getBoundingClientRect();
     const clientOffset = monitor.getClientOffset();
+
 
     if (clientOffset) {
       if (orientation === 'row') {
@@ -63,16 +69,6 @@ export default function handleDrop(props, monitor, Component) {
           refBoundingRect.left + ((refBoundingRect.right - refBoundingRect.left) / 2);
         nextIndex += clientOffset.x >= refMiddleX ? 1 : 0;
       }
-    }
-
-    // if the item is in the same list with a smaller index, you must account for the
-    // "missing" index upon movement within the list
-    if (
-      draggingItem.parentId
-      && draggingItem.parentId === parentId
-      && draggingItem.index < nextIndex
-    ) {
-      nextIndex = Math.max(0, nextIndex - 1);
     }
 
     dropResult.destination = {
