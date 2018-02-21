@@ -21,7 +21,7 @@ export default class DraggableNewComponent extends React.PureComponent {
     return (
       <DragDroppable
         component={{ type, id }}
-        components={{}}
+        parentComponent={null}
         index={0}
       >
         {({ dragSourceRef }) => (

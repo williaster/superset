@@ -15,16 +15,16 @@ import {
 } from '../../util/constants';
 
 const propTypes = {
+  id: PropTypes.string.isRequired,
+  parentId: PropTypes.string.isRequired,
   component: componentShape.isRequired,
-  components: PropTypes.object.isRequired,
+  parentComponent: componentShape.isRequired,
   index: PropTypes.number.isRequired,
   depth: PropTypes.number.isRequired,
-  parentId: PropTypes.string.isRequired,
 
   // grid related
   availableColumnCount: PropTypes.number.isRequired,
   columnWidth: PropTypes.number.isRequired,
-  rowHeight: PropTypes.number,
   onResizeStart: PropTypes.func.isRequired,
   onResize: PropTypes.func.isRequired,
   onResizeStop: PropTypes.func.isRequired,
@@ -35,7 +35,6 @@ const propTypes = {
 };
 
 const defaultProps = {
-  rowHeight: null,
 };
 
 class Chart extends React.Component {
@@ -54,8 +53,8 @@ class Chart extends React.Component {
   }
 
   handleDeleteComponent() {
-    const { deleteComponent, component, parentId } = this.props;
-    deleteComponent(component.id, parentId);
+    const { deleteComponent, id, parentId } = this.props;
+    deleteComponent(id, parentId);
   }
 
   render() {
@@ -63,26 +62,23 @@ class Chart extends React.Component {
 
     const {
       component,
-      components,
+      parentComponent,
       index,
       depth,
-      parentId,
       availableColumnCount,
       columnWidth,
-      rowHeight,
       onResizeStart,
       onResize,
       onResizeStop,
       handleComponentDrop,
     } = this.props;
-    console.log('chart depth', depth)
+
     return (
       <DragDroppable
         component={component}
-        components={components}
+        parentComponent={parentComponent}
         orientation={depth % 2 === 1 ? 'column' : 'row'}
         index={index}
-        parentId={parentId}
         onDrop={handleComponentDrop}
         disableDragDrop={isFocused}
       >

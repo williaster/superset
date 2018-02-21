@@ -26,7 +26,6 @@ class WithPopoverMenu extends React.PureComponent {
       isFocused: props.isFocused,
     };
     this.setRef = this.setRef.bind(this);
-    // this.setPopoverRef = this.setPopoverRef.bind(this);
     this.handleClick = this.handleClick.bind(this);
   }
 
@@ -46,10 +45,6 @@ class WithPopoverMenu extends React.PureComponent {
   setRef(ref) {
     this.container = ref;
   }
-  //
-  // setPopoverRef(ref) {
-  //   this.popover = ref;
-  // }
 
   handleClick(event) {
     const { onChangeFocus } = this.props;
@@ -88,12 +83,12 @@ class WithPopoverMenu extends React.PureComponent {
         )}
       >
         {children}
-        {isFocused && menuItems.length &&
+        {isFocused && menuItems.length ?
           <div className="popover-menu" >
             {menuItems.map((node, i) => (
               <div className="menu-item" key={`menu-item-${i}`}>{node}</div>
             ))}
-          </div>}
+          </div> : null}
       </div>
     );
   }

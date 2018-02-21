@@ -1,12 +1,17 @@
-export default function handleHover(props, monitor, Component) {
+import throttle from 'lodash.throttle';
+import isValidChild from '../../util/isValidChild';
+import shouldWrapChildInRow from '../../util/shouldWrapChildInRow';
+
+const HOVER_THROTTLE_MS = 200;
+
+function handleHover(props, monitor, Component) {
+  if (!Component.mounted) return;
+
   const {
     component,
-    components,
-    parentId,
+    parentComponent,
     orientation,
     isDraggingOverShallow,
-    isValidChild,
-    isValidSibling,
   } = Component.props;
 
   const draggingItem = monitor.getItem();
@@ -21,18 +26,22 @@ export default function handleHover(props, monitor, Component) {
     childType: draggingItem.type,
   });
 
-  const validSibling = isValidSibling({
-    parentType: components[parentId] && components[parentId].type,
-    siblingType: draggingItem.type,
+  const validSibling = isValidChild({
+    parentType: parentComponent && parentComponent.type,
+    childType: draggingItem.type,
   });
 
-  if (validChild && !isDraggingOverShallow) {
+  const shouldWrapSibling = shouldWrapChildInRow({
+    parentType: parentComponent && parentComponent.type,
+    childType: draggingItem.type,
+  });
+
+  if ((validChild && !isDraggingOverShallow) || (!validChild && !validSibling)) {
     Component.setState(() => ({ dropIndicator: null }));
     return;
   }
 
-  if (validChild) { // indicate drop in container
-    console.log('valid child', component.type, draggingItem.type);
+  if (validChild && (!validSibling || shouldWrapSibling)) { // indicate drop in container
     const indicatorOrientation = orientation === 'row' ? 'column' : 'row';
 
     Component.setState(() => ({
@@ -49,8 +58,7 @@ export default function handleHover(props, monitor, Component) {
         zIndex: 10,
       },
     }));
-  } else if (validSibling) { // indicate drop near parent
-    console.log('valid sibling', components[parentId].type, draggingItem.type);
+  } else { // indicate drop near parent
     const refBoundingRect = Component.ref.getBoundingClientRect();
     const clientOffset = monitor.getClientOffset();
 
@@ -80,3 +88,6 @@ export default function handleHover(props, monitor, Component) {
     }
   }
 }
+
+// this is called very frequently by react-dnd
+export default throttle(handleHover, HOVER_THROTTLE_MS);

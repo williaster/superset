@@ -15,17 +15,21 @@ import { componentShape } from '../../util/propShapes';
 import rowStyleOptions from '../../util/rowStyleOptions';
 import { GRID_GUTTER_SIZE, ROW_TRANSPARENT } from '../../util/constants';
 
+const GUTTER = 'GUTTER';
+
 const propTypes = {
+  id: PropTypes.string.isRequired,
+  parentId: PropTypes.string.isRequired,
   component: componentShape.isRequired,
-  components: PropTypes.object.isRequired,
+  parentComponent: componentShape.isRequired,
   index: PropTypes.number.isRequired,
   depth: PropTypes.number.isRequired,
-  parentId: PropTypes.string.isRequired,
 
   // grid related
   availableColumnCount: PropTypes.number.isRequired,
   columnWidth: PropTypes.number.isRequired,
-  rowHeight: PropTypes.number,
+  occupiedColumnCount: PropTypes.number.isRequired,
+  occupiedRowCount: PropTypes.number.isRequired,
   onResizeStart: PropTypes.func.isRequired,
   onResize: PropTypes.func.isRequired,
   onResizeStop: PropTypes.func.isRequired,
@@ -79,11 +83,12 @@ class Row extends React.PureComponent {
   render() {
     const {
       component: rowComponent,
-      components,
+      parentComponent,
       index,
-      parentId,
       availableColumnCount,
       columnWidth,
+      occupiedColumnCount,
+      occupiedRowCount,
       depth,
       onResizeStart,
       onResize,
@@ -91,20 +96,14 @@ class Row extends React.PureComponent {
       handleComponentDrop,
     } = this.props;
 
-    let occupiedColumnCount = 0;
-    let rowHeight = 0; // row items without height require this
     const rowItems = [];
+    console.log('render row', rowComponent);
 
     // this adds a gutter between each child in the row.
     (rowComponent.children || []).forEach((id, childIndex) => {
-      const component = components[id];
-      occupiedColumnCount += (component.meta || {}).width || 0;
-      rowItems.push(component);
+      rowItems.push(id);
       if (childIndex < rowComponent.children.length - 1) {
-        rowItems.push(`gutter-${childIndex}`);
-      }
-      if ((component.meta || {}).height) {
-        rowHeight = Math.max(rowHeight, component.meta.height);
+        rowItems.push(GUTTER);
       }
     });
 
@@ -115,10 +114,9 @@ class Row extends React.PureComponent {
     return (
       <DragDroppable
         component={rowComponent}
-        components={components}
+        parentComponent={parentComponent}
         orientation="row"
         index={index}
-        parentId={parentId}
         onDrop={handleComponentDrop}
       >
         {({ dropIndicatorProps, dragSourceRef }) => (
@@ -151,20 +149,20 @@ class Row extends React.PureComponent {
                 />
               </HoverMenu>
 
-              {rowItems.map((component, itemIndex) => {
-                if (!component.id) {
-                  return <div key={component} style={{ width: GRID_GUTTER_SIZE }} />;
+              {rowItems.map((componentId, itemIndex) => {
+                if (componentId === GUTTER) {
+                  return <div key={`gutter-${itemIndex}`} style={{ width: GRID_GUTTER_SIZE }} />;
                 }
 
                 return (
                   <DashboardComponent
-                    key={component.id}
-                    id={component.id}
+                    key={componentId}
+                    id={componentId}
+                    parentId={rowComponent.id}
                     depth={depth + 1}
                     index={itemIndex / 2} // account for gutters!
-                    parentId={rowComponent.id}
                     availableColumnCount={availableColumnCount - occupiedColumnCount}
-                    rowHeight={rowHeight}
+                    occupiedRowCount={occupiedRowCount}
                     columnWidth={columnWidth}
                     onResizeStart={onResizeStart}
                     onResize={onResize}

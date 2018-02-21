@@ -16,10 +16,13 @@ import { componentShape } from '../../util/propShapes';
 import { SMALL_HEADER, ROW_TRANSPARENT } from '../../util/constants';
 
 const propTypes = {
-  component: componentShape.isRequired,
-  components: PropTypes.object.isRequired,
-  index: PropTypes.number.isRequired,
+  id: PropTypes.string.isRequired,
   parentId: PropTypes.string.isRequired,
+  component: componentShape.isRequired,
+  parentComponent: componentShape.isRequired,
+  index: PropTypes.number.isRequired,
+
+  // redux
   handleComponentDrop: PropTypes.func.isRequired,
   deleteComponent: PropTypes.func.isRequired,
   updateComponents: PropTypes.func.isRequired,
@@ -62,8 +65,8 @@ class Header extends React.PureComponent {
   }
 
   handleDeleteComponent() {
-    const { deleteComponent, component, parentId } = this.props;
-    deleteComponent(component.id, parentId);
+    const { deleteComponent, id, parentId } = this.props;
+    deleteComponent(id, parentId);
   }
 
   render() {
@@ -71,9 +74,8 @@ class Header extends React.PureComponent {
 
     const {
       component,
-      components,
+      parentComponent,
       index,
-      parentId,
       handleComponentDrop,
     } = this.props;
 
@@ -88,10 +90,9 @@ class Header extends React.PureComponent {
     return (
       <DragDroppable
         component={component}
-        components={components}
+        parentComponent={parentComponent}
         orientation="row"
         index={index}
-        parentId={parentId}
         onDrop={handleComponentDrop}
         disableDragDrop={isFocused}
       >

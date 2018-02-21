@@ -1,26 +1,26 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { Tabs as BootstrapTabs, Tab } from 'react-bootstrap';
+import { Tabs as BootstrapTabs, Tab as BootstrapTab } from 'react-bootstrap';
 
 import DragDroppable from '../dnd/DragDroppable';
 import DragHandle from '../dnd/DragHandle';
 import DashboardComponent from '../../containers/DashboardComponent';
-import EditableTitle from '../../../../components/EditableTitle';
 import DeleteComponentButton from '../DeleteComponentButton';
 import HoverMenu from '../menu/HoverMenu';
-import WithPopoverMenu from '../menu/WithPopoverMenu';
 import { componentShape } from '../../util/propShapes';
 import { NEW_TAB_ID } from '../../util/constants';
+import { RENDER_TAB, RENDER_TAB_CONTENT } from './Tab';
 
 const NEW_TAB_INDEX = -1;
 const MAX_TAB_COUNT = 5;
 
 const propTypes = {
+  id: PropTypes.string.isRequired,
+  parentId: PropTypes.string.isRequired,
   component: componentShape.isRequired,
-  components: PropTypes.object.isRequired,
+  parentComponent: componentShape.isRequired,
   index: PropTypes.number.isRequired,
   depth: PropTypes.number.isRequired,
-  parentId: PropTypes.string.isRequired,
 
   // grid related
   availableColumnCount: PropTypes.number.isRequired,
@@ -47,13 +47,10 @@ class Tabs extends React.PureComponent {
     super(props);
     this.state = {
       tabIndex: 0,
-      focusedId: null,
     };
     this.handleClicKTab = this.handleClicKTab.bind(this);
     this.handleDeleteComponent = this.handleDeleteComponent.bind(this);
     this.handleDropOnTab = this.handleDropOnTab.bind(this);
-    this.handleChangeFocus = this.handleChangeFocus.bind(this);
-    this.handleChangeText = this.handleChangeText.bind(this);
   }
 
   componentWillReceiveProps(nextProps) {
@@ -65,14 +62,13 @@ class Tabs extends React.PureComponent {
 
   handleClicKTab(tabIndex) {
     const { onChangeTab, component, createComponent } = this.props;
-    const { focusedId } = this.state;
 
-    if (!focusedId && tabIndex !== NEW_TAB_INDEX && tabIndex !== this.state.tabIndex) {
+    if (tabIndex !== NEW_TAB_INDEX && tabIndex !== this.state.tabIndex) {
       this.setState(() => ({ tabIndex }));
       if (onChangeTab) {
-        onChangeTab({ tabIndex, tab: component.children[tabIndex] });
+        onChangeTab({ tabIndex, tabId: component.children[tabIndex] });
       }
-    } else if (!focusedId && tabIndex === NEW_TAB_INDEX) {
+    } else if (tabIndex === NEW_TAB_INDEX) {
       createComponent({
         destination: {
           droppableId: component.id,
@@ -83,45 +79,19 @@ class Tabs extends React.PureComponent {
     }
   }
 
-  handleChangeFocus(nextFocus) {
-    if (this.state.focusedId !== nextFocus) {
-      this.setState(() => ({ focusedId: nextFocus }));
-    }
-  }
-
-  handleChangeText({ id, nextTabText }) {
-    const { updateComponents, components } = this.props;
-    const tab = components[id];
-    if (nextTabText && tab && nextTabText !== tab.meta.text) {
-      updateComponents({
-        [tab.id]: {
-          ...tab,
-          meta: {
-            ...tab.meta,
-            text: nextTabText,
-          },
-        },
-      });
-    }
-  }
-
-  handleDeleteComponent(id) {
-    const { deleteComponent, component, parentId } = this.props;
-    const isTabsComponent = id === component.id;
-    if (isTabsComponent || component.children.length > 1) {
-      deleteComponent(id, isTabsComponent ? parentId : component.id);
-    }
+  handleDeleteComponent() {
+    const { deleteComponent, id, parentId } = this.props;
+    deleteComponent(id, parentId);
   }
 
   handleDropOnTab(dropResult) {
-    const { component, handleComponentDrop } = this.props;
-    handleComponentDrop(dropResult);
+    const { component } = this.props;
 
     // Ensure dropped tab is visible
     const { destination } = dropResult;
     if (destination) {
       const dropTabIndex = destination.droppableId === component.id
-        ? destination.index // dropped ON tab
+        ? destination.index // dropped ON tabs
         : component.children.indexOf(destination.droppableId); // dropped IN tab
 
       if (dropTabIndex > -1) {
@@ -136,8 +106,7 @@ class Tabs extends React.PureComponent {
     const {
       depth,
       component: tabsComponent,
-      components,
-      parentId,
+      parentComponent,
       index,
       availableColumnCount,
       columnWidth,
@@ -147,28 +116,22 @@ class Tabs extends React.PureComponent {
       handleComponentDrop,
     } = this.props;
 
-    const { tabIndex: selectedTabIndex, focusedId } = this.state;
+    const { tabIndex: selectedTabIndex } = this.state;
     const { children: tabIds } = tabsComponent;
 
     return (
       <DragDroppable
         component={tabsComponent}
-        components={components}
+        parentComponent={parentComponent}
         orientation="row"
         index={index}
-        parentId={parentId}
         onDrop={handleComponentDrop}
-        disableDragDrop={Boolean(focusedId)}
       >
         {({ dropIndicatorProps: tabsDropIndicatorProps, dragSourceRef: tabsDragSourceRef }) => (
           <div className="dashboard-component dashboard-component-tabs">
             <HoverMenu innerRef={tabsDragSourceRef} position="left">
               <DragHandle position="left" />
-              <DeleteComponentButton
-                onDelete={() => {
-                  this.handleDeleteComponent(tabsComponent.id);
-                }}
-              />
+              <DeleteComponentButton onDelete={this.handleDeleteComponent} />
             </HoverMenu>
 
             <BootstrapTabs
@@ -177,90 +140,57 @@ class Tabs extends React.PureComponent {
               onSelect={this.handleClicKTab}
               animation={false}
             >
-              {tabIds.map((tabId, tabIndex) => {
-                const tabComponent = components[tabId];
-                return (
-                  // react-bootstrap doesn't render a Tab if we move this to its own Tab.jsx
-                  // so we set the title as the Tab.jsx component. This also enables not needing
-                  // the entire dashboard component lookup to render Tabs.jsx
-                  <Tab
-                    key={tabId}
-                    eventKey={tabIndex}
-                    title={
-                      // @TODO to Tab.jsx
-                      <DragDroppable
-                        component={tabComponent}
-                        components={components}
-                        orientation="column"
-                        index={tabIndex}
-                        parentId={tabsComponent.id}
-                        onDrop={this.handleDropOnTab}
-                        disableDragDrop={tabId === focusedId}
-                      >
-                        {({ dropIndicatorProps, dragSourceRef }) => (
-                          <div className="dragdroppable-tab" ref={dragSourceRef}>
-                            <WithPopoverMenu
-                              onChangeFocus={(nextFocus) => {
-                                this.handleChangeFocus(nextFocus && tabId);
-                              }}
-                              menuItems={[
-                                <DeleteComponentButton
-                                  onDelete={() => {
-                                    this.handleDeleteComponent(tabId);
-                                  }}
-                                />,
-                              ]}
-                            >
-                              <EditableTitle
-                                title={tabComponent.meta.text}
-                                canEdit={focusedId === tabId}
-                                onSaveTitle={(nextTabText) => {
-                                  this.handleChangeText({ id: tabId, nextTabText });
-                                }}
-                                showTooltip={false}
-                              />
-                            </WithPopoverMenu>
-
-                            {dropIndicatorProps &&
-                              <div {...dropIndicatorProps} />}
-                          </div>
-                        )}
-                      </DragDroppable>
-                    }
-                  >
-                    {/*
-                      react-bootstrap renders all children with display:none, so we don't
-                      render potentially-expensive charts (this also enables lazy loading
-                      their content)
-                    */}
-                    {tabIndex === selectedTabIndex &&
-                      <div className="dashboard-component-tabs-content">
-                        {tabComponent.children.map((componentId, componentIndex) => (
-                          <DashboardComponent
-                            key={componentId}
-                            id={componentId}
-                            depth={depth}
-                            index={componentIndex}
-                            parentId={tabComponent.id}
-                            onDrop={handleComponentDrop}
-                            availableColumnCount={availableColumnCount}
-                            columnWidth={columnWidth}
-                            onResizeStart={onResizeStart}
-                            onResize={onResize}
-                            onResizeStop={onResizeStop}
-                          />
-                        ))}
-                      </div>}
-                  </Tab>
-                );
-              })}
+              {tabIds.map((tabId, tabIndex) => (
+                // react-bootstrap doesn't render a Tab if we move this to its own Tab.jsx so we
+                // use `renderType` to indicate what the DashboardComponent should render. This
+                // prevents us from passing the entire dashboard component lookup to render Tabs.jsx
+                <BootstrapTab
+                  key={tabId}
+                  eventKey={tabIndex}
+                  title={
+                    <DashboardComponent
+                      id={tabId}
+                      parentId={tabsComponent.id}
+                      depth={depth}
+                      index={tabIndex}
+                      renderType={RENDER_TAB}
+                      availableColumnCount={availableColumnCount}
+                      columnWidth={columnWidth}
+                      onResizeStart={onResizeStart}
+                      onResize={onResize}
+                      onResizeStop={onResizeStop}
+                      onDropOnTab={this.handleDropOnTab}
+                    />
+                  }
+                >
+                  {/*
+                    react-bootstrap renders all children with display:none, so we don't
+                    render potentially-expensive charts (this also enables lazy loading
+                    their content)
+                  */}
+                  {tabIndex === selectedTabIndex &&
+                    <DashboardComponent
+                      id={tabId}
+                      parentId={tabsComponent.id}
+                      depth={depth}
+                      index={tabIndex}
+                      renderType={RENDER_TAB_CONTENT}
+                      availableColumnCount={availableColumnCount}
+                      columnWidth={columnWidth}
+                      onResizeStart={onResizeStart}
+                      onResize={onResize}
+                      onResizeStop={onResizeStop}
+                      onDropOnTab={this.handleDropOnTab}
+                    />}
+                </BootstrapTab>
+              ))}
 
               {tabIds.length < MAX_TAB_COUNT &&
-                <Tab
-                  key="new-tab"
+                <BootstrapTab
                   eventKey={NEW_TAB_INDEX}
                   title={<div className="fa fa-plus-square" />}
                 />}
+
             </BootstrapTabs>
 
             {tabsDropIndicatorProps

@@ -94,7 +94,10 @@ class DashboardGrid extends React.PureComponent {
     return (
       <div
         ref={(ref) => { this.grid = ref; }}
-        className={cx('grid-container', isResizing && 'grid-container--resizing')}
+        className={cx(
+          'grid-container',
+          isResizing && 'grid-container--resizing',
+        )}
       >
         <ParentSize>
           {({ width }) => {
@@ -108,9 +111,9 @@ class DashboardGrid extends React.PureComponent {
                   <DashboardComponent
                     key={id}
                     id={id}
+                    parentId={rootComponent.id}
                     depth={0}
                     index={index}
-                    parentId={rootComponent.id}
                     availableColumnCount={GRID_COLUMN_COUNT}
                     columnWidth={columnWidth}
                     onResizeStart={this.handleResizeStart}
@@ -122,10 +125,9 @@ class DashboardGrid extends React.PureComponent {
                 {rootComponent.children.length === 0 &&
                   <DragDroppable
                     component={rootComponent}
-                    components={components}
-                    orientation="column"
+                    parentComponent={null}
                     index={0}
-                    parentId={null}
+                    orientation="column"
                     onDrop={handleComponentDrop}
                   >
                     {({ dropIndicatorProps }) => (

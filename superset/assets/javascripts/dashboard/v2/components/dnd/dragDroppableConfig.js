@@ -1,3 +1,6 @@
+import handleHover from './handleHover';
+import handleDrop from './handleDrop';
+
 // note: the 'type' hook is not useful for us as dropping is contigent on other properties
 const TYPE = 'DRAG_DROPPABLE';
 
@@ -8,8 +11,13 @@ export const dragConfig = [
       return !props.disableDragDrop;
     },
     beginDrag(props /* , monitor, component */) {
-      const { component, index, parentId } = props;
-      return { draggableId: component.id, index, parentId, type: component.type };
+      const { component, index, parentComponent } = props;
+      return {
+        draggableId: component.id,
+        index,
+        parentId: parentComponent && parentComponent.id,
+        type: component.type,
+      };
     },
   },
   function dragStateToProps(connect, monitor) {
@@ -28,9 +36,9 @@ export const dropConfig = [
       if (
         component
         && component.decoratedComponentInstance
-        && component.decoratedComponentInstance.handleHover
-      ) { // use the component instance so we can throttle calls
-        component.decoratedComponentInstance.handleHover(
+        && component.decoratedComponentInstance.mounted
+      ) {
+        handleHover(
           props,
           monitor,
           component.decoratedComponentInstance,
@@ -43,8 +51,8 @@ export const dropConfig = [
     drop(props, monitor, component) {
       const Component = component.decoratedComponentInstance;
       const dropResult = monitor.getDropResult();
-      if ((!dropResult || !dropResult.destination) && Component.props.handleDrop) {
-        return Component.props.handleDrop(props, monitor, Component);
+      if ((!dropResult || !dropResult.destination) && Component.mounted) {
+        return handleDrop(props, monitor, Component);
       }
       return undefined;
     },
