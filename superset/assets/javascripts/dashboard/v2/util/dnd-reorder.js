@@ -1,16 +1,16 @@
-export const reorder = (list, startIndex, endIndex) => {
+export function reorder(list, startIndex, endIndex) {
   const result = [...list];
   const [removed] = result.splice(startIndex, 1);
   result.splice(endIndex, 0, removed);
 
   return result;
-};
+}
 
-export const reorderRows = ({
+export default function reorderItem({
   entitiesMap,
   source,
   destination,
-}) => {
+}) {
   const current = [...entitiesMap[source.droppableId].children];
   const next = [...entitiesMap[destination.droppableId].children];
   const target = current[source.index];
@@ -51,4 +51,4 @@ export const reorderRows = ({
   };
 
   return result;
-};
+}

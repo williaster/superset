@@ -7,16 +7,16 @@ import Dashboard from '../v2/components/Dashboard';
 
 function mapStateToProps({ charts, dashboard }) {
   return {
-    initMessages: dashboard.common.flash_messages,
-    timeout: dashboard.common.conf.SUPERSET_WEBSERVER_TIMEOUT,
-    dashboard: dashboard.dashboard,
-    slices: charts,
-    datasources: dashboard.datasources,
-    filters: dashboard.filters,
-    refresh: !!dashboard.refresh,
-    userId: dashboard.userId,
-    isStarred: !!dashboard.isStarred,
-    editMode: dashboard.editMode,
+    // initMessages: dashboard.common.flash_messages,
+    // timeout: dashboard.common.conf.SUPERSET_WEBSERVER_TIMEOUT,
+    // dashboard: dashboard.dashboard,
+    // slices: charts,
+    // datasources: dashboard.datasources,
+    // filters: dashboard.filters,
+    // refresh: !!dashboard.refresh,
+    // userId: dashboard.userId,
+    // isStarred: !!dashboard.isStarred,
+    // editMode: dashboard.editMode,
   };
 }
 
