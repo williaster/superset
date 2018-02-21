@@ -10,7 +10,7 @@ import DeleteComponentButton from '../DeleteComponentButton';
 import HoverMenu from '../menu/HoverMenu';
 import WithPopoverMenu from '../menu/WithPopoverMenu';
 import { componentShape } from '../../util/propShapes';
-import { TAB_TYPE } from '../../util/componentTypes';
+import { NEW_TAB_ID } from '../../util/constants';
 
 const NEW_TAB_INDEX = -1;
 const MAX_TAB_COUNT = 5;
@@ -78,7 +78,7 @@ class Tabs extends React.PureComponent {
           droppableId: component.id,
           index: component.children.length,
         },
-        draggableId: TAB_TYPE,
+        draggableId: NEW_TAB_ID,
       });
     }
   }
