@@ -7,10 +7,11 @@ import DeleteComponentButton from '../DeleteComponentButton';
 import { componentShape } from '../../util/propShapes';
 
 const propTypes = {
-  component: componentShape.isRequired,
-  components: PropTypes.object.isRequired,
-  index: PropTypes.number.isRequired,
+  id: PropTypes.string.isRequired,
   parentId: PropTypes.string.isRequired,
+  component: componentShape.isRequired,
+  parentComponent: componentShape.isRequired,
+  index: PropTypes.number.isRequired,
   handleComponentDrop: PropTypes.func.isRequired,
   deleteComponent: PropTypes.func.isRequired,
 };
@@ -22,26 +23,24 @@ class Divider extends React.PureComponent {
   }
 
   handleDeleteComponent() {
-    const { deleteComponent, component, parentId } = this.props;
-    deleteComponent(component.id, parentId);
+    const { deleteComponent, id, parentId } = this.props;
+    deleteComponent(id, parentId);
   }
 
   render() {
     const {
       component,
-      components,
+      parentComponent,
       index,
-      parentId,
       handleComponentDrop,
     } = this.props;
 
     return (
       <DragDroppable
         component={component}
-        components={components}
+        parentComponent={parentComponent}
         orientation="row"
         index={index}
-        parentId={parentId}
         onDrop={handleComponentDrop}
       >
         {({ dropIndicatorProps, dragSourceRef }) => (

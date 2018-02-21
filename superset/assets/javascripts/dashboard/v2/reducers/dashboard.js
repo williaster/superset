@@ -41,7 +41,12 @@ const actionHandlers = {
       if (parent) { // may have been deleted in another recursion
         const componentIndex = (parent.children || []).indexOf(componentId);
         if (componentIndex > -1) {
-          parent.children.splice(componentIndex, 1);
+          const nextChildren = [...parent.children];
+          nextChildren.splice(componentIndex, 1);
+          nextComponents[componentParentId] = {
+            ...parent,
+            children: nextChildren,
+          };
         }
       }
     }

@@ -1,11 +1,12 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 
 import ComponentLookup from '../components/gridComponents';
+import countChildRowsAndColumns from '../util/countChildRowsAndColumns';
 import { componentShape } from '../util/propShapes';
+import { ROW_TYPE } from '../util/componentTypes';
 
 import {
   createComponent,
@@ -16,7 +17,7 @@ import {
 
 const propTypes = {
   component: componentShape.isRequired,
-  components: PropTypes.object.isRequired,
+  parentComponent: componentShape.isRequired,
   createComponent: PropTypes.func.isRequired,
   deleteComponent: PropTypes.func.isRequired,
   updateComponents: PropTypes.func.isRequired,
@@ -24,11 +25,25 @@ const propTypes = {
 };
 
 function mapStateToProps({ dashboard = {} }, ownProps) {
-  const { id } = ownProps;
-  return {
+  const { id, parentId } = ownProps;
+  const props = {
     component: dashboard[id],
-    components: dashboard,
+    parentComponent: dashboard[parentId],
   };
+
+  // row is a special component that needs extra dims about its children
+  // doing this allows us to not pass the entire component lookup to all Components
+  if (props.component.type === ROW_TYPE) {
+    const { rowCount, columnCount } = countChildRowsAndColumns({
+      component: props.component,
+      components: dashboard,
+    });
+
+    props.occupiedRowCount = rowCount;
+    props.occupiedColumnCount = columnCount;
+  }
+
+  return props;
 }
 
 function mapDispatchToProps(dispatch) {

@@ -3,27 +3,28 @@ import PropTypes from 'prop-types';
 
 import DeleteComponentButton from '../DeleteComponentButton';
 import DragDroppable from '../dnd/DragDroppable';
-import DragHandle from '../dnd/DragHandle';
+// import DragHandle from '../dnd/DragHandle';
 import HoverMenu from '../menu/HoverMenu';
 import ResizableContainer from '../resizable/ResizableContainer';
 import { componentShape } from '../../util/propShapes';
 
 import {
 //   GRID_MIN_COLUMN_COUNT,
-  GRID_MIN_ROW_UNITS,
+  // GRID_MIN_ROW_UNITS,
 } from '../../util/constants';
 
 const propTypes = {
+  id: PropTypes.string.isRequired,
+  parentId: PropTypes.string.isRequired,
   component: componentShape.isRequired,
-  components: PropTypes.object.isRequired,
+  parentComponent: componentShape.isRequired,
   index: PropTypes.number.isRequired,
   depth: PropTypes.number.isRequired,
-  parentId: PropTypes.string.isRequired,
 
   // grid related
   availableColumnCount: PropTypes.number.isRequired,
   columnWidth: PropTypes.number.isRequired,
-  rowHeight: PropTypes.number,
+  occupiedRowCount: PropTypes.number,
   onResizeStart: PropTypes.func.isRequired,
   onResize: PropTypes.func.isRequired,
   onResizeStop: PropTypes.func.isRequired,
@@ -34,7 +35,7 @@ const propTypes = {
 };
 
 const defaultProps = {
-  rowHeight: null,
+  occupiedRowCount: null,
 };
 
 class Spacer extends React.PureComponent {
@@ -44,20 +45,19 @@ class Spacer extends React.PureComponent {
   }
 
   handleDeleteComponent() {
-    const { deleteComponent, component, parentId } = this.props;
-    deleteComponent(component.id, parentId);
+    const { deleteComponent, id, parentId } = this.props;
+    deleteComponent(id, parentId);
   }
 
   render() {
     const {
       component,
-      components,
+      parentComponent,
       index,
       depth,
-      parentId,
       availableColumnCount,
       columnWidth,
-      rowHeight,
+      occupiedRowCount,
       onResizeStart,
       onResize,
       onResizeStop,
@@ -72,10 +72,9 @@ class Spacer extends React.PureComponent {
     return (
       <DragDroppable
         component={component}
-        components={components}
+        parentComponent={parentComponent}
         orientation={orientation}
         index={index}
-        parentId={parentId}
         onDrop={handleComponentDrop}
       >
         {({ dropIndicatorProps, dragSourceRef }) => (
@@ -86,7 +85,7 @@ class Spacer extends React.PureComponent {
             widthStep={columnWidth}
             widthMultiple={component.meta.width}
             heightMultiple={adjustableHeight ? component.meta.height || 1 : undefined}
-            staticHeightMultiple={!adjustableHeight ? rowHeight || 5 : undefined}
+            staticHeightMultiple={!adjustableHeight ? occupiedRowCount || 5 : undefined}
             minWidthMultiple={1}
             minHeightMultiple={1}
             maxWidthMultiple={availableColumnCount + (component.meta.width || 0)}

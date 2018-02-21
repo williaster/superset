@@ -12,13 +12,16 @@ import { componentShape } from '../../util/propShapes';
 
 import { GRID_GUTTER_SIZE, GRID_MIN_COLUMN_COUNT } from '../../util/constants';
 
+const GUTTER = 'GUTTER';
+
 const propTypes = {
+  id: PropTypes.string.isRequired,
+  parentId: PropTypes.string.isRequired,
   component: componentShape.isRequired,
-  components: PropTypes.object.isRequired,
+  parentComponent: componentShape.isRequired,
   index: PropTypes.number.isRequired,
   depth: PropTypes.number.isRequired,
-  parentId: PropTypes.string.isRequired,
-  rowHeight: PropTypes.number,
+  // occupiedRowCount: PropTypes.number,
 
   // grid related
   availableColumnCount: PropTypes.number.isRequired,
@@ -33,7 +36,7 @@ const propTypes = {
 };
 
 const defaultProps = {
-  rowHeight: null,
+  // occupiedRowCount: null,
 };
 
 class Column extends React.PureComponent {
@@ -43,19 +46,18 @@ class Column extends React.PureComponent {
   }
 
   handleDeleteComponent() {
-    const { deleteComponent, component, parentId } = this.props;
-    deleteComponent(component.id, parentId);
+    const { deleteComponent, id, parentId } = this.props;
+    deleteComponent(id, parentId);
   }
 
   render() {
     const {
       component: columnComponent,
-      components,
+      parentComponent,
       index,
-      parentId,
       availableColumnCount,
       columnWidth,
-      rowHeight,
+      // occupiedRowCount,
       depth,
       onResizeStart,
       onResize,
@@ -66,20 +68,18 @@ class Column extends React.PureComponent {
     const columnItems = [];
 
     (columnComponent.children || []).forEach((id, childIndex) => {
-      const component = components[id];
-      columnItems.push(component);
+      columnItems.push(id);
       if (childIndex < columnComponent.children.length - 1) {
-        columnItems.push(`gutter-${childIndex}`);
+        columnItems.push(GUTTER);
       }
     });
 
     return (
       <DragDroppable
         component={columnComponent}
-        components={components}
+        parentComponent={parentComponent}
         orientation="column"
         index={index}
-        parentId={parentId}
         onDrop={handleComponentDrop}
       >
         {({ dropIndicatorProps, dragSourceRef }) => (
@@ -89,7 +89,7 @@ class Column extends React.PureComponent {
             adjustableHeight={false}
             widthStep={columnWidth}
             widthMultiple={columnComponent.meta.width}
-            heightMultiple={rowHeight}
+            // heightMultiple={occupiedRowCount}
             minWidthMultiple={GRID_MIN_COLUMN_COUNT}
             maxWidthMultiple={availableColumnCount + (columnComponent.meta.width || 0)}
             onResizeStart={onResizeStart}
@@ -107,20 +107,18 @@ class Column extends React.PureComponent {
                 <DeleteComponentButton onDelete={this.handleDeleteComponent} />
               </HoverMenu>
 
-              {columnItems.map((component, itemIndex) => {
-                if (!component.id) {
-                  return <div key={component} style={{ height: GRID_GUTTER_SIZE }} />;
+              {columnItems.map((componentId, itemIndex) => {
+                if (componentId === GUTTER) {
+                  return <div key={`gutter-${itemIndex}`} style={{ height: GRID_GUTTER_SIZE }} />;
                 }
 
                 return (
                   <DashboardComponent
-                    key={component.id}
-                    id={component.id}
+                    key={componentId}
+                    id={componentId}
+                    parentId={columnComponent.id}
                     depth={depth + 1}
                     index={itemIndex / 2} // account for gutters!
-                    component={component}
-                    components={components}
-                    parentId={columnComponent.id}
                     availableColumnCount={availableColumnCount}
                     columnWidth={columnWidth}
                     onResizeStart={onResizeStart}
@@ -129,6 +127,7 @@ class Column extends React.PureComponent {
                   />
                 );
               })}
+
               {dropIndicatorProps && <div {...dropIndicatorProps} />}
             </div>
           </ResizableContainer>
