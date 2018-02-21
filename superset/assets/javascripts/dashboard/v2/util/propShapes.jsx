@@ -1,12 +1,14 @@
 import PropTypes from 'prop-types';
 import componentTypes from './componentTypes';
+import rowStyleOptions from './rowStyleOptions';
+import headerStyleOptions from './headerStyleOptions';
 
-export const componentShape = PropTypes.shape({
+export const componentShape = PropTypes.shape({ // eslint-disable-line
   id: PropTypes.string.isRequired,
   type: PropTypes.oneOf(
     Object.values(componentTypes),
   ).isRequired,
-  childIds: PropTypes.arrayOf(PropTypes.string),
+  children: PropTypes.arrayOf(PropTypes.string).isRequired,
   meta: PropTypes.shape({
     // Dimensions
     width: PropTypes.number,
@@ -14,24 +16,9 @@ export const componentShape = PropTypes.shape({
 
     // Header
     text: PropTypes.string,
+    headerSize: PropTypes.oneOf(headerStyleOptions.map(opt => opt.value)),
+
+    // Row
+    rowStyle: PropTypes.oneOf(rowStyleOptions.map(opt => opt.value)),
   }),
 });
-
-export const componentProps = {
-  component: componentShape.isRequired,
-  components: PropTypes.object.isRequired,
-  depth: PropTypes.number.isRequired,
-  index: PropTypes.number.isRequired,
-  parentId: PropTypes.string.isRequired,
-
-  // grid related
-  availableColumnCount: PropTypes.number.isRequired,
-  columnWidth: PropTypes.number.isRequired,
-  rowHeight: PropTypes.number,
-  onResizeStart: PropTypes.func.isRequired,
-  onResize: PropTypes.func.isRequired,
-  onResizeStop: PropTypes.func.isRequired,
-
-  // dnd
-  onDrop: PropTypes.func.isRequired,
-};

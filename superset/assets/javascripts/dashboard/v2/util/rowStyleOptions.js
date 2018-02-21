@@ -1,5 +1,5 @@
-import { t } from '../../../../locales';
-import { ROW_TRANSPARENT, ROW_WHITE } from '../../util/constants';
+import { t } from '../../../locales';
+import { ROW_TRANSPARENT, ROW_WHITE } from './constants';
 
 export default [
   { value: ROW_TRANSPARENT, label: t('Transparent'), className: 'grid-row--transparent' },

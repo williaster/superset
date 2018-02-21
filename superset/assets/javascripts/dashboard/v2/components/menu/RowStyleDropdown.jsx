@@ -2,7 +2,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import cx from 'classnames';
 
-import rowStyleOptions from './rowStyleOptions';
+import rowStyleOptions from '../../util/rowStyleOptions';
 import PopoverDropdown from './PopoverDropdown';
 
 const propTypes = {

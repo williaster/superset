@@ -21,7 +21,7 @@ const typeToDefaultMetaData = {
   [CHART_TYPE]: { width: 3, height: 15 },
   [COLUMN_TYPE]: { width: 3 },
   [DIVIDER_TYPE]: null,
-  [HEADER_TYPE]: { text: 'New header', size: MEDIUM_HEADER, rowStyle: ROW_TRANSPARENT },
+  [HEADER_TYPE]: { text: 'New header', headerSize: MEDIUM_HEADER, rowStyle: ROW_TRANSPARENT },
   [MARKDOWN_TYPE]: { width: 3, height: 15 },
   [ROW_TYPE]: { rowStyle: ROW_TRANSPARENT },
   [SPACER_TYPE]: {},

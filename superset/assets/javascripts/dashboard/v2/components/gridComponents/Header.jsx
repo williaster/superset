@@ -9,10 +9,9 @@ import HoverMenu from '../menu/HoverMenu';
 import WithPopoverMenu from '../menu/WithPopoverMenu';
 import RowStyleDropdown from '../menu/RowStyleDropdown';
 import DeleteComponentButton from '../DeleteComponentButton';
-import IconButton from '../IconButton';
 import PopoverDropdown from '../menu/PopoverDropdown';
-import headerStyleOptions from '../menu/headerStyleOptions';
-import rowStyleOptions from '../menu/rowStyleOptions';
+import headerStyleOptions from '../../util/headerStyleOptions';
+import rowStyleOptions from '../../util/rowStyleOptions';
 import { componentShape } from '../../util/propShapes';
 import { SMALL_HEADER, ROW_TRANSPARENT } from '../../util/constants';
 
@@ -38,7 +37,7 @@ class Header extends React.PureComponent {
     this.handleDeleteComponent = this.handleDeleteComponent.bind(this);
     this.handleChangeFocus = this.handleChangeFocus.bind(this);
     this.handleUpdateMeta = this.handleUpdateMeta.bind(this);
-    this.handleChangeSize = this.handleUpdateMeta.bind(this, 'size');
+    this.handleChangeSize = this.handleUpdateMeta.bind(this, 'headerSize');
     this.handleChangeRowStyle = this.handleUpdateMeta.bind(this, 'rowStyle');
     this.handleChangeText = this.handleUpdateMeta.bind(this, 'text');
   }
@@ -79,7 +78,7 @@ class Header extends React.PureComponent {
     } = this.props;
 
     const headerStyle = headerStyleOptions.find(
-      opt => opt.value === (component.meta.size || SMALL_HEADER),
+      opt => opt.value === (component.meta.headerSize || SMALL_HEADER),
     );
 
     const rowStyle = rowStyleOptions.find(
@@ -108,7 +107,7 @@ class Header extends React.PureComponent {
                 <PopoverDropdown
                   id={`${component.id}-header-style`}
                   options={headerStyleOptions}
-                  value={component.meta.size}
+                  value={component.meta.headerSize}
                   onChange={this.handleChangeSize}
                   renderTitle={option => `${option.label} header`}
                 />,

@@ -101,7 +101,7 @@ class DashboardGrid extends React.PureComponent {
             // account for (COLUMN_COUNT - 1) gutters
             const columnPlusGutterWidth = (width + GRID_GUTTER_SIZE) / GRID_COLUMN_COUNT;
             const columnWidth = columnPlusGutterWidth - GRID_GUTTER_SIZE;
-            console.log('render grid parentsize')
+
             return width < 50 ? null : (
               <div style={{ height: '100%', display: 'flex', flexDirection: 'column' }}>
                 {(rootComponent.children || []).map((id, index) => (

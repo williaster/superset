@@ -1,5 +1,5 @@
-import { t } from '../../../../locales';
-import { SMALL_HEADER, MEDIUM_HEADER, LARGE_HEADER } from '../../util/constants';
+import { t } from '../../../locales';
+import { SMALL_HEADER, MEDIUM_HEADER, LARGE_HEADER } from './constants';
 
 export default [
   { value: SMALL_HEADER, label: t('Small'), className: 'header-small' },

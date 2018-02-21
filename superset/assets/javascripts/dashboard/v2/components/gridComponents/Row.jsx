@@ -12,7 +12,7 @@ import RowStyleDropdown from '../menu/RowStyleDropdown';
 import WithPopoverMenu from '../menu/WithPopoverMenu';
 
 import { componentShape } from '../../util/propShapes';
-import rowStyleOptions from '../menu/rowStyleOptions';
+import rowStyleOptions from '../../util/rowStyleOptions';
 import { GRID_GUTTER_SIZE, ROW_TRANSPARENT } from '../../util/constants';
 
 const propTypes = {
