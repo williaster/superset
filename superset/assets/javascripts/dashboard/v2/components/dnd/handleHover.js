@@ -1,92 +1,36 @@
 import throttle from 'lodash.throttle';
-import isValidChild from '../../util/isValidChild';
-import shouldWrapChildInRow from '../../util/shouldWrapChildInRow';
+import getDropPosition, { DROP_TOP, DROP_RIGHT, DROP_BOTTOM, DROP_LEFT } from '../../util/getDropPosition';
 
 const HOVER_THROTTLE_MS = 200;
 
 function handleHover(props, monitor, Component) {
+  // this may happen due to throttling
   if (!Component.mounted) return;
 
-  const {
-    component,
-    parentComponent,
-    orientation,
-    isDraggingOverShallow,
-  } = Component.props;
+  const dropPosition = getDropPosition(monitor, Component);
 
-  const draggingItem = monitor.getItem();
-
-  if (!draggingItem || draggingItem.draggableId === component.id) {
+  if (!dropPosition) {
     Component.setState(() => ({ dropIndicator: null }));
     return;
   }
 
-  const validChild = isValidChild({
-    parentType: component.type,
-    childType: draggingItem.type,
-  });
-
-  const validSibling = isValidChild({
-    parentType: parentComponent && parentComponent.type,
-    childType: draggingItem.type,
-  });
-
-  const shouldWrapSibling = shouldWrapChildInRow({
-    parentType: parentComponent && parentComponent.type,
-    childType: draggingItem.type,
-  });
-
-  if ((validChild && !isDraggingOverShallow) || (!validChild && !validSibling)) {
-    Component.setState(() => ({ dropIndicator: null }));
-    return;
-  }
-
-  if (validChild && (!validSibling || shouldWrapSibling)) { // indicate drop in container
-    const indicatorOrientation = orientation === 'row' ? 'column' : 'row';
-
-    Component.setState(() => ({
-      dropIndicator: {
-        top: 0,
-        right: component.children.length ? 8 : null,
-        height: indicatorOrientation === 'column' ? '100%' : 3,
-        width: indicatorOrientation === 'column' ? 3 : '100%',
-        minHeight: indicatorOrientation === 'column' ? 16 : null,
-        minWidth: indicatorOrientation === 'column' ? null : 16,
-        margin: 'auto',
-        backgroundColor: '#44C0FF',
-        position: 'absolute',
-        zIndex: 10,
-      },
-    }));
-  } else { // indicate drop near parent
-    const refBoundingRect = Component.ref.getBoundingClientRect();
-    const clientOffset = monitor.getClientOffset();
-
-    if (clientOffset) {
-      let dropOffset;
-      if (orientation === 'row') {
-        const refMiddleY =
-          refBoundingRect.top + ((refBoundingRect.bottom - refBoundingRect.top) / 2);
-        dropOffset = clientOffset.y < refMiddleY ? 0 : refBoundingRect.height;
-      } else {
-        const refMiddleX =
-          refBoundingRect.left + ((refBoundingRect.right - refBoundingRect.left) / 2);
-        dropOffset = clientOffset.x < refMiddleX ? 0 : refBoundingRect.width;
-      }
-
-      Component.setState(() => ({
-        dropIndicator: {
-          top: orientation === 'column' ? 0 : dropOffset,
-          left: orientation === 'column' ? dropOffset : 0,
-          height: orientation === 'column' ? '100%' : 3,
-          width: orientation === 'column' ? 3 : '100%',
-          backgroundColor: '#44C0FF',
-          position: 'absolute',
-          zIndex: 10,
-        },
-      }));
-    }
-  }
+  // @TODO
+  // drop-indicator
+  // drop-indicator--top/right/bottom/left
+  Component.setState(() => ({
+    dropIndicator: {
+      top: dropPosition === DROP_BOTTOM ? '100%' : 0,
+      left: dropPosition === DROP_RIGHT ? '100%' : 0,
+      height: dropPosition === DROP_LEFT || dropPosition === DROP_RIGHT ? '100%' : 3,
+      width: dropPosition === DROP_TOP || dropPosition === DROP_BOTTOM ? '100%' : 3,
+      minHeight: dropPosition === DROP_LEFT || dropPosition === DROP_RIGHT ? 16 : null,
+      minWidth: dropPosition === DROP_TOP || dropPosition === DROP_BOTTOM ? 16 : null,
+      margin: 'auto',
+      backgroundColor: '#44C0FF',
+      position: 'absolute',
+      zIndex: 10,
+    },
+  }));
 }
 
 // this is called very frequently by react-dnd
