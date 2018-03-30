@@ -71,7 +71,12 @@ class Chart extends React.PureComponent {
   componentDidMount() {
     if (this.props.triggerQuery) {
       const { formData } = this.props;
-      this.props.actions.runQuery(formData, false, this.props.timeout, this.props.chartId);
+      this.props.actions.runQuery(
+        formData,
+        false,
+        this.props.timeout,
+        this.props.chartId,
+      );
     } else {
       // when drag/dropping in a dashboard, a chart may be unmounted/remounted but still have data
       this.renderViz();
@@ -119,7 +124,8 @@ class Chart extends React.PureComponent {
 
   width() {
     return (
-      this.props.width || (this.container && this.container.el && this.container.el.offsetWidth)
+      this.props.width ||
+      (this.container && this.container.el && this.container.el.offsetWidth)
     );
   }
 
@@ -129,13 +135,15 @@ class Chart extends React.PureComponent {
 
   height() {
     return (
-      this.props.height || (this.container && this.container.el && this.container.el.offsetHeight)
+      this.props.height ||
+      (this.container && this.container.el && this.container.el.offsetHeight)
     );
   }
 
   d3format(col, number) {
     const { datasource } = this.props;
-    const format = (datasource.column_formats && datasource.column_formats[col]) || '0.3s';
+    const format =
+      (datasource.column_formats && datasource.column_formats[col]) || '0.3s';
 
     return d3format(format, number);
   }
@@ -177,25 +185,39 @@ class Chart extends React.PureComponent {
   }
 
   renderViz() {
-    const { vizType, formData, queryResponse, setControlValue, chartId, chartStatus } = this.props;
-    const visRenderer = visMap[vizType];
+    const {
+      vizType,
+      formData,
+      queryResponse,
+      setControlValue,
+      chartId,
+      chartStatus,
+    } = this.props;
+    const visPromise = visMap[vizType];
     const renderStart = Logger.getTimestamp();
     try {
-      // Executing user-defined data mutator function
-      if (formData.js_data) {
-        queryResponse.data = sandboxedEval(formData.js_data)(queryResponse.data);
-      }
-      visRenderer(this, queryResponse, setControlValue);
-      if (chartStatus !== 'rendered') {
-        this.props.actions.chartRenderingSucceeded(chartId);
-      }
-      Logger.append(LOG_ACTIONS_RENDER_CHART, {
-        slice_id: 'slice_' + chartId,
-        viz_type: vizType,
-        start_offset: renderStart,
-        duration: Logger.getTimestamp() - renderStart,
+      // [re]render the visualization
+      visPromise().then(renderVis => {
+        // Execute user-defined data mutator function
+        if (formData.js_data) {
+          queryResponse.data = sandboxedEval(formData.js_data)(
+            queryResponse.data,
+          );
+        }
+
+        renderVis(this, queryResponse, setControlValue);
+
+        Logger.append(LOG_ACTIONS_RENDER_CHART, {
+          slice_id: 'slice_' + chartId,
+          viz_type: vizType,
+          start_offset: renderStart,
+          duration: Logger.getTimestamp() - renderStart,
+        });
+
+        if (chartStatus !== 'rendered') {
+          this.props.actions.chartRenderingSucceeded(chartId);
+        }
       });
-      this.props.actions.chartRenderingSucceeded(chartId);
     } catch (e) {
       console.error(e); // eslint-disable-line no-console
       this.props.actions.chartRenderingFailed(e, chartId);
@@ -206,9 +228,14 @@ class Chart extends React.PureComponent {
     const isLoading = this.props.chartStatus === 'loading';
 
     // this allows <Loading /> to be positioned in the middle of the chart
-    const containerStyles = isLoading ? { height: this.height(), width: this.width() } : null;
+    const containerStyles = isLoading
+      ? { height: this.height(), width: this.width() }
+      : null;
     return (
-      <div className={`chart-container ${isLoading ? 'is-loading' : ''}`} style={containerStyles}>
+      <div
+        className={`chart-container ${isLoading ? 'is-loading' : ''}`}
+        style={containerStyles}
+      >
         {this.renderTooltip()}
         {isLoading && <Loading size={75} />}
         {this.props.chartAlert && (
@@ -238,8 +265,10 @@ class Chart extends React.PureComponent {
               vizType={this.props.vizType}
               height={this.height}
               width={this.width}
-              faded={this.props.refreshOverlayVisible && !this.props.errorMessage}
-              ref={(inner) => {
+              faded={
+                this.props.refreshOverlayVisible && !this.props.errorMessage
+              }
+              ref={inner => {
                 this.container = inner;
               }}
             />
