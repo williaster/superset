@@ -10,7 +10,7 @@ import Loading from '../components/Loading';
 import { Logger, LOG_ACTIONS_RENDER_CHART } from '../logger';
 import StackTraceMessage from '../components/StackTraceMessage';
 import RefreshChartOverlay from '../components/RefreshChartOverlay';
-import visMap from '../visualizations';
+import visPromiseLookup from '../visualizations';
 import sandboxedEval from '../modules/sandbox';
 import './chart.css';
 
@@ -54,7 +54,11 @@ const defaultProps = {
 class Chart extends React.PureComponent {
   constructor(props) {
     super(props);
-    this.state = {};
+    // lazy load visualizations with promises that resolve to a renderVis function
+    this.state = {
+      renderVis: null,
+    };
+
     // these properties are used by visualizations
     this.annotationData = props.annotationData;
     this.containerId = props.containerId;
@@ -81,6 +85,20 @@ class Chart extends React.PureComponent {
       // when drag/dropping in a dashboard, a chart may be unmounted/remounted but still have data
       this.renderViz();
     }
+
+    this.visPromise = visPromiseLookup[this.props.vizType];
+
+    this.visPromise()
+      .then(renderVis => {
+        if (this.visPromise) {
+          // ensure Component is still mounted
+          this.setState({ renderVis }, this.renderVis);
+        }
+      })
+      .catch(error => {
+        console.error(error); // eslint-disable-line
+        this.props.actions.chartRenderingFailed(error, this.props.chartKey);
+      });
   }
 
   componentWillReceiveProps(nextProps) {
@@ -102,8 +120,12 @@ class Chart extends React.PureComponent {
         prevProps.width !== this.props.width ||
         prevProps.lastRendered !== this.props.lastRendered)
     ) {
-      this.renderViz();
+      this.renderVis();
     }
+  }
+
+  componentWillUnmount() {
+    this.visPromise = null;
   }
 
   getFilters() {
@@ -184,7 +206,8 @@ class Chart extends React.PureComponent {
     return null;
   }
 
-  renderViz() {
+  renderVis() {
+    const { renderVis } = this.state;
     const {
       vizType,
       formData,
@@ -193,19 +216,20 @@ class Chart extends React.PureComponent {
       chartId,
       chartStatus,
     } = this.props;
-    const visPromise = visMap[vizType];
-    const renderStart = Logger.getTimestamp();
-    try {
-      // [re]render the visualization
-      visPromise().then(renderVis => {
-        // Execute user-defined data mutator function
+
+    // check that we have the render function and data
+    if (renderVis && ['success', 'rendered'].indexOf(chartStatus) > -1) {
+      const renderStart = Logger.getTimestamp();
+
+      try {
+        // Executing user-defined data mutator function
         if (formData.js_data) {
           queryResponse.data = sandboxedEval(formData.js_data)(
             queryResponse.data,
           );
         }
 
-        renderVis(this, queryResponse, setControlValue);
+        renderVis(this, qr, this.props.setControlValue);
 
         Logger.append(LOG_ACTIONS_RENDER_CHART, {
           slice_id: 'slice_' + chartId,
@@ -217,26 +241,29 @@ class Chart extends React.PureComponent {
         if (chartStatus !== 'rendered') {
           this.props.actions.chartRenderingSucceeded(chartId);
         }
-      });
-    } catch (e) {
-      console.error(e); // eslint-disable-line no-console
-      this.props.actions.chartRenderingFailed(e, chartId);
+      } catch (e) {
+        console.error(e); // eslint-disable-line
+        this.props.actions.chartRenderingFailed(e, chartId);
+      }
     }
   }
 
   render() {
-    const isLoading = this.props.chartStatus === 'loading';
+    const isLoading =
+      this.props.chartStatus === 'loading' || !this.state.renderVis;
 
     // this allows <Loading /> to be positioned in the middle of the chart
     const containerStyles = isLoading
       ? { height: this.height(), width: this.width() }
       : null;
+
     return (
       <div
         className={`chart-container ${isLoading ? 'is-loading' : ''}`}
         style={containerStyles}
       >
         {this.renderTooltip()}
+
         {isLoading && <Loading size={75} />}
         {this.props.chartAlert && (
           <StackTraceMessage
