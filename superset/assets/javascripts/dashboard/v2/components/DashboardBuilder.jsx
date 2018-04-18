@@ -66,7 +66,7 @@ class DashboardBuilder extends React.Component {
     const gridComponent = dashboardLayout[gridComponentId];
 
     return (
-      <div className={cx('dashboard-v2', editMode && 'dashboard-v2--editing')}>
+      <div className={cx('dashboard', editMode && 'dashboard--editing')}>
         {topLevelTabs || !editMode ? ( // you cannot drop on/displace tabs if they already exist
           <DashboardHeader />
         ) : (
