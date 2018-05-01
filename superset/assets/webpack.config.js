@@ -59,6 +59,9 @@ const config = {
         loader: ExtractTextPlugin.extract({
           use: ['css-loader'],
           fallback: 'style-loader',
+          // this is needed due to a webpack bug for importing CSS in lazy loaded JS files
+          // see https://github.com/webpack-contrib/extract-text-webpack-plugin/issues/456
+          allChunks: true,
         }),
       },
       // Optionally extract less files
@@ -69,6 +72,9 @@ const config = {
         loader: ExtractTextPlugin.extract({
           use: ['css-loader', 'less-loader'],
           fallback: 'style-loader',
+          // this is needed due to a webpack bug for importing CSS in lazy loaded JS files
+          // see https://github.com/webpack-contrib/extract-text-webpack-plugin/issues/456
+          allChunks: true,
         }),
       },
       /* for css linking images */
