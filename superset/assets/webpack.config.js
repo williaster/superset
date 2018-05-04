@@ -1,4 +1,3 @@
-const webpack = require('webpack');
 const path = require('path');
 const ManifestPlugin = require('webpack-manifest-plugin');
 const CleanWebpackPlugin = require('clean-webpack-plugin');
@@ -36,10 +35,6 @@ const config = {
       '.js',
       '.jsx',
     ],
-    alias: {
-      webworkify: 'webworkify-webpack',
-    },
-
   },
   module: {
     rules: [
@@ -52,7 +47,6 @@ const config = {
         exclude: /node_modules/,
         loader: 'babel-loader',
       },
-      // Extract css files
       {
         test: /\.css$/,
         include: APP_DIR,
@@ -64,8 +58,6 @@ const config = {
           allChunks: true,
         }),
       },
-      // Optionally extract less files
-      // or any other compile-to-css language
       {
         test: /\.less$/,
         include: APP_DIR,
@@ -107,27 +99,10 @@ const config = {
     'react/lib/ReactContext': true,
   },
   plugins: [
-    new ManifestPlugin(),
+    new ManifestPlugin(), // this is used to look up hashed filenames in html templates
     new CleanWebpackPlugin(['dist']),
-    new webpack.DefinePlugin({
-      'process.env': {
-        NODE_ENV: JSON.stringify(process.env.NODE_ENV),
-      },
-    }),
     new ExtractTextPlugin('[name].[chunkhash].css'),
   ],
 };
-if (process.env.NODE_ENV === 'production') {
-  // Using settings suggested in https://github.com/webpack/webpack/issues/537
-  const UJSplugin = new webpack.optimize.UglifyJsPlugin({
-    sourceMap: false,
-    minimize: true,
-    parallel: {
-      cache: true,
-      workers: 4,
-    },
-    compress: false,
-  });
-  config.plugins.push(UJSplugin);
-}
+
 module.exports = config;
