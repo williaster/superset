@@ -43,6 +43,7 @@ const config = {
     extensions: ['.js', '.jsx'],
   },
   module: {
+    noParse: /(mapbox-gl)\.js$/,
     rules: [
       {
         test: /datatables\.net.*/,
