@@ -54,7 +54,7 @@ const defaultProps = {
 class Chart extends React.PureComponent {
   constructor(props) {
     super(props);
-    // lazy load visualizations with promises that resolve to a renderVis function
+    // visualizations are lazy-loaded with promises that resolve to a renderVis function
     this.state = {
       renderVis: null,
     };
@@ -70,35 +70,23 @@ class Chart extends React.PureComponent {
     this.headerHeight = this.headerHeight.bind(this);
     this.height = this.height.bind(this);
     this.width = this.width.bind(this);
+    this.visPromise = null;
   }
 
   componentDidMount() {
     if (this.props.triggerQuery) {
-      const { formData } = this.props;
+      const { formData, timeout, chartId } = this.props;
       this.props.actions.runQuery(
         formData,
         false,
-        this.props.timeout,
-        this.props.chartId,
+        timeout,
+        chartId,
       );
+      this.loadAsyncVis(this.props.vizType);
     } else {
       // when drag/dropping in a dashboard, a chart may be unmounted/remounted but still have data
       this.renderViz();
     }
-
-    this.visPromise = visPromiseLookup[this.props.vizType];
-
-    this.visPromise()
-      .then(renderVis => {
-        if (this.visPromise) {
-          // ensure Component is still mounted
-          this.setState({ renderVis }, this.renderVis);
-        }
-      })
-      .catch(error => {
-        console.error(error); // eslint-disable-line
-        this.props.actions.chartRenderingFailed(error, this.props.chartKey);
-      });
   }
 
   componentWillReceiveProps(nextProps) {
@@ -107,6 +95,10 @@ class Chart extends React.PureComponent {
     this.selector = `#${this.containerId}`;
     this.formData = nextProps.formData;
     this.datasource = nextProps.datasource;
+    if (nextProps.vizType !== this.props.vizType) {
+      this.setState(() => ({ renderVis: null }));
+      this.loadAsyncVis(nextProps.vizType);
+    }
   }
 
   componentDidUpdate(prevProps) {
@@ -134,6 +126,22 @@ class Chart extends React.PureComponent {
 
   setTooltip(tooltip) {
     this.setState({ tooltip });
+  }
+
+  loadAsyncVis(visType) {
+    this.visPromise = visPromiseLookup[visType];
+
+    this.visPromise()
+      .then((renderVis) => {
+        // ensure Component is still mounted
+        if (this.visPromise) {
+          this.setState({ renderVis }, this.renderVis);
+        }
+      })
+      .catch((error) => {
+        console.error(error); // eslint-disable-line
+        this.props.actions.chartRenderingFailed(error, this.props.chartId);
+      });
   }
 
   addFilter(col, vals, merge = true, refresh = true) {
@@ -264,7 +272,7 @@ class Chart extends React.PureComponent {
       >
         {this.renderTooltip()}
 
-        {isLoading && <Loading size={75} />}
+        {isLoading && <Loading size={50} />}
         {this.props.chartAlert && (
           <StackTraceMessage
             message={this.props.chartAlert}

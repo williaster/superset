@@ -8,7 +8,7 @@ const defaultProps = {
   size: 50,
 };
 
-export default function Loading(props) {
+export default function Loading({ size }) {
   return (
     <img
       className="loading"
@@ -16,8 +16,7 @@ export default function Loading(props) {
       src="/static/assets/images/loading.gif"
       style={{
         width: Math.min(props.size, 50),
-        // height is auto
-        padding: 0,
+        // height is auto        padding: 0,
         margin: 0,
         position: 'absolute',
         left: '50%',
