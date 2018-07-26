@@ -3,7 +3,6 @@
 from __future__ import absolute_import, division, print_function, unicode_literals
 
 from datetime import datetime
-import json
 import logging
 from time import sleep
 import uuid
@@ -12,6 +11,7 @@ from celery.exceptions import SoftTimeLimitExceeded
 from contextlib2 import contextmanager
 import numpy as np
 import pandas as pd
+import simplejson as json
 import sqlalchemy
 from sqlalchemy.orm import sessionmaker
 from sqlalchemy.pool import NullPool
