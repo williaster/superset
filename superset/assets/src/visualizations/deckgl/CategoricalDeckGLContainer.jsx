@@ -67,20 +67,6 @@ export default class CategoricalDeckGLContainer extends React.PureComponent {
   componentWillReceiveProps(nextProps) {
     this.setState(CategoricalDeckGLContainer.getDerivedStateFromProps(nextProps, this.state));
   }
-  addColor(data, fd) {
-    const c = fd.color_picker || { r: 0, g: 0, b: 0, a: 1 };
-    const fixedColor = [c.r, c.g, c.b, 255 * c.a];
-
-    return data.map((d) => {
-      let color;
-      if (fd.dimension) {
-        color = hexToRGB(getColorFromScheme(d.cat_color, fd.color_scheme), c.a * 255);
-      } else {
-        color = fixedColor;
-      }
-      return { ...d, color };
-    });
-  }
   getLayers(values) {
     const fd = this.props.slice.formData;
     let data = [...this.props.data];
@@ -107,6 +93,17 @@ export default class CategoricalDeckGLContainer extends React.PureComponent {
     }
 
     return [this.props.getLayer(fd, data, this.props.slice)];
+  }
+  addColor(data, fd) {
+    const c = fd.color_picker || { r: 0, g: 0, b: 0, a: 1 };
+    return data.map((d) => {
+      let color;
+      if (fd.dimension) {
+        color = hexToRGB(getColorFromScheme(d.cat_color, fd.color_scheme), c.a * 255);
+        return { ...d, color };
+      }
+      return d;
+    });
   }
   toggleCategory(category) {
     const categoryState = this.state.categories[category];
