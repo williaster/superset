@@ -1,6 +1,7 @@
 /* eslint global-require: 0, no-console: 0 */
 import $ from 'jquery';
 import { SupersetClient } from '@superset-ui/core';
+import 'abortcontroller-polyfill/dist/abortcontroller-polyfill-only';
 
 import { t } from './locales';
 
