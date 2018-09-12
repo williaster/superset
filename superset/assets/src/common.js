@@ -2,6 +2,7 @@
 import $ from 'jquery';
 import { t } from './locales';
 import { SupersetClient } from '@superset-ui/core';
+import 'abortcontroller-polyfill/dist/abortcontroller-polyfill-only';
 import utils = from './modules/utils';
 
 $(document).ready(function () {
