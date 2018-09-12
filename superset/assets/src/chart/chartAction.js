@@ -1,14 +1,15 @@
+/* global window, AbortController */
+/* eslint no-undef: 'error' */
+import { SupersetClient } from '@superset-ui/core';
 import { getExploreUrlAndPayload, getAnnotationJsonUrl } from '../explore/exploreUtils';
 import { requiresQuery, ANNOTATION_SOURCE_TYPES } from '../modules/AnnotationTypes';
 import { Logger, LOG_ACTIONS_LOAD_CHART } from '../logger';
 import { COMMON_ERR_MESSAGES } from '../common';
 import { t } from '../locales';
 
-const $ = (window.$ = require('jquery'));
-
 export const CHART_UPDATE_STARTED = 'CHART_UPDATE_STARTED';
-export function chartUpdateStarted(queryRequest, latestQueryFormData, key) {
-  return { type: CHART_UPDATE_STARTED, queryRequest, latestQueryFormData, key };
+export function chartUpdateStarted(queryController, latestQueryFormData, key) {
+  return { type: CHART_UPDATE_STARTED, queryController, latestQueryFormData, key };
 }
 
 export const CHART_UPDATE_SUCCEEDED = 'CHART_UPDATE_SUCCEEDED';
@@ -52,8 +53,8 @@ export function annotationQuerySuccess(annotation, queryResponse, key) {
 }
 
 export const ANNOTATION_QUERY_STARTED = 'ANNOTATION_QUERY_STARTED';
-export function annotationQueryStarted(annotation, queryRequest, key) {
-  return { type: ANNOTATION_QUERY_STARTED, annotation, queryRequest, key };
+export function annotationQueryStarted(annotation, queryController, key) {
+  return { type: ANNOTATION_QUERY_STARTED, annotation, queryController, key };
 }
 
 export const ANNOTATION_QUERY_FAILED = 'ANNOTATION_QUERY_FAILED';
@@ -79,18 +80,21 @@ export function runAnnotationQuery(annotation, timeout = 60, formData = null, ke
     );
     const isNative = annotation.sourceType === ANNOTATION_SOURCE_TYPES.NATIVE;
     const url = getAnnotationJsonUrl(annotation.value, sliceFormData, isNative);
-    const queryRequest = $.ajax({
+    const controller = new AbortController();
+    const { signal } = controller;
+
+    dispatch(annotationQueryStarted(annotation, controller, sliceKey));
+
+    return SupersetClient.get({
       url,
-      dataType: 'json',
+      signal,
       timeout: timeout * 1000,
-    });
-    dispatch(annotationQueryStarted(annotation, queryRequest, sliceKey));
-    return queryRequest
-      .then(queryResponse => dispatch(annotationQuerySuccess(annotation, queryResponse, sliceKey)))
+    })
+      .then(({ json }) => dispatch(annotationQuerySuccess(annotation, json, sliceKey)))
       .catch((err) => {
         if (err.statusText === 'timeout') {
           dispatch(annotationQueryFailed(annotation, { error: 'Query Timeout' }, sliceKey));
-        } else if ((err.responseJSON.error || '').toLowerCase().startsWith('no data')) {
+        } else if ((err.responseJSON.error || '').toLowerCase().includes('no data')) {
           dispatch(annotationQuerySuccess(annotation, err, sliceKey));
         } else if (err.statusText !== 'abort') {
           dispatch(annotationQueryFailed(annotation, err.responseJSON, sliceKey));
@@ -129,30 +133,30 @@ export function runQuery(formData, force = false, timeout = 60, key) {
       force,
     });
     const logStart = Logger.getTimestamp();
-    const queryRequest = $.ajax({
-      type: 'POST',
+    const controller = new AbortController();
+    const { signal } = controller;
+
+    dispatch(chartUpdateStarted(controller, payload, key));
+
+    const queryPromise = SupersetClient.post({
       url,
-      dataType: 'json',
-      data: {
-        form_data: JSON.stringify(payload),
-      },
+      postPayload: { form_data: payload },
+      signal,
       timeout: timeout * 1000,
-    });
-    const queryPromise = Promise.resolve(dispatch(chartUpdateStarted(queryRequest, payload, key)))
-      .then(() => queryRequest)
-      .then((queryResponse) => {
+    })
+      .then(({ json }) => {
         Logger.append(LOG_ACTIONS_LOAD_CHART, {
           slice_id: key,
-          is_cached: queryResponse.is_cached,
+          is_cached: json.is_cached,
           force_refresh: force,
-          row_count: queryResponse.rowcount,
+          row_count: json.rowcount,
           datasource: formData.datasource,
           start_offset: logStart,
           duration: Logger.getTimestamp() - logStart,
           has_extra_filters: formData.extra_filters && formData.extra_filters.length > 0,
           viz_type: formData.viz_type,
         });
-        return dispatch(chartUpdateSucceeded(queryResponse, key));
+        return dispatch(chartUpdateSucceeded(json, key));
       })
       .catch((err) => {
         Logger.append(LOG_ACTIONS_LOAD_CHART, {
@@ -164,7 +168,7 @@ export function runQuery(formData, force = false, timeout = 60, key) {
         });
         if (err.statusText === 'timeout') {
           dispatch(chartUpdateTimeout(err.statusText, timeout, key));
-        } else if (err.statusText === 'abort') {
+        } else if (err.statusText === 'AbortError') {
           dispatch(chartUpdateStopped(key));
         } else {
           let errObject;
@@ -187,7 +191,9 @@ export function runQuery(formData, force = false, timeout = 60, key) {
           dispatch(chartUpdateFailed(errObject, key));
         }
       });
+
     const annotationLayers = formData.annotation_layers || [];
+
     return Promise.all([
       queryPromise,
       dispatch(triggerQuery(false, key)),
