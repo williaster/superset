@@ -144,7 +144,7 @@ def execute_sql(
     user_name=None, session=None, start_time=None,
 ):
     """Executes the sql query returns the results."""
-    if store_results:
+    if store_results and start_time:
         # only asynchronous queries
         stats_logger.timing(
             'sqllab.query.time_pending', utils.now_as_float() - start_time)
@@ -219,7 +219,7 @@ def execute_sql(
         logging.info('Running query: \n{}'.format(executed_sql))
         logging.info(query.executed_sql)
         query_start_time = utils.now_as_float()
-        db_engine_spec.execute(cursor, query.executed_sql, async_=True)
+        db_engine_spec.execute(cursor, query.executed_sql, async=True)
         logging.info('Handling cursor')
         db_engine_spec.handle_cursor(cursor, query, session)
         logging.info('Fetching data: {}'.format(query.to_dict()))
