@@ -120,14 +120,14 @@ def convert_results_to_df(cursor_description, data):
 @celery_app.task(bind=True, soft_time_limit=SQLLAB_TIMEOUT)
 def get_sql_results(
     ctask, query_id, rendered_query, return_results=True, store_results=False,
-        user_name=None):
+        user_name=None, start_time=None):
     """Executes the sql query returns the results."""
     with session_scope(not ctask.request.called_directly) as session:
 
         try:
             return execute_sql(
                 ctask, query_id, rendered_query, return_results, store_results, user_name,
-                session=session)
+                session=session, start_time=start_time)
         except Exception as e:
             logging.exception(e)
             stats_logger.incr('error_sqllab_unhandled')
@@ -141,10 +141,13 @@ def get_sql_results(
 
 def execute_sql(
     ctask, query_id, rendered_query, return_results=True, store_results=False,
-    user_name=None, session=None,
+    user_name=None, session=None, start_time=None,
 ):
     """Executes the sql query returns the results."""
-
+    if store_results and start_time:
+        # only asynchronous queries
+        stats_logger.timing(
+            'sqllab.query.time_pending', utils.now_as_float() - start_time)
     query = get_query(query_id, session)
     payload = dict(query_id=query_id)
 
@@ -215,11 +218,15 @@ def execute_sql(
         cursor = conn.cursor()
         logging.info('Running query: \n{}'.format(executed_sql))
         logging.info(query.executed_sql)
+        query_start_time = utils.now_as_float()
         db_engine_spec.execute(cursor, query.executed_sql, async=True)
         logging.info('Handling cursor')
         db_engine_spec.handle_cursor(cursor, query, session)
         logging.info('Fetching data: {}'.format(query.to_dict()))
         data = db_engine_spec.fetch_data(cursor, query.limit)
+        stats_logger.timing(
+            'sqllab.query.time_executing_query',
+            utils.now_as_float() - query_start_time)
     except SoftTimeLimitExceeded as e:
         logging.exception(e)
         if conn is not None:
@@ -269,14 +276,17 @@ def execute_sql(
     if store_results:
         key = '{}'.format(uuid.uuid4())
         logging.info('Storing results in results backend, key: {}'.format(key))
-        json_payload = json.dumps(payload, default=utils.json_iso_dttm_ser)
+        write_to_results_backend_start = utils.now_as_float()
+        json_payload = json.dumps(
+            payload, default=utils.json_iso_dttm_ser, ignore_nan=True)
         cache_timeout = database.cache_timeout
         if cache_timeout is None:
             cache_timeout = config.get('CACHE_DEFAULT_TIMEOUT', 0)
         results_backend.set(key, utils.zlib_compress(json_payload), cache_timeout)
         query.results_key = key
-        query.end_result_backend_time = utils.now_as_float()
-
+        stats_logger.timing(
+            'sqllab.query.results_backend_write',
+            utils.now_as_float() - write_to_results_backend_start)
     session.merge(query)
     session.commit()
 
