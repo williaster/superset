@@ -205,16 +205,16 @@ class BaseViz(object):
                 df[DTTM_ALIAS] += self.time_shift
 
             if self.enforce_numerical_metrics:
-                self.df_metrics_to_num(df, query_obj.get('metrics') or [])
+                self.df_metrics_to_num(df)
 
             df.replace([np.inf, -np.inf], np.nan)
             fillna = self.get_fillna_for_columns(df.columns)
             df = df.fillna(fillna)
         return df
 
-    @staticmethod
-    def df_metrics_to_num(df, metrics):
+    def df_metrics_to_num(self, df):
         """Converting metrics to numeric when pandas.read_sql cannot"""
+        metrics = self.metric_labels
         for col, dtype in df.dtypes.items():
             if dtype.type == np.object_ and col in metrics:
                 df[col] = pd.to_numeric(df[col], errors='coerce')
@@ -2010,6 +2010,10 @@ class MapboxViz(BaseViz):
             ],
         }
 
+        x_series, y_series = df[fd.get('all_columns_x')], df[fd.get('all_columns_y')]
+        south_west = [x_series.min(), y_series.min()]
+        north_east = [x_series.max(), y_series.max()]
+
         return {
             'geoJSON': geo_json,
             'customMetric': custom_metric,
@@ -2019,9 +2023,7 @@ class MapboxViz(BaseViz):
             'clusteringRadius': fd.get('clustering_radius'),
             'pointRadiusUnit': fd.get('point_radius_unit'),
             'globalOpacity': fd.get('global_opacity'),
-            'viewportLongitude': fd.get('viewport_longitude'),
-            'viewportLatitude': fd.get('viewport_latitude'),
-            'viewportZoom': fd.get('viewport_zoom'),
+            'bounds': [south_west, north_east],
             'renderWhileDragging': fd.get('render_while_dragging'),
             'tooltip': fd.get('rich_tooltip'),
             'color': fd.get('mapbox_color'),
