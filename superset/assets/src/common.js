@@ -38,7 +38,7 @@ export function appSetup() {
   SupersetClient.configure({ host: (window.location && window.location.host) || '' })
     .init()
     .catch((error) => {
-      console.warn(error);
+      console.warn('Error initializing SupersetClient', error);
     });
 }
 
