@@ -910,9 +910,26 @@ class HiveEngineSpec(PrestoEngineSpec):
                 return next(unicodecsv.reader(f, encoding='utf-8-sig'))
 
         table_name = form.name.data
-        filename = form.csv_file.data.filename
+        schema_name = form.schema.data
 
-        bucket_path = app.config['CSV_TO_HIVE_UPLOAD_S3_BUCKET']
+        if config.get('UPLOADED_CSV_HIVE_NAMESPACE'):
+            if '.' in table_name or schema_name:
+                raise Exception(
+                    "You can't specify a namespace. "
+                    'All tables will be uploaded to the `{}` namespace'.format(
+                        config.get('HIVE_NAMESPACE')))
+            table_name = '{}.{}'.format(
+                config.get('UPLOADED_CSV_HIVE_NAMESPACE'), table_name)
+        else:
+            if '.' in table_name and schema_name:
+                raise Exception(
+                    "You can't specify a namespace both in the name of the table "
+                    'and in the schema field. Please remove one')
+            if schema_name:
+                table_name = '{}.{}'.format(schema_name, table_name)
+
+        filename = form.csv_file.data.filename
+        bucket_path = config['CSV_TO_HIVE_UPLOAD_S3_BUCKET']
 
         if not bucket_path:
             logging.info('No upload bucket specified')
@@ -933,7 +950,7 @@ class HiveEngineSpec(PrestoEngineSpec):
         s3.upload_file(
             upload_path, bucket_path,
             os.path.join(upload_prefix, table_name, filename))
-        sql = """CREATE EXTERNAL TABLE {table_name} ( {schema_definition} )
+        sql = """CREATE TABLE {table_name} ( {schema_definition} )
             ROW FORMAT DELIMITED FIELDS TERMINATED BY ',' STORED AS
             TEXTFILE LOCATION '{location}'
             tblproperties ('skip.header.line.count'='1')""".format(**locals())
