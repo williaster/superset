@@ -302,10 +302,6 @@ class SqlaTable(Model, BaseDatasource):
         return utils.markdown(self.description)
 
     @property
-    def datasource_name(self):
-        return self.table_name
-
-    @property
     def database_name(self):
         return self.database.name
 
