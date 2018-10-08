@@ -302,6 +302,10 @@ class SqlaTable(Model, BaseDatasource):
         return utils.markdown(self.description)
 
     @property
+    def database_name(self):
+        return self.database.name
+
+    @property
     def link(self):
         name = escape(self.name)
         anchor = '<a target="_blank" href="{self.explore_url}">{name}</a>'

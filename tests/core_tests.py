@@ -701,6 +701,11 @@ class CoreTests(SupersetTestCase):
         self.assertEqual(data['status'], None)
         self.assertEqual(data['error'], None)
 
+    def test_select_star(self):
+        self.login(username='admin')
+        resp = self.get_resp('/superset/select_star/1/birth_names')
+        self.assertIn('gender', resp)
+
 
 if __name__ == '__main__':
     unittest.main()
