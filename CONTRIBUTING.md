@@ -52,7 +52,8 @@ If you are proposing a feature:
 
 ### Questions
 
-There is a dedicated [tag](https://stackoverflow.com/questions/tagged/apache-superset) on [stackoverflow](https://stackoverflow.com/). Please use it when asking questions.
+There is a dedicated [tag](https://stackoverflow.com/questions/tagged/apache-superset) on [stackoverflow](https://stackoverflow.com/). 
+Please use it when asking questions.
 
 ## Pull Request Guidelines
 
