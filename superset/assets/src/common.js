@@ -1,16 +1,16 @@
 /* eslint global-require: 0, no-console: 0 */
 import $ from 'jquery';
-import { t } from './locales';
 import { SupersetClient } from '@superset-ui/core';
 import 'abortcontroller-polyfill/dist/abortcontroller-polyfill-only';
-import utils = from './modules/utils';
+import { t } from './locales';
+import { toggleCheckbox } from './modules/utils';
 
 $(document).ready(function () {
   $(':checkbox[data-checkbox-api-prefix]').change(function () {
     const $this = $(this);
     const prefix = $this.data('checkbox-api-prefix');
     const id = $this.attr('id');
-    utils.toggleCheckbox(prefix, '#' + id);
+    toggleCheckbox(prefix, '#' + id);
   });
 
   // for language picker dropdown

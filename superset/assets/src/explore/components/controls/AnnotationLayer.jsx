@@ -19,7 +19,7 @@ import AnnotationTypes, {
   requiresQuery,
 } from '../../../modules/AnnotationTypes';
 
-import { getScheme } from '../../../modules/ColorSchemeManager';
+import { ALL_COLOR_SCHEMES } from '../../../modules/colors';
 import PopoverSection from '../../../components/PopoverSection';
 import ControlHeader from '../ControlHeader';
 import { nonEmpty } from '../../validators';
@@ -453,7 +453,7 @@ export default class AnnotationLayer extends React.PureComponent {
 
   renderDisplayConfiguration() {
     const { color, opacity, style, width, showMarkers, hideLine, annotationType } = this.state;
-    const colorScheme = [...getScheme(this.props.colorScheme)];
+    const colorScheme = [...ALL_COLOR_SCHEMES[this.props.colorScheme]];
     if (
       color &&
       color !== AUTOMATIC_COLOR &&
